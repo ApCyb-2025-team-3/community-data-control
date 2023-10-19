@@ -10,6 +10,6 @@ public class ApplicationController {
 
   @GetMapping("/status")
   public String status() {
-    return "Okay";
+    return "Server is running";
   }
 }
