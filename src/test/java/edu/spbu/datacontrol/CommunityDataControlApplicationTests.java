@@ -2,15 +2,13 @@ package edu.spbu.datacontrol;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
+
 @SpringBootTest
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
+@AutoConfigureEmbeddedDatabase
 class CommunityDataControlApplicationTests {
   @Test
   void contextLoads() {
