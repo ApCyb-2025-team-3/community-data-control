@@ -4,8 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -34,9 +37,11 @@ public class User {
   // TODO: Maybe change to ID if supervisor is in system
   String supervisorName;
 
-  long teamleadId;
+  @OneToOne
+  User teamLead;
 
-  long[] productOwnersIds;
+  @OneToMany
+  List<User> productOwnersIds;
 
   // TODO: Maybe change to group ID
   String project;
