@@ -18,11 +18,12 @@ on:
     branches:
       - main
       - dev
+      
+permissions: write-all
 
 jobs:
   build:
 
-    permissions: write-all
     runs-on: ubuntu-latest
 
     steps:
