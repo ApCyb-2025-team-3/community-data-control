@@ -1,5 +1,6 @@
 package edu.spbu.datacontrol.models;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class User {
 
   boolean isActive;
 
+
   String name;
 
   Date dob;
@@ -42,6 +44,7 @@ public class User {
   String project;
 
   String department;
+
 
   // TODO: Change to enum
   String grade;
