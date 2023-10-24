@@ -29,4 +29,5 @@ public class Event {
 
   String description;
 
+  long userId;
 }
