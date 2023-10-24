@@ -1,5 +1,6 @@
 package edu.spbu.datacontrol.models;
 
+import edu.spbu.datacontrol.models.enums.EventType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +22,7 @@ public class Event {
 
     long userId;
 
-    String type;
+    EventType type;
 
     @CreatedDate
     Date createdAt;
