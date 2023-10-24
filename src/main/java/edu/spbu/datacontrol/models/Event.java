@@ -1,5 +1,6 @@
 package edu.spbu.datacontrol.models;
 
+import edu.spbu.datacontrol.models.enums.EventEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +19,7 @@ public class Event {
   @GeneratedValue(strategy = GenerationType.AUTO)
   long id;
 
-  String type;
+  EventEnum type;
 
   @CreatedDate
   Date createdAt;
