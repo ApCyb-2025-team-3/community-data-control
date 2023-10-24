@@ -1,10 +1,13 @@
 package edu.spbu.datacontrol.models;
 
+import edu.spbu.datacontrol.models.enums.EventType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
+
 import java.util.Date;
+
 import lombok.Data;
 import jakarta.persistence.Id;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,20 +16,18 @@ import org.springframework.data.annotation.CreatedDate;
 @Data
 @Table(name = "event_log")
 public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    long id;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  long id;
+    EventType type;
 
-  String type;
+    @CreatedDate
+    Date createdAt;
 
-  @CreatedDate
-  Date createdAt;
+    String previousValue;
 
-  String previousValue;
+    String newValue;
 
-  String newValue;
-
-  String description;
-
+    String description;
 }
