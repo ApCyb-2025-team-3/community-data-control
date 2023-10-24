@@ -20,6 +20,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
 
+    long userId;
+
     EventType type;
 
     @CreatedDate
