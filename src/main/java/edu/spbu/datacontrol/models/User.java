@@ -1,16 +1,12 @@
 package edu.spbu.datacontrol.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import edu.spbu.datacontrol.models.enums.*;
 
 @Entity
 @Data
@@ -48,12 +44,12 @@ public class User {
 
   String department;
 
-  // TODO: Change to enum
-  String grade;
+  @Enumerated(EnumType.STRING)
+  Grade grade;
 
-  // TODO: Change to enum
-  String role;
+  @Enumerated(EnumType.STRING)
+  Role role;
 
-  // TODO: Change to enum
-  String mentorStatus;
+  @Enumerated(EnumType.STRING)
+  Competency mentorStatus;
 }

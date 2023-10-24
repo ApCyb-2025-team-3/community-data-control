@@ -1,5 +1,8 @@
 package edu.spbu.datacontrol.models;
+import edu.spbu.datacontrol.models.enums.*;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 @Data
@@ -15,9 +18,9 @@ public class UserDTO {
 
   String department;
 
-  // TODO: Change to enum
-  String grade;
+  @Enumerated(EnumType.STRING)
+  Grade grade;
 
-  // TODO: Change to enum
-  String role;
+  @Enumerated(EnumType.STRING)
+  Role role;
 }
