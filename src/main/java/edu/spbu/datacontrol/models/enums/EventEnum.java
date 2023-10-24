@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum EventEnum {
-    ADD_WORKER("Adding worker"),
-    DISMISSAL_WORKER("Dismissal worker"),
-    CHANGE_PROJECT("Change worker project"),
+    ADD_USER("Adding user"),
+    DISMISSAL_USER("Dismissal user"),
+    CHANGE_PROJECT("Change user project"),
     CHANGE_USER_DATA("Change user data"),
-    UPDATE_WORKER_GRADE("Update worker grade");
+    UPDATE_USER_GRADE("Update user grade");
 
     private final String eventName;
 
