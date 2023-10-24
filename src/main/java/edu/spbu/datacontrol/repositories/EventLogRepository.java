@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface EventLogRepository extends CrudRepository<Event, Long> {
     long addEvent(Event event);
+
     Event getEventById(long eventId);
+
     List<Event> getEventsByUserId(long userId);
 }
