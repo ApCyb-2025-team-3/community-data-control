@@ -15,9 +15,11 @@ public class UserDTO {
 
   String department;
 
-  // TODO: Change to enum
-  String grade;
-
-  // TODO: Change to enum
-  String role;
+  UserDTO(User user) {
+    this.id = user.getId();
+    this.name = user.getName();
+    this.email = user.getEmail();
+    this.project = user.getProject();
+    this.department = user.getDepartment();
+  }
 }
