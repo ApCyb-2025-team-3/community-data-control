@@ -8,7 +8,7 @@ public enum Role {
     DATA_ENGINEER("DataEngineer"),
     DEVELOPER("Developer"),
     TEAM_LEAD("TeamLead"),
-    PRODUCT_OWNER("ProductOwner");
+    PRODUCT_OWNER("ProductOwner"),
     NON_MEMBER("NonMember");
 
 
