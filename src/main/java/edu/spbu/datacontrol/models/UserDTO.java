@@ -5,21 +5,21 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
-  long id;
+    long id;
 
-  String name;
+    String name;
 
-  String email;
+    String email;
 
-  String project;
+    String project;
 
-  String department;
+    String department;
 
-  UserDTO(User user) {
-    this.id = user.getId();
-    this.name = user.getName();
-    this.email = user.getEmail();
-    this.project = user.getProject();
-    this.department = user.getDepartment();
-  }
+    UserDTO(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.project = user.getProject();
+        this.department = user.getDepartment();
+    }
 }

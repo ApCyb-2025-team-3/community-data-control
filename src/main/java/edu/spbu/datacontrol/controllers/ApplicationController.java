@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApplicationController {
 
-  @GetMapping("/status")
-  public String status() {
-    return "Server is running";
-  }
+    @GetMapping("/status")
+    public String status() {
+        return "Server is running";
+    }
 }

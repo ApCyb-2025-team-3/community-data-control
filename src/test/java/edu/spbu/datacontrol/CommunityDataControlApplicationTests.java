@@ -10,9 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @AutoConfigureEmbeddedDatabase
 class CommunityDataControlApplicationTests {
-  @Test
-  void contextLoads() {
-    assertTrue(true);
-  }
+
+    @Test
+    void contextLoads() {
+        assertTrue(true);
+    }
 
 }

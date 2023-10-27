@@ -16,6 +16,7 @@ import org.springframework.data.annotation.CreatedDate;
 @Data
 @Table(name = "event_log")
 public class Event {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
