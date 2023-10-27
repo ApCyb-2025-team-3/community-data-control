@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CommunityDataControlApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(CommunityDataControlApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(CommunityDataControlApplication.class, args);
+    }
 
 }

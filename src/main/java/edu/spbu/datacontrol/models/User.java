@@ -10,46 +10,45 @@ import edu.spbu.datacontrol.models.enums.*;
 
 @Entity
 @Data
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    long id;
 
-  @CreatedDate
-  Date invitedAt;
+    @CreatedDate
+    Date invitedAt;
 
-  boolean isActive;
+    boolean isActive;
 
-  String name;
+    String name;
 
-  Date dob;
+    Date dob;
 
-  String email;
+    String email;
 
-  String phoneNumber;
+    String phoneNumber;
 
-  // TODO: Maybe change to ID if supervisor is in system
-  String supervisorName;
+    @OneToOne
+    User supervisor;
 
-  @OneToOne
-  User teamLead;
+    @OneToOne
+    User teamLead;
 
-  @OneToMany
-  List<User> productOwnersIds;
+    @OneToMany
+    List<User> productOwnersIds;
 
-  // TODO: Maybe change to group ID
-  String project;
+    String project;
 
-  String department;
+    String department;
 
-  @Enumerated(EnumType.STRING)
-  Grade grade;
+    @Enumerated(EnumType.STRING)
+    Grade grade;
 
-  @Enumerated(EnumType.STRING)
-  Role role;
+    @Enumerated(EnumType.STRING)
+    Role role;
 
-  @Enumerated(EnumType.STRING)
-  MentorshipStatus mentorStatus;
+    @Enumerated(EnumType.STRING)
+    MentorshipStatus mentorStatus;
 }
