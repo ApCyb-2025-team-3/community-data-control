@@ -19,65 +19,65 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    private UUID id;
 
     @CreatedDate
-    Date invitedAt;
+    private Date invitedAt;
 
-    boolean isActive = true;
+    private boolean isActive = true;
 
-    String name;
+    private String name;
 
-    LocalDate dob;
+    private LocalDate dob;
 
-    String email;
+    private String email;
 
-    String phoneNumber;
-
-    @OneToOne
-    User supervisor;
+    private String phoneNumber;
 
     @OneToOne
-    User teamLead;
+    private User supervisor;
+
+    @OneToOne
+    private User teamLead;
 
     @OneToMany
-    List<User> productOwners;
+    private List<User> productOwners;
 
-    String project;
+    private String project;
 
-    String department;
-
-    @Enumerated(EnumType.STRING)
-    Grade grade;
+    private String department;
 
     @Enumerated(EnumType.STRING)
-    Role role;
+    private Grade grade;
 
     @Enumerated(EnumType.STRING)
-    MentorshipStatus mentorStatus;
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private MentorshipStatus mentorStatus;
 
     public User(UserAdditionDTO userData) {
-        this.name = userData.name;
-        this.dob = userData.dob;
-        this.email = userData.email;
-        this.phoneNumber = userData.phoneNumber;
-        this.project = userData.project;
-        this.department = userData.department;
+        this.name = userData.getName();
+        this.dob = userData.getDob();
+        this.email = userData.getEmail();
+        this.phoneNumber = userData.getPhoneNumber();
+        this.project = userData.getProject();
+        this.department = userData.getDepartment();
 
         try {
-            this.grade = Grade.valueOf(userData.grade);
+            this.grade = Grade.valueOf(userData.getGrade());
         } catch (IllegalArgumentException e) {
             this.grade = Grade.UNSPECIFIED;
         }
 
         try {
-            this.role = Role.valueOf(userData.role);
+            this.role = Role.valueOf(userData.getRole());
         } catch (IllegalArgumentException e) {
             this.role = Role.NON_MEMBER;
         }
 
         try {
-            this.mentorStatus = MentorshipStatus.valueOf(userData.mentorStatus);
+            this.mentorStatus = MentorshipStatus.valueOf(userData.getMentorStatus());
         } catch (IllegalArgumentException e) {
             this.mentorStatus = MentorshipStatus.NOT_PARTICIPATING;
         }

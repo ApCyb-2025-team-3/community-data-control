@@ -19,8 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/user")
 public class UserController {
 
-    UserRepository userRepository;
-    EventRepository eventLog;
+    private UserRepository userRepository;
+    private EventRepository eventLog;
 
     public UserController(UserRepository userRepository, EventRepository eventRepository) {
         this.userRepository = userRepository;
@@ -40,7 +40,7 @@ public class UserController {
         }
 
         newUser = userRepository.save(newUser);
-        Event userAddition = new Event(newUser.getId(), EventType.ADD_USER, "New user added");
+        Event userAddition = new Event(newUser.getId(), EventType.ADD_USER, "");
         eventLog.save(userAddition);
 
         return "User successfully added.";
@@ -50,30 +50,32 @@ public class UserController {
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
             Role.SUPERVISOR);
         if (possibleSupervisors.size() > 1) {
-            possibleSupervisors = possibleSupervisors.stream()
-                .filter(t -> t.getProject().equals(user.getProject())).toList();
+            possibleSupervisors = filterUsersByProject(possibleSupervisors, Role.SUPERVISOR,
+                user.getProject());
         }
-
-        if (possibleSupervisors.size() > 1) {
-            throw new IllegalArgumentException("Cannot find exact user for assigning as supervisor.");
-        } else if (possibleSupervisors.size() == 1) {
-            user.setSupervisor(possibleSupervisors.get(0));
-        }
+        user.setSupervisor(!possibleSupervisors.isEmpty() ? possibleSupervisors.get(0) : null);
     }
 
     private void assignTeamLead(User user, String teamLeadName) throws IllegalArgumentException {
         List<User> possibleTeamLeads = userRepository.getUsersByNameAndRole(teamLeadName,
             Role.TEAM_LEAD);
         if (possibleTeamLeads.size() > 1) {
-            possibleTeamLeads = possibleTeamLeads.stream()
-                .filter(t -> t.getProject().equals(user.getProject())).toList();
+            possibleTeamLeads = filterUsersByProject(possibleTeamLeads, Role.TEAM_LEAD,
+                user.getProject());
+        }
+        user.setTeamLead(!possibleTeamLeads.isEmpty() ? possibleTeamLeads.get(0) : null);
+    }
+
+    private List<User> filterUsersByProject(List<User> users, Role role, String project) {
+        users = users.stream()
+            .filter(t -> t.getProject().equals(project)).toList();
+
+        if (users.size() > 1) {
+            throw new IllegalArgumentException(
+                "Cannot find exact user for assigning as " + role.toString());
         }
 
-        if (possibleTeamLeads.size() > 1) {
-            throw new IllegalArgumentException("Cannot find exact user for assigning as team lead.");
-        } else if (possibleTeamLeads.size() == 1) {
-            user.setTeamLead(possibleTeamLeads.get(0));
-        }
+        return users;
     }
 
     private void assignProductOwners(User user, List<String> productOwnersNames) {
@@ -81,7 +83,7 @@ public class UserController {
         List<User> filteredProductOwners = userRepository.getUsersByNameInAndRole(
             productOwnersNames, Role.PRODUCT_OWNER);
 
-        user.setProductOwners(filteredProductOwners);
+        user.setProductOwners(!filteredProductOwners.isEmpty() ? filteredProductOwners : null);
     }
 
 }

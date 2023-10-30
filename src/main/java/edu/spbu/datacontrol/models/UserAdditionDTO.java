@@ -7,29 +7,29 @@ import lombok.Getter;
 @Getter
 public class UserAdditionDTO {
 
-    String name;
+    private String name;
 
-    LocalDate dob;
+    private LocalDate dob;
 
-    String email;
+    private String email;
 
-    String phoneNumber;
+    private String phoneNumber;
 
-    String supervisorName;
+    private String supervisorName;
 
-    String teamLeadName;
+    private String teamLeadName;
 
-    List<String> productOwnersNames;
+    private List<String> productOwnersNames;
 
-    String project;
+    private String project;
 
-    String department;
+    private String department;
 
-    String grade;
+    private String grade;
 
-    String role;
+    private String role;
 
-    String mentorStatus;
+    private String mentorStatus;
 
     public UserAdditionDTO() {}
 

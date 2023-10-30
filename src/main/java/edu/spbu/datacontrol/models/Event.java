@@ -1,7 +1,6 @@
 package edu.spbu.datacontrol.models;
 
 import edu.spbu.datacontrol.models.enums.EventType;
-import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -24,20 +23,20 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    private UUID id;
 
-    UUID userId;
+    private UUID userId;
 
-    EventType type;
+    private EventType type;
 
     @CreatedDate
-    Date createdAt;
+    private Date createdAt;
 
-    String previousValue;
+    private String previousValue;
 
-    String newValue;
+    private String newValue;
 
-    String description;
+    private String description;
 
     public Event() {}
 

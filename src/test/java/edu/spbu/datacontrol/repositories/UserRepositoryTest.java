@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class UserRepositoryTest {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     void saveAndGetByIdTest() {

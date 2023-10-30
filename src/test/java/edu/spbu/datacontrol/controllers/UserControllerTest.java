@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class UserControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Test
     void addUserTest() throws Exception {
