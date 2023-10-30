@@ -34,7 +34,7 @@ public class UserController {
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
         try {
             this.assignSupervisor(newUser, userData.getSupervisorName());
-            this.assignSupervisor(newUser, userData.getTeamLeadName());
+            this.assignTeamLead(newUser, userData.getTeamLeadName());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
         }
