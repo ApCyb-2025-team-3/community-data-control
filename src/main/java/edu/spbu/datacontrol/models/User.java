@@ -2,7 +2,7 @@ package edu.spbu.datacontrol.models;
 
 import jakarta.persistence.*;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class User {
 
     String name;
 
-    Calendar dob;
+    LocalDate dob;
 
     String email;
 

@@ -1,7 +1,6 @@
 package edu.spbu.datacontrol.models;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
 
@@ -10,7 +9,7 @@ public class UserAdditionDTO {
 
     String name;
 
-    Calendar dob;
+    LocalDate dob;
 
     String email;
 
@@ -34,7 +33,7 @@ public class UserAdditionDTO {
 
     public UserAdditionDTO() {}
 
-    public UserAdditionDTO(String name, Calendar dob, String email, String phoneNumber,
+    public UserAdditionDTO(String name, LocalDate dob, String email, String phoneNumber,
         String supervisorName, String teamLeadName, List<String> productOwnersNames, String project,
         String department, String grade, String role, String mentorStatus) {
         this.name = name;
