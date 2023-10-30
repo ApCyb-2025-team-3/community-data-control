@@ -23,7 +23,7 @@ public class User {
     @CreatedDate
     Date invitedAt;
 
-    boolean isActive;
+    boolean isActive = true;
 
     String name;
 
