@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 
 import java.util.Date;
+import java.util.UUID;
 
 import lombok.Data;
 import jakarta.persistence.Id;
@@ -21,7 +22,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
 
-    long userId;
+    UUID userId;
 
     EventType type;
 
