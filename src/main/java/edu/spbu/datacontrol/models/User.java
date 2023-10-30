@@ -52,4 +52,33 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     MentorshipStatus mentorStatus;
+
+    public User(UserAdditionDTO userData) {
+        this.name = userData.name;
+        this.dob = userData.dob;
+        this.email = userData.email;
+        this.phoneNumber = userData.phoneNumber;
+        this.project = userData.project;
+        this.department = userData.department;
+
+        try {
+            this.grade = Grade.valueOf(userData.grade);
+        } catch (IllegalArgumentException e) {
+            this.grade = Grade.UNSPECIFIED;
+        }
+
+        try {
+            this.role = Role.valueOf(userData.role);
+        } catch (IllegalArgumentException e) {
+            this.role = Role.NON_MEMBER;
+        }
+
+        try {
+            this.mentorStatus = MentorshipStatus.valueOf(userData.mentorStatus);
+        } catch (IllegalArgumentException e) {
+            this.mentorStatus = MentorshipStatus.NOT_PARTICIPATING;
+        }
+    }
+
+    public User() {}
 }
