@@ -15,7 +15,7 @@ import edu.spbu.datacontrol.models.enums.*;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "UUID", strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
     @CreatedDate

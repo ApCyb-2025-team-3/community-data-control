@@ -1,11 +1,12 @@
 package edu.spbu.datacontrol.models;
 
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class UserDTO {
 
-    long id;
+    UUID id;
 
     String name;
 

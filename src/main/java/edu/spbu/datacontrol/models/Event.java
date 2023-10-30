@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.models;
 
 import edu.spbu.datacontrol.models.enums.EventType;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,8 +20,8 @@ import org.springframework.data.annotation.CreatedDate;
 public class Event {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    UUID id;
 
     UUID userId;
 
