@@ -34,4 +34,12 @@ public class Event {
     String newValue;
 
     String description;
+
+    public Event() {}
+
+    public Event(UUID userId, EventType type, String description) {
+        this.userId = userId;
+        this.type = type;
+        this.description = description;
+    }
 }
