@@ -9,6 +9,7 @@ public enum Role {
     DEVELOPER("Developer"),
     TEAM_LEAD("TeamLead"),
     PRODUCT_OWNER("ProductOwner"),
+    SUPERVISOR("Supervisor"),
     NON_MEMBER("NonMember");
 
 

@@ -1,19 +1,20 @@
 package edu.spbu.datacontrol.models;
 
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class UserDTO {
 
-    long id;
+    private UUID id;
 
-    String name;
+    private String name;
 
-    String email;
+    private String email;
 
-    String project;
+    private String project;
 
-    String department;
+    private String department;
 
     UserDTO(User user) {
         this.id = user.getId();
