@@ -8,8 +8,10 @@ import java.util.UUID;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import edu.spbu.datacontrol.models.enums.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @Table(name = "users")
 public class User {
