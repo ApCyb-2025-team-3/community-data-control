@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import edu.spbu.datacontrol.models.enums.*;
@@ -14,8 +15,8 @@ import edu.spbu.datacontrol.models.enums.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    @GeneratedValue(generator = "UUID", strategy = GenerationType.AUTO)
+    UUID id;
 
     @CreatedDate
     Date invitedAt;
@@ -37,7 +38,7 @@ public class User {
     User teamLead;
 
     @OneToMany
-    List<User> productOwnersIds;
+    List<User> productOwners;
 
     String project;
 
