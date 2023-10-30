@@ -8,9 +8,8 @@ public enum Grade {
     MIDDLE("Middle"),
     SENIOR("Senior"),
     TEAM_LEAD("TeamLead"),
-    UNSPECIFIED(
-        "Unspecified"); // Special grade for non-members such as administrative supervisors etc.
-
+    // Special grade for non-members such as administrative supervisors etc.
+    UNSPECIFIED("Unspecified");
     private final String description;
 
     Grade(String description) {
