@@ -1,8 +1,11 @@
 package edu.spbu.datacontrol.repositories;
 
 import edu.spbu.datacontrol.models.User;
+import edu.spbu.datacontrol.models.enums.Role;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +20,10 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     User getUserByPhoneNumber(String phoneNumber);
 
     List<User> getUsersByName(String name);
+
+    List<User> getUsersByNameAndRole(String name, Role role);
+
+    List<User> getUsersByNameInAndRole(List<String> names, Role role);
 
     List<User> findAllByOrderByName();
 }
