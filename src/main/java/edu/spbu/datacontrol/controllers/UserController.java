@@ -54,10 +54,11 @@ public class UserController {
                 .filter(t -> t.getProject().equals(user.getProject())).toList();
         }
 
-        if (possibleSupervisors.size() != 1) {
+        if (possibleSupervisors.size() > 1) {
             throw new IllegalArgumentException("Cannot find exact user for assigning as supervisor.");
+        } else if (possibleSupervisors.size() == 1) {
+            user.setSupervisor(possibleSupervisors.get(0));
         }
-        user.setTeamLead(possibleSupervisors.get(0));
     }
 
     private void assignTeamLead(User user, String teamLeadName) throws IllegalArgumentException {
@@ -68,10 +69,11 @@ public class UserController {
                 .filter(t -> t.getProject().equals(user.getProject())).toList();
         }
 
-        if (possibleTeamLeads.size() != 1) {
+        if (possibleTeamLeads.size() > 1) {
             throw new IllegalArgumentException("Cannot find exact user for assigning as team lead.");
+        } else if (possibleTeamLeads.size() == 1) {
+            user.setTeamLead(possibleTeamLeads.get(0));
         }
-        user.setTeamLead(possibleTeamLeads.get(0));
     }
 
     private void assignProductOwners(User user, List<String> productOwnersNames) {
