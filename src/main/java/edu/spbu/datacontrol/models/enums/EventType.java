@@ -23,6 +23,6 @@ public enum EventType {
             }
         }
         throw new IllegalArgumentException(
-            "No constant with name " + text + " found in " + Grade.class);
+            "No constant with name " + text + " found in " + EventType.class);
     }
 }
