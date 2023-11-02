@@ -24,6 +24,6 @@ public enum MentorshipStatus {
             }
         }
         throw new IllegalArgumentException(
-            "No constant with name " + text + " found in " + Role.class);
+            "No constant with name " + text + " found in " + MentorshipStatus.class);
     }
 }
