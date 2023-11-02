@@ -65,19 +65,19 @@ public class User {
         this.department = userData.getDepartment();
 
         try {
-            this.grade = Grade.valueOf(userData.getGrade());
+            this.grade = Grade.fromString(userData.getGrade());
         } catch (IllegalArgumentException e) {
             this.grade = Grade.UNSPECIFIED;
         }
 
         try {
-            this.role = Role.valueOf(userData.getRole());
+            this.role = Role.fromString(userData.getRole());
         } catch (IllegalArgumentException e) {
             this.role = Role.NON_MEMBER;
         }
 
         try {
-            this.mentorStatus = MentorshipStatus.valueOf(userData.getMentorStatus());
+            this.mentorStatus = MentorshipStatus.fromString(userData.getMentorStatus());
         } catch (IllegalArgumentException e) {
             this.mentorStatus = MentorshipStatus.NOT_PARTICIPATING;
         }
