@@ -16,4 +16,14 @@ public enum MentorshipStatus {
         this.statusName = statusName;
         this.description = description;
     }
+
+    public static MentorshipStatus fromString(String text) {
+        for (MentorshipStatus x : MentorshipStatus.values()) {
+            if (x.statusName.equalsIgnoreCase(text)) {
+                return x;
+            }
+        }
+        throw new IllegalArgumentException(
+            "No constant with name " + text + " found in " + Role.class);
+    }
 }

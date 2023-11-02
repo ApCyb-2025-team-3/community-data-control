@@ -15,4 +15,14 @@ public enum EventType {
     EventType(String eventName) {
         this.eventName = eventName;
     }
+
+    public static EventType fromString(String text) {
+        for (EventType x : EventType.values()) {
+            if (x.eventName.equalsIgnoreCase(text)) {
+                return x;
+            }
+        }
+        throw new IllegalArgumentException(
+            "No constant with name " + text + " found in " + Grade.class);
+    }
 }

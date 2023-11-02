@@ -15,4 +15,14 @@ public enum Grade {
     Grade(String description) {
         this.description = description;
     }
+
+    public static Grade fromString(String text) {
+        for (Grade x : Grade.values()) {
+            if (x.description.equalsIgnoreCase(text)) {
+                return x;
+            }
+        }
+        throw new IllegalArgumentException(
+            "No constant with name " + text + " found in " + Grade.class);
+    }
 }

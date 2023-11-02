@@ -18,4 +18,14 @@ public enum Role {
     Role(String description) {
         this.description = description;
     }
+
+    public static Role fromString(String text) {
+        for (Role x : Role.values()) {
+            if (x.description.equalsIgnoreCase(text)) {
+                return x;
+            }
+        }
+        throw new IllegalArgumentException(
+            "No constant with name " + text + " found in " + Role.class);
+    }
 }
