@@ -23,5 +23,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByNameInAndRole(List<String> names, Role role);
 
+    List<User> getUsersByRole(Role role);
+
     List<User> findAllByOrderByName();
 }

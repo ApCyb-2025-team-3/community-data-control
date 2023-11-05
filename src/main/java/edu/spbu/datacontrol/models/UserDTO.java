@@ -1,5 +1,7 @@
 package edu.spbu.datacontrol.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.UUID;
 import lombok.Data;
 
@@ -16,7 +18,9 @@ public class UserDTO {
 
     private String department;
 
-    UserDTO(User user) {
+    public UserDTO() {}
+
+    public UserDTO(User user) {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();

@@ -3,15 +3,20 @@ package edu.spbu.datacontrol.controllers;
 import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
+import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import java.util.List;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,6 +49,19 @@ public class UserController {
         eventLog.save(userAddition);
 
         return "User successfully added.";
+    }
+
+    @GetMapping("/getUsersByRole")
+    public ResponseEntity<List<UserDTO>> getUsersByRole(@RequestParam String role) {
+
+        try {
+            return new ResponseEntity<>(
+                userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {

@@ -83,4 +83,27 @@ class UserRepositoryTest {
         teamLeads.forEach(u -> assertTrue(expectedUUID.contains(u.getId())));
     }
 
+    @Test
+    void getUsersByRoleTest() {
+        User userA = new User();
+        userA.setName("James Doe");
+        userA.setRole(Role.DEVELOPER);
+        User userB = new User();
+        userB.setName("William White");
+        userB.setRole(Role.DEVELOPER);
+        User userC = new User();
+        userC.setName("James Doe");
+        userC.setRole(Role.DATA_ENGINEER);
+
+        List<UUID> expectedDevs = new ArrayList<>();
+
+        expectedDevs.add(userRepository.save(userA).getId());
+        expectedDevs.add(userRepository.save(userB).getId());
+        userRepository.save(userC);
+
+        List<User> developers = userRepository.getUsersByRole(Role.DEVELOPER);
+        assertEquals(2, developers.size());
+        developers.forEach(u -> assertTrue(expectedDevs.contains(u.getId())));
+    }
+
 }
