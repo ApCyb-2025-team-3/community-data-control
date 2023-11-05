@@ -1,7 +1,5 @@
 package edu.spbu.datacontrol.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.UUID;
 import lombok.Data;
 
