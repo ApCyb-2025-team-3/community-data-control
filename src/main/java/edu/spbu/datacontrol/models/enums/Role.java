@@ -5,27 +5,16 @@ import lombok.Getter;
 @Getter
 public enum Role {
     MEMBER("Member"),
-    DATA_ENGINEER("DataEngineer"),
+    DATA_ENGINEER("Data Engineer"),
     DEVELOPER("Developer"),
-    TEAM_LEAD("TeamLead"),
-    PRODUCT_OWNER("ProductOwner"),
+    TEAM_LEAD("Team Lead"),
+    PRODUCT_OWNER("Product Owner"),
     SUPERVISOR("Supervisor"),
-    NON_MEMBER("NonMember");
-
+    NON_MEMBER("Non Member");
 
     private final String description;
 
     Role(String description) {
         this.description = description;
-    }
-
-    public static Role fromString(String text) {
-        for (Role x : Role.values()) {
-            if (x.description.equalsIgnoreCase(text)) {
-                return x;
-            }
-        }
-        throw new IllegalArgumentException(
-            "No constant with name " + text + " found in " + Role.class);
     }
 }

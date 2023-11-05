@@ -65,19 +65,20 @@ public class User {
         this.department = userData.getDepartment();
 
         try {
-            this.grade = Grade.fromString(userData.getGrade());
+            this.grade = EnumUtils.fromString(Grade.class, userData.getGrade());
         } catch (IllegalArgumentException e) {
             this.grade = Grade.UNSPECIFIED;
         }
 
         try {
-            this.role = Role.fromString(userData.getRole());
+            this.role = EnumUtils.fromString(Role.class, userData.getRole());
         } catch (IllegalArgumentException e) {
             this.role = Role.NON_MEMBER;
         }
 
         try {
-            this.mentorStatus = MentorshipStatus.fromString(userData.getMentorStatus());
+            this.mentorStatus = EnumUtils.fromString(MentorshipStatus.class,
+                userData.getMentorStatus());
         } catch (IllegalArgumentException e) {
             this.mentorStatus = MentorshipStatus.NOT_PARTICIPATING;
         }

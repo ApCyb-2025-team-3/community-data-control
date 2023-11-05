@@ -4,6 +4,7 @@ import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.EventRepository;
@@ -55,7 +56,8 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByRole(Role.fromString(role)).stream().map(UserDTO::new)
+                userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
+                    .map(UserDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));

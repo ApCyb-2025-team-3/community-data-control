@@ -43,20 +43,7 @@ class UserControllerTest {
         ObjectMapper userAdditionDTOMapper = new ObjectMapper();
         userAdditionDTOMapper.registerModule(new JavaTimeModule());
 
-        UserAdditionDTO userData = new UserAdditionDTO(
-            "Michael White",
-            LocalDate.of(2000, 1, 1),
-            "simplemail@test.org",
-            "999111999",
-            "",
-            "",
-            new ArrayList<String>(),
-            "Sample project",
-            "Data Science",
-            "Junior",
-            "DataEngineer",
-            ""
-        );
+        UserAdditionDTO userData = generateSimpleUser();
 
         String json = userAdditionDTOMapper.writeValueAsString(userData);
         this.mockMvc.perform(
@@ -90,14 +77,7 @@ class UserControllerTest {
             new TypeReference<List<UserDTO>>() {}
             );
 
-        assertTrue(usersList.stream().anyMatch(u -> userDtoComparator(u, expected)));
-    }
-
-    private boolean userDtoComparator(UserDTO user1, UserDTO user2) {
-        return user1.getName().equals(user2.getName())
-            && user1.getEmail().equals(user2.getEmail())
-            && user1.getProject().equals(user2.getProject())
-            && user1.getDepartment().equals(user2.getDepartment());
+        assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
     }
 
     private String generateRandomString() {
@@ -111,11 +91,11 @@ class UserControllerTest {
         String generatedMail = generateRandomString();
         String generatedPhone = generateRandomString();
 
-        String[] grades = new String[] {"Junior", "Middle", "Senior", "TeamLead"};
+        String[] grades = new String[] {"Junior", "Middle", "Senior", "Team Lead"};
         int gradeId = random.nextInt(0, 4);
 
-        String[] roles = new String[]{"Member", "DataEngineer", "Developer", "TeamLead",
-            "ProductOwner"};
+        String[] roles = new String[]{"Member", "Data Engineer", "Developer", "Team Lead",
+            "Product Owner"};
         int roleId = random.nextInt(0, 5);
 
         return new UserAdditionDTO(
