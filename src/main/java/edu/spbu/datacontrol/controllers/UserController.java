@@ -6,10 +6,12 @@ import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
+import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,6 +65,45 @@ public class UserController {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
+
+    @GetMapping("/getUsersBySupervisorID")
+    public ResponseEntity<List<UserDTO>> getUsersBySupervisorID(@RequestParam UUID supervisorId) {
+        try {
+            User user = userRepository.getUserById(supervisorId);
+            if (user.getRole() == Role.SUPERVISOR) {
+            return new ResponseEntity<>(
+                userRepository.getUsersBySupervisor(user).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+            }
+            else {
+                throw new IllegalArgumentException("This user isn't supervisor");
+            }
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @PostMapping("/dismissUserById")
+    public ResponseEntity<Event> dismissUserById(@RequestParam UUID uuid, @RequestParam String description) {
+        User dismissedUser = userRepository.findById(uuid).orElse(null);
+        if (dismissedUser != null) {
+            dismissedUser.setActive(false);
+            dismissedUser.setProject(null);
+            dismissedUser.setTeamLead(null);
+            dismissedUser.setProductOwners(null);
+            dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
+            userRepository.save(dismissedUser);
+            Event event = new Event(uuid, EventType.DISMISS_USER, description);
+            eventLog.save(event);
+            return  new ResponseEntity<>(event, HttpStatusCode.valueOf(200));
+        } else {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+
+
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
