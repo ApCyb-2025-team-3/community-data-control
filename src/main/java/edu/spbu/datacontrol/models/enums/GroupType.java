@@ -7,9 +7,9 @@ public enum GroupType {
     WORKING_TEAM("Work team"),
     INTEREST_GROUP("Interest group");
 
-    private final String groupType;
+    private final String grType;
 
-    GroupType(String groupType) {
-        this.groupType = groupType;
+    GroupType(String grType) {
+        this.grType = grType;
     }
 }
