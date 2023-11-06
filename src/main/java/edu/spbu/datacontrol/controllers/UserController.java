@@ -80,12 +80,12 @@ public class UserController {
                 throw new IllegalArgumentException("This user isn't supervisor");
             }
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
     }
 
     @PostMapping("/dismissUserById")
-    public ResponseEntity<Event> dismissUserById(@RequestParam UUID uuid, @RequestParam String description) {
+    public ResponseEntity<String> dismissUserById(@RequestParam UUID uuid, @RequestParam String description) {
         User dismissedUser = userRepository.findById(uuid).orElse(null);
         if (dismissedUser != null) {
             dismissedUser.setActive(false);
@@ -96,9 +96,9 @@ public class UserController {
             userRepository.save(dismissedUser);
             Event event = new Event(uuid, EventType.DISMISS_USER, description);
             eventLog.save(event);
-            return  new ResponseEntity<>(event, HttpStatusCode.valueOf(200));
+            return  new ResponseEntity<>("User was successfully dismissed" ,HttpStatusCode.valueOf(200));
         } else {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>("Probably, this user doesn't exist" ,HttpStatusCode.valueOf(404));
         }
     }
 

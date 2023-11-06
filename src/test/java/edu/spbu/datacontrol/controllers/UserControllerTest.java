@@ -10,10 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
-import edu.spbu.datacontrol.models.enums.EventType;
+
 
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import java.time.LocalDate;
@@ -76,7 +75,7 @@ class UserControllerTest {
         UUID id = usersList.get(0).getId();
 
         String description = "Testing dismiss";
-        String eventJson = this.mockMvc.perform(
+        String response = this.mockMvc.perform(
                 post("/api/user/dismissUserById")
                     .param("uuid", id.toString())
                     .param("description", description))
@@ -84,13 +83,7 @@ class UserControllerTest {
                     .andReturn()
                     .getResponse()
                     .getContentAsString();
-
-        Event event = objectMapper.readValue(eventJson,
-            new TypeReference<>() {}
-        );
-        Assertions.assertEquals(id, event.getUserId());
-        Assertions.assertEquals(EventType.DISMISS_USER, event.getType());
-        Assertions.assertEquals(description, event.getDescription());
+        Assertions.assertEquals("User was successfully dismissed", response);
     }
 
     @Test
@@ -99,30 +92,10 @@ class UserControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        UserAdditionDTO supervisor = new UserAdditionDTO(
-            "John", LocalDate.of(2000,1,1),
-            generateRandomString(), generateRandomString(),
-            "", "",
-            new ArrayList<>(), "proj",
-            "dep", "Unspecified", "Supervisor",
-            "Not participating"
-        );
-        UserAdditionDTO subordinate = new UserAdditionDTO(
-            "Jane", LocalDate.of(2000,1,1),
-            generateRandomString(), generateRandomString(),
-            "John", "",
-            new ArrayList<>(), "proj",
-            "dep", "Team Lead", "Team Lead",
-            "Mentor"
-        );
-        UserAdditionDTO avgJoe =  new UserAdditionDTO(
-            "Joe", LocalDate.of(2000,1,1),
-            generateRandomString(), generateRandomString(),
-            "", "",
-            new ArrayList<>(), "proj",
-            "dep", "Junior", "Developer",
-            "mentee"
-        );
+        UserAdditionDTO supervisor = generateSimpleUser();
+        supervisor.setRole("supervisor");
+        UserAdditionDTO subordinate = generateSimpleUser();
+        subordinate.setSupervisorName(supervisor.getName());
 
         UserDTO expected = new UserDTO();
         expected.setProject(subordinate.getProject());
@@ -136,10 +109,6 @@ class UserControllerTest {
                 post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
             .andExpect(status().isOk());
         json = objectMapper.writeValueAsString(subordinate);
-        this.mockMvc.perform(
-                post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
-            .andExpect(status().isOk());
-        json = objectMapper.writeValueAsString(avgJoe);
         this.mockMvc.perform(
                 post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
             .andExpect(status().isOk());

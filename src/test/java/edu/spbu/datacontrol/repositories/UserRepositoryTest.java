@@ -106,4 +106,28 @@ class UserRepositoryTest {
         developers.forEach(u -> assertTrue(expectedDevs.contains(u.getId())));
     }
 
+    @Test
+    void getUsersBySupervisorTest() {
+        User userA = new User();
+        userA.setName("James Doe");
+        userA.setRole(Role.SUPERVISOR);
+        User userB = new User();
+        userB.setName("William White");
+        userB.setRole(Role.DEVELOPER);
+        userB.setSupervisor(userA);
+        User userC = new User();
+        userC.setName("James Doe");
+        userC.setRole(Role.DATA_ENGINEER);
+
+        List<User> expectedUsers = new ArrayList<>();
+
+        userRepository.save(userA);
+        expectedUsers.add(userRepository.save(userB));
+        userRepository.save(userC);
+
+        List<User> subordinates = userRepository.getUsersBySupervisor(userA);
+        assertEquals(expectedUsers.size(), subordinates.size());
+        subordinates.forEach(u -> assertEquals(userA.getId(), u.getSupervisor().getId()));
+    }
+
 }

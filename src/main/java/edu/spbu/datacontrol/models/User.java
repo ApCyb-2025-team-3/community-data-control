@@ -34,10 +34,10 @@ public class User {
 
     private String phoneNumber;
 
-    @OneToOne
+    @OneToOne //Мне кажется здесь должно быть @ManyToOne?
     private User supervisor;
 
-    @OneToOne
+    @OneToOne //Мне кажется здесь должно быть @ManyToOne?
     private User teamLead;
 
     @OneToMany
