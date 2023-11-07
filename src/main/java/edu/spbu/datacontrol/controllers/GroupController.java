@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/group")
@@ -27,6 +28,11 @@ public class GroupController {
 
         Group newGroup = new Group(type, name, description, teamLead);
         this.assignTeamLead(newGroup, teamLead);
+        try {
+            this.assignTeamLead(newGroup, teamLead);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
+        }
 
         newGroup = groupRepository.save(newGroup);
 
