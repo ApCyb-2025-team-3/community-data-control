@@ -24,7 +24,7 @@ public class GroupController {
     }
 
     @PostMapping("/create")
-    public String createGroup(@RequestParam GroupType type, @RequestParam String name, @RequestParam String description, @RequestParam User teamLead) {
+    public String createGroup(@RequestParam String type, @RequestParam String name, @RequestParam String description, @RequestParam User teamLead) {
 
         Group newGroup = new Group(type, name, description, teamLead);
         try {
