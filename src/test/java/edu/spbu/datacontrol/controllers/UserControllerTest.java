@@ -13,10 +13,7 @@ import edu.spbu.datacontrol.models.UserDTO;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,52 +49,33 @@ class UserControllerTest {
 
     @Test
     void getUsersByRoleTest() throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
         UserAdditionDTO user = generateSimpleUser();
-        UserDTO expected = new UserDTO();
-        expected.setName(user.getName());
-        expected.setEmail(user.getEmail());
-        expected.setProject(user.getProject());
-        expected.setDepartment(user.getDepartment());
-        String json = objectMapper.writeValueAsString(user);
-        this.mockMvc.perform(
-                        post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk());
-
-        String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByRole").param("role", user.getRole())
-        ).andReturn().getResponse().getContentAsString();
-
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson,
-                new TypeReference<>() {
-                }
-        );
-
-        assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("role", user.getRole());
+        getEndpointTest("getUsersByRole", user, params);
     }
 
     @Test
     void getUsersByGradeTest() throws Exception {
+        UserAdditionDTO user = generateSimpleUser();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grade", user.getGrade());
+        getEndpointTest("getUsersByGrade", user, params);
+    }
 
+
+    private void getEndpointTest(String methodUrl, UserAdditionDTO user, MultiValueMap<String, String> params) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        UserAdditionDTO user = generateSimpleUser();
-        UserDTO expected = new UserDTO();
-        expected.setName(user.getName());
-        expected.setEmail(user.getEmail());
-        expected.setProject(user.getProject());
-        expected.setDepartment(user.getDepartment());
+        UserDTO expected = getUserDTOFromUserAdditionDTO(user);
         String json = objectMapper.writeValueAsString(user);
         this.mockMvc.perform(
                         post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk());
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByGrade").param("grade", user.getGrade())
+                get("/api/user/" + methodUrl).params(params)
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson,
@@ -138,6 +118,15 @@ class UserControllerTest {
                 roles[roleId],
                 ""
         );
+    }
+
+    private UserDTO getUserDTOFromUserAdditionDTO(UserAdditionDTO userAdditionDTO) {
+        UserDTO expected = new UserDTO();
+        expected.setName(userAdditionDTO.getName());
+        expected.setEmail(userAdditionDTO.getEmail());
+        expected.setProject(userAdditionDTO.getProject());
+        expected.setDepartment(userAdditionDTO.getDepartment());
+        return expected;
     }
 
 }
