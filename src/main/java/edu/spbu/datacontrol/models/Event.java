@@ -3,6 +3,8 @@ package edu.spbu.datacontrol.models;
 import edu.spbu.datacontrol.models.enums.EventType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
@@ -27,6 +29,7 @@ public class Event {
 
     private UUID userId;
 
+    @Enumerated(EnumType.STRING)
     private EventType type;
 
     @CreatedDate
