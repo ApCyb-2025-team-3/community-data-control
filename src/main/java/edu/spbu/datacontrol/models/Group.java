@@ -44,8 +44,8 @@ public class Group {
     @LastModifiedDate
     private Date updatedDate;
 
-    public Group(String type, String name, String description, User teamLead) {
-        this.type = GroupType.valueOf(type);
+    public Group(GroupType type, String name, String description, User teamLead) {
+        this.type = type;
         this.name = name;
         this.description = description;
         this.teamLead = teamLead;
