@@ -5,25 +5,17 @@ import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.EnumUtils;
-import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.Grade;
 import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-
-import java.util.List;
-
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -61,20 +53,23 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                    userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
     @GetMapping("/getUsersByGrade")
-    public List<UserDTO> getUsersByGrade(@RequestParam String grade) {
+    public ResponseEntity<List<UserDTO>> getUsersByGrade(@RequestParam String grade) {
         try {
-            return userRepository.getUsersByGrade(Grade.valueOf(grade)).stream().map(UserDTO::new).toList();
+            return new ResponseEntity<>(
+                    userRepository.getUsersByGrade(EnumUtils.fromString(Grade.class, grade)).stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), e.getMessage());
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
@@ -102,7 +97,7 @@ public class UserController {
 
     private List<User> filterUsersByProject(List<User> users, Role role, String project) {
         users = users.stream()
-            .filter(t -> t.getProject().equals(project)).toList();
+                .filter(t -> t.getProject().equals(project)).toList();
 
         if (users.size() > 1) {
             throw new IllegalArgumentException(
