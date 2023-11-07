@@ -26,8 +26,8 @@ public class GroupController {
     @PostMapping("/create")
     public String createGroup(@RequestParam String type, @RequestParam String name, @RequestParam String description, @RequestParam User teamLead) {
 
-        GroupType type1 = GroupType.valueOf(type);
-        Group newGroup = new Group(type1, name, description, teamLead);
+        GroupType groupType = GroupType.valueOf(type);
+        Group newGroup = new Group(groupType, name, description, teamLead);
         try {
             assignTeamLead(newGroup, teamLead);
         } catch (IllegalArgumentException e) {
