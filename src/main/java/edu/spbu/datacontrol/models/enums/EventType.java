@@ -8,7 +8,9 @@ public enum EventType {
     DISMISS_USER("Dismiss user"),
     CHANGE_PROJECT("Change project"),
     CHANGE_GRADE("Update grade"),
-    CHANGE_PERSONAL_DATA("Change personal data");
+    CHANGE_PERSONAL_DATA("Change personal data"),
+    CREATE_GROUP("Create group");
+
 
     private final String eventName;
 
