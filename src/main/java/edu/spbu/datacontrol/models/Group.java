@@ -4,8 +4,8 @@ import edu.spbu.datacontrol.models.enums.GroupType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -20,27 +20,29 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @CreatedDate
-    private Date creationDate;
-
-    @CreatedDate
-    private Date disbandmentDate;
-
-    private String disbandmentReason;
-
     private boolean isActive = true;
-
-    private GroupType type;
 
     private String name;
 
+    private GroupType type;
+
     private String description;
+
+    @CreatedDate
+    private Date creationDate;
 
     @ManyToOne
     private User teamLead;
 
     @ManyToMany
     private List<User> members;
+
+    private Date disbandmentDate;
+
+    private String disbandmentReason;
+
+    @LastModifiedDate
+    private Date updatedDate;
 
     public Group(GroupType type, String name, String description, User teamLead) {
         this.type = type;
@@ -51,6 +53,4 @@ public class Group {
     }
 
     public Group() {}
-
-
 }
