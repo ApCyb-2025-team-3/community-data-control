@@ -3,46 +3,43 @@ package edu.spbu.datacontrol.controllers;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
-
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/mentorship")
 public class MentorshipController {
     private UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
+    public MentorshipController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @PostMapping("/becomeMentee")
-    public ResponseEntity<?> becomeMentee(@RequestBody User user){
-        try {
-            User tryUser = userRepository.getUserById(user.getId()).orElseThrow();
-            return new ResponseEntity<>(tryUser, HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<User> becomeMentee(@RequestBody User user){
+        if (isInMentorship(user)) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
-        user.setMentorshipStatus(MentorshipStatus.MENTEE);
+        user.setMentorStatus(MentorshipStatus.MENTEE);
+        userRepository.save(user);
+        return new ResponseEntity<>(user, HttpStatusCode.valueOf(200));
     }
 
-
-
     @PostMapping("/becomeMentor")
-    public ResponseEntity<?> becomeMentor(@RequestBody User user) {
-        try {
-            User tryUser = userRepository.getUserById(user.getId()).orElseThrow();
-            return new ResponseEntity<>(tryUser, HttpStatus.OK);
-        } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<User> becomeMentor(@RequestBody User user) {
+        if (isInMentorship(user)) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
-        user.setMentorshipStatus(MentorshipStatus.MENTOR);
+        user.setMentorStatus(MentorshipStatus.MENTOR);
+        userRepository.save(user);
+        return new ResponseEntity<>(user, HttpStatusCode.valueOf(200));
+    }
+
+    private boolean isInMentorship(User user) {
+        return false;   //
     }
 
 }
