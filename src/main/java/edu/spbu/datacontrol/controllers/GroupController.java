@@ -1,47 +1,42 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.Group;
 import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.GroupType;
-import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/group")
 public class GroupController {
-    private GroupRepository groupRepository;
-    private EventRepository eventLog;
+    private final GroupRepository groupRepository;
 
-    public GroupController(GroupRepository groupRepository, EventRepository eventRepository) {
-
+    public GroupController(GroupRepository groupRepository) {
         this.groupRepository = groupRepository;
-        this.eventLog = eventRepository;
     }
 
     @PostMapping("/create")
-    public String createGroup(@RequestParam String type, @RequestParam String name, @RequestParam String description, @RequestParam User teamLead) {
-
-        GroupType groupType = GroupType.valueOf(type);
-        Group newGroup = new Group(groupType, name, description, teamLead);
+    public ResponseEntity<String> createGroup(@RequestParam String name, @RequestParam String type,
+                                             @RequestParam String description, @RequestBody User teamLead) {
         try {
+            GroupType groupType = GroupType.valueOf(type);
+            Group newGroup = new Group(name, groupType, description);
+
             assignTeamLead(newGroup, teamLead);
+            groupRepository.save(newGroup);
+
+            return new ResponseEntity<>("Group successfully created.", HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
+            return new ResponseEntity<>(
+                "Probably, it isn't possible to assign a given user as a team leader",
+                HttpStatusCode.valueOf(404)
+            );
         }
-
-        newGroup = groupRepository.save(newGroup);
-        Event groupCreation = new Event(newGroup.getId(), EventType.CREATE_GROUP, "");
-        eventLog.save(groupCreation);
-
-        return "Group successfully created.";
     }
 
-    public void assignTeamLead(Group group, User teamLead) {
-
+    public void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
+        // for this we need to realize applyUser method
     }
 }

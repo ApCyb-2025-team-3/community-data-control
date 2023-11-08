@@ -44,12 +44,10 @@ public class Group {
     @LastModifiedDate
     private Date updatedDate;
 
-    public Group(GroupType type, String name, String description, User teamLead) {
-        this.type = type;
+    public Group(String name, GroupType type, String description) {
         this.name = name;
+        this.type = type;
         this.description = description;
-        this.teamLead = teamLead;
-
     }
 
     public Group() {}
