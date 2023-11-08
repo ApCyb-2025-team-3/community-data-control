@@ -5,13 +5,12 @@ import lombok.Getter;
 @Getter
 public enum Role {
     MEMBER("Member"),
-    DATA_ENGINEER("DataEngineer"),
+    DATA_ENGINEER("Data Engineer"),
     DEVELOPER("Developer"),
-    TEAM_LEAD("TeamLead"),
-    PRODUCT_OWNER("ProductOwner"),
+    TEAM_LEAD("Team Lead"),
+    PRODUCT_OWNER("Product Owner"),
     SUPERVISOR("Supervisor"),
-    NON_MEMBER("NonMember");
-
+    NON_MEMBER("Non Member");
 
     private final String description;
 

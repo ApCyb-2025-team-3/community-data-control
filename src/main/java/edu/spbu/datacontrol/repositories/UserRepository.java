@@ -1,8 +1,11 @@
 package edu.spbu.datacontrol.repositories;
 
 import edu.spbu.datacontrol.models.User;
+import edu.spbu.datacontrol.models.enums.Grade;
 import edu.spbu.datacontrol.models.enums.Role;
+
 import java.util.UUID;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,5 +26,11 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByNameInAndRole(List<String> names, Role role);
 
+    List<User> getUsersByRole(Role role);
+
+    List<User> getUsersBySupervisor(User supervisor);
+
     List<User> findAllByOrderByName();
+
+    List<User> getUsersByGrade(Grade grade);
 }
