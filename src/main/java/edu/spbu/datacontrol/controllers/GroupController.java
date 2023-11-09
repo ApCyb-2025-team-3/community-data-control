@@ -1,47 +1,50 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.Group;
+import edu.spbu.datacontrol.models.GroupInfoDTO;
 import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.enums.EventType;
-import edu.spbu.datacontrol.models.enums.GroupType;
-import edu.spbu.datacontrol.repositories.EventRepository;
+import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.repositories.GroupRepository;
-import org.springframework.http.HttpStatusCode;
+import edu.spbu.datacontrol.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/group")
 public class GroupController {
-    private GroupRepository groupRepository;
-    private EventRepository eventLog;
+    private final GroupRepository groupRepository;
 
-    public GroupController(GroupRepository groupRepository, EventRepository eventRepository) {
+    private final UserRepository userRepository;
 
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
-        this.eventLog = eventRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/create")
-    public String createGroup(@RequestParam String type, @RequestParam String name, @RequestParam String description, @RequestParam User teamLead) {
-
-        GroupType groupType = GroupType.valueOf(type);
-        Group newGroup = new Group(groupType, name, description, teamLead);
+    public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
+                                              @RequestBody UserDTO teamLeadDTO) {
         try {
+            Group newGroup = new Group(groupInfoDTO);
+
+            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
+
+            groupRepository.save(newGroup);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST
+            );
         }
 
-        newGroup = groupRepository.save(newGroup);
-        Event groupCreation = new Event(newGroup.getId(), EventType.CREATE_GROUP, "");
-        eventLog.save(groupCreation);
-
-        return "Group successfully created.";
+        return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
     }
 
-    public void assignTeamLead(Group group, User teamLead) {
-
+    private void assignTeamLead(Group group, User teamLead) {
+        // for this we need to realize applyUser method
+        throw new UnsupportedOperationException("Method isn't implemented.");
     }
 }
