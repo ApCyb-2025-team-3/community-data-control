@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public String addUser(@RequestBody UserAdditionDTO userData) {
+    public ResponseEntity<String> addUser(@RequestBody UserAdditionDTO userData) {
 
         User newUser = new User(userData);
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
@@ -36,14 +36,16 @@ public class UserController {
             this.assignSupervisor(newUser, userData.getSupervisorName());
             this.assignTeamLead(newUser, userData.getTeamLeadName());
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
+            return new ResponseEntity<>(
+                "Wrong users were sent to assign as supervisor and team lead.",
+                HttpStatusCode.valueOf(409));
         }
 
         newUser = userRepository.save(newUser);
         Event userAddition = new Event(newUser.getId(), EventType.ADD_USER, "");
         eventLog.save(userAddition);
 
-        return "User successfully added.";
+        return new ResponseEntity<>("User successfully added.", HttpStatusCode.valueOf(201));
     }
 
     @GetMapping("/getUsersByRole")
@@ -52,8 +54,9 @@ public class UserController {
         try {
             return new ResponseEntity<>(
                     userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
-                            .map(UserDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
+                        .filter(User::isActive)
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
@@ -64,8 +67,9 @@ public class UserController {
         try {
             return new ResponseEntity<>(
                     userRepository.getUsersByGrade(EnumUtils.fromString(Grade.class, grade)).stream()
-                            .map(UserDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
+                        .filter(User::isActive)
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
@@ -103,12 +107,9 @@ public class UserController {
             eventLog.save(event);
             return  new ResponseEntity<>("User was successfully dismissed" ,HttpStatusCode.valueOf(200));
         } else {
-            return new ResponseEntity<>("Probably, this user doesn't exist" ,HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>("This user doesn't exist" ,HttpStatusCode.valueOf(404));
         }
     }
-
-
-
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
