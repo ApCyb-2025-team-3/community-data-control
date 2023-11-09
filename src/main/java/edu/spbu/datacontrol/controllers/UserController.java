@@ -101,9 +101,9 @@ public class UserController {
     }
 
     @PostMapping("/dismissUserById")
-    public ResponseEntity<String> dismissUserById(@RequestParam UUID uuid,
+    public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
         @RequestParam String description) {
-        User dismissedUser = userRepository.findById(uuid).orElse(null);
+        User dismissedUser = userRepository.findById(userId).orElse(null);
         if (dismissedUser != null) {
             dismissedUser.setActive(false);
             dismissedUser.setProject(null);
@@ -111,7 +111,7 @@ public class UserController {
             dismissedUser.setProductOwners(null);
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             userRepository.save(dismissedUser);
-            Event event = new Event(uuid, EventType.DISMISS_USER, description);
+            Event event = new Event(userId, EventType.DISMISS_USER, description);
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
                 HttpStatusCode.valueOf(200));
