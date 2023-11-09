@@ -4,16 +4,23 @@ import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
-import edu.spbu.datacontrol.models.enums.*;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
+import edu.spbu.datacontrol.models.enums.EventType;
+import edu.spbu.datacontrol.models.enums.Grade;
+import edu.spbu.datacontrol.models.enums.MentorshipStatus;
+import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.UUID;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
@@ -28,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public String addUser(@RequestBody UserAdditionDTO userData) {
+    public ResponseEntity<String> addUser(@RequestBody UserAdditionDTO userData) {
 
         User newUser = new User(userData);
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
@@ -36,14 +43,16 @@ public class UserController {
             this.assignSupervisor(newUser, userData.getSupervisorName());
             this.assignTeamLead(newUser, userData.getTeamLeadName());
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
+            return new ResponseEntity<>(
+                "Wrong users were sent to assign as supervisor and team lead.",
+                HttpStatusCode.valueOf(409));
         }
 
         newUser = userRepository.save(newUser);
         Event userAddition = new Event(newUser.getId(), EventType.ADD_USER, "");
         eventLog.save(userAddition);
 
-        return "User successfully added.";
+        return new ResponseEntity<>("User successfully added.", HttpStatusCode.valueOf(201));
     }
 
     @GetMapping("/getUsersByRole")
@@ -51,9 +60,10 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
-                            .map(UserDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
+                userRepository.getUsersByRoleAndIsActiveTrue(EnumUtils.fromString(Role.class, role))
+                    .stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
@@ -63,16 +73,17 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getUsersByGrade(@RequestParam String grade) {
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByGrade(EnumUtils.fromString(Grade.class, grade)).stream()
-                            .map(UserDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
+                userRepository.getUsersByGradeAndIsActiveTrue(
+                        EnumUtils.fromString(Grade.class, grade)).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
     @GetMapping("/getUsersBySupervisorID")
-    public ResponseEntity<List<UserDTO>> getUsersBySupervisorID(@RequestParam UUID supervisorId) {
+    public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
         try {
             User user = userRepository.getUserById(supervisorId);
             if (user.getRole() == Role.SUPERVISOR) {
@@ -90,8 +101,9 @@ public class UserController {
     }
 
     @PostMapping("/dismissUserById")
-    public ResponseEntity<String> dismissUserById(@RequestParam UUID uuid, @RequestParam String description) {
-        User dismissedUser = userRepository.findById(uuid).orElse(null);
+    public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
+        @RequestParam String description) {
+        User dismissedUser = userRepository.findById(userId).orElse(null);
         if (dismissedUser != null) {
             dismissedUser.setActive(false);
             dismissedUser.setProject(null);
@@ -99,16 +111,14 @@ public class UserController {
             dismissedUser.setProductOwners(null);
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             userRepository.save(dismissedUser);
-            Event event = new Event(uuid, EventType.DISMISS_USER, description);
+            Event event = new Event(userId, EventType.DISMISS_USER, description);
             eventLog.save(event);
-            return  new ResponseEntity<>("User was successfully dismissed" ,HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>("User was successfully dismissed",
+                HttpStatusCode.valueOf(200));
         } else {
-            return new ResponseEntity<>("Probably, this user doesn't exist" ,HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
         }
     }
-
-
-
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
