@@ -60,10 +60,10 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByRoleAndActiveTrue(EnumUtils.fromString(Role.class, role))
-                    .stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                    userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
+                        .filter(User::isActive)
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
@@ -73,10 +73,10 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getUsersByGrade(@RequestParam String grade) {
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByGradeAndActiveTrue(
-                        EnumUtils.fromString(Grade.class, grade)).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                    userRepository.getUsersByGrade(EnumUtils.fromString(Grade.class, grade)).stream()
+                        .filter(User::isActive)
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
