@@ -46,8 +46,8 @@ class UserControllerTest {
 
         String json = userAdditionDTOMapper.writeValueAsString(userData);
         this.mockMvc.perform(
-                        post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk());
+                post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isCreated());
 
     }
 
@@ -63,7 +63,7 @@ class UserControllerTest {
         this.mockMvc.perform(
                 post("/api/user/add")
                     .contentType(MediaType.APPLICATION_JSON).content(json))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
 
         String usersListJson = this.mockMvc.perform(
             get("/api/user/getUsersByRole").param("role", user.getRole())
@@ -107,11 +107,11 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(supervisor);
         this.mockMvc.perform(
                 post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
         json = objectMapper.writeValueAsString(subordinate);
         this.mockMvc.perform(
                 post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
         String usersListJson = this.mockMvc.perform(
             get("/api/user/getUsersByRole").param("role", "supervisor")
         ).andReturn().getResponse().getContentAsString();
@@ -159,7 +159,7 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(user);
         this.mockMvc.perform(
                         post("/api/user/add").contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/" + methodUrl).params(params)
