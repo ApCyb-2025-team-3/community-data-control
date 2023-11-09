@@ -1,5 +1,6 @@
 package edu.spbu.datacontrol.models;
 
+import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.GroupType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -44,10 +45,10 @@ public class Group {
     @LastModifiedDate
     private Date updatedDate;
 
-    public Group(String name, GroupType type, String description) {
-        this.name = name;
-        this.type = type;
-        this.description = description;
+    public Group(GroupInfoDTO groupInfo) {
+        this.name = groupInfo.getName();
+        this.type = EnumUtils.fromString(GroupType.class, groupInfo.getType());
+        this.description = groupInfo.getDescription();
     }
 
     public Group() {}

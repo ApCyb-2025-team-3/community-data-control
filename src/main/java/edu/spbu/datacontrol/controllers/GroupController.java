@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.Group;
+import edu.spbu.datacontrol.models.GroupInfoDTO;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.EnumUtils;
@@ -24,20 +25,19 @@ public class GroupController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createGroup(@RequestParam String name, @RequestParam String type,
-                                              @RequestParam String description, @RequestBody UserDTO teamLeadDTO) {
+    public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
+                                              @RequestBody UserDTO teamLeadDTO) {
         try {
-            GroupType groupType = EnumUtils.fromString(GroupType.class, type);
-            Group newGroup = new Group(name, groupType, description);
+            Group newGroup = new Group(groupInfoDTO);
 
             User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
 
             groupRepository.save(newGroup);
 
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(
-                "Probably, it isn't possible to assign a given user as a team leader",
+                e.getMessage(),
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -45,7 +45,8 @@ public class GroupController {
         return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
     }
 
-    private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
+    private void assignTeamLead(Group group, User teamLead) {
         // for this we need to realize applyUser method
+        throw new UnsupportedOperationException("Method isn't implemented.");
     }
 }
