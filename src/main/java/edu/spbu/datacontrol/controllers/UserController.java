@@ -60,7 +60,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByRole(EnumUtils.fromString(Role.class, role)).stream()
+                    userRepository.getUsersByRoleAndIsActiveTrue(EnumUtils.fromString(Role.class, role)).stream()
                         .filter(User::isActive)
                         .map(UserDTO::new)
                         .toList(), HttpStatusCode.valueOf(200));
@@ -73,7 +73,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getUsersByGrade(@RequestParam String grade) {
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByGrade(EnumUtils.fromString(Grade.class, grade)).stream()
+                    userRepository.getUsersByGradeAndIsActiveTrue(EnumUtils.fromString(Grade.class, grade)).stream()
                         .filter(User::isActive)
                         .map(UserDTO::new)
                         .toList(), HttpStatusCode.valueOf(200));
