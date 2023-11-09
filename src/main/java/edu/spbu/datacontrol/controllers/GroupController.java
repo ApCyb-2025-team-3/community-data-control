@@ -4,8 +4,6 @@ import edu.spbu.datacontrol.models.Group;
 import edu.spbu.datacontrol.models.GroupInfoDTO;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserDTO;
-import edu.spbu.datacontrol.models.enums.EnumUtils;
-import edu.spbu.datacontrol.models.enums.GroupType;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
