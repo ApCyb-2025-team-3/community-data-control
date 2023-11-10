@@ -101,7 +101,7 @@ class UserRepositoryTest {
         expectedDevs.add(userRepository.save(userB).getId());
         userRepository.save(userC);
 
-        List<User> developers = userRepository.getUsersByRole(Role.DEVELOPER);
+        List<User> developers = userRepository.getUsersByRoleAndIsActiveTrue(Role.DEVELOPER);
         assertEquals(2, developers.size());
         developers.forEach(u -> assertTrue(expectedDevs.contains(u.getId())));
     }
