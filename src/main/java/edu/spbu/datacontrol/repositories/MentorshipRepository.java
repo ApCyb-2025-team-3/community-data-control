@@ -14,5 +14,4 @@ public interface MentorshipRepository extends CrudRepository<Mentorship, UUID> {
     @Query("SELECT COUNT(m) FROM Mentorship m WHERE m.mentor.id = :uId OR m.mentee.id = :uId")
     long countMentorshipByMenteeOrMentor(@Param("uId") UUID uId);
 
-
 }

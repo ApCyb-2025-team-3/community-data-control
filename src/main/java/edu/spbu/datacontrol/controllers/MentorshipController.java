@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.User;
+import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
@@ -23,22 +24,36 @@ public class MentorshipController {
     }
 
     @PostMapping("/becomeMentee")
-    public ResponseEntity<User> becomeMentee(@RequestBody User user){
-        return ChangeMentorshipStatus(user, MentorshipStatus.MENTEE);
+    public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO){
+        try {
+            changeMentorshipStatus(userDTO, MentorshipStatus.MENTEE);
+        }
+        catch (IllegalArgumentException exception) {
+            return new ResponseEntity<>("This user is in mentorship pair already!", HttpStatusCode.valueOf(409));
+
+        }
+        return new ResponseEntity<>("The user has become mentee now", HttpStatusCode.valueOf(200));
     }
 
     @PostMapping("/becomeMentor")
-    public ResponseEntity<User> becomeMentor(@RequestBody User user) {
-        return ChangeMentorshipStatus(user, MentorshipStatus.MENTOR);
+    public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
+        try {
+            changeMentorshipStatus(userDTO, MentorshipStatus.MENTEE);
+        }
+        catch (IllegalArgumentException exception) {
+            return new ResponseEntity<>("This user is in mentorship pair already!", HttpStatusCode.valueOf(409));
+
+        }
+        return new ResponseEntity<>("The user has become mentor now", HttpStatusCode.valueOf(200));
     }
 
-    private ResponseEntity<User> ChangeMentorshipStatus(User user, MentorshipStatus mentorStatus) {
-        if (mentorshipRepository.countMentorshipByMenteeOrMentor(user.getId()) > 0) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+    private void changeMentorshipStatus(UserDTO userDTO, MentorshipStatus mentorStatus) {
+        if (mentorshipRepository.countMentorshipByMenteeOrMentor(userDTO.getId()) > 0) {
+            throw new IllegalArgumentException("IllegalArgumentException");
         }
+        User user = userRepository.getUserById(userDTO.getId());
         user.setMentorStatus(mentorStatus);
         userRepository.save(user);
-        return new ResponseEntity<>(user, HttpStatusCode.valueOf(200));
     }
 
 }
