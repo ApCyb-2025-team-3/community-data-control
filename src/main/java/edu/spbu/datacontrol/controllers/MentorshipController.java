@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/mentorship")
 public class MentorshipController {
-    private UserRepository userRepository;
-    private MentorshipRepository mentorshipRepository;
+    private final UserRepository userRepository;
+    private final MentorshipRepository mentorshipRepository;
 
     public MentorshipController(UserRepository userRepository, MentorshipRepository mentorshipRepository) {
         this.userRepository = userRepository;
@@ -33,7 +33,7 @@ public class MentorshipController {
     }
 
     private ResponseEntity<User> ChangeMentorshipStatus(User user, MentorshipStatus mentorStatus) {
-        if (mentorshipRepository.getNumberOfUserPairs(user) > 0) {
+        if (mentorshipRepository.countMentorshipByMenteeOrMentor(user.getId()) > 0) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
         user.setMentorStatus(mentorStatus);
