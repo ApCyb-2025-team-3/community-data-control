@@ -38,7 +38,7 @@ public class MentorshipController {
     @PostMapping("/becomeMentor")
     public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
         try {
-            changeMentorshipStatus(userDTO, MentorshipStatus.MENTEE);
+            changeMentorshipStatus(userDTO, MentorshipStatus.MENTOR);
         }
         catch (IllegalArgumentException exception) {
             return new ResponseEntity<>("This user is in mentorship pair already!", HttpStatusCode.valueOf(409));
