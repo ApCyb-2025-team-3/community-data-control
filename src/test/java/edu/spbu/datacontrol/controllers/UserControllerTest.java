@@ -234,10 +234,17 @@ class UserControllerTest {
 
         String usersListJson = this.mockMvc.perform(
             get("/api/user/getUsersByRole").param("role", user.getRole())
-        ).andReturn().getResponse().getContentAsString();
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
-        return usersList.get(0).getId();
+        ).andExpect(status().isOk())
+            .andDo(t -> System.out.println(user.getName())).andReturn()
+            .getResponse().getContentAsString();
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
+
+        Optional<UserDTO> possibleUser = usersList.stream()
+            .filter(t -> t.getName().equals(user.getName())).findFirst();
+
+        if (possibleUser.isEmpty()) fail();
+
+        return possibleUser.get().getId();
     }
 
     private UserDTO getUserById(UUID userId) throws Exception {
