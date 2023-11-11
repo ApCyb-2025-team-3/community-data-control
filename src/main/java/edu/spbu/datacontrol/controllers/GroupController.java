@@ -47,27 +47,22 @@ public class GroupController {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
-        Group currentGroup = groupRepository.getGroupByName(groupInfoDTO.getName());
+    public ResponseEntity<String> acceptUser(@RequestBody Group group, @RequestBody UserDTO userDTO) {
         try {
-            isGroupActive(currentGroup.getName());
-
-            List<User> currentMembers = currentGroup.getMembers();
-            currentMembers.add(userRepository.getUserById(userDTO.getId()));
-
-            groupRepository.save(currentGroup);
+            if (!group.isActive()) {
+                throw new IllegalArgumentException("This group isn't active!");
+            }
         }
         catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
         }
-        return new ResponseEntity<>("User has been successfully added to group " + currentGroup.getName(), HttpStatusCode.valueOf(200));
-    }
 
-    private void isGroupActive(String groupName) throws IllegalArgumentException {
-        Group currentGroup = groupRepository.getGroupByName(groupName);
-        if (!currentGroup.isActive()) {
-            throw new IllegalArgumentException("This group isn't active!");
-        }
+        List<User> currentMembers = group.getMembers();
+        currentMembers.add(userRepository.getUserById(userDTO.getId()));
+
+        groupRepository.save(group);
+
+        return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
     }
 
     private void assignTeamLead(Group group, User teamLead) {
