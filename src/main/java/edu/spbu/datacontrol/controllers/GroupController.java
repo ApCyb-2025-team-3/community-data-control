@@ -7,8 +7,11 @@ import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/group")
@@ -41,6 +44,30 @@ public class GroupController {
         }
 
         return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/accept")
+    public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
+        Group currentGroup = groupRepository.getGroupByName(groupInfoDTO.getName());
+        try {
+            isGroupActive(currentGroup.getName());
+
+            List<User> currentMembers = currentGroup.getMembers();
+            currentMembers.add(userRepository.getUserById(userDTO.getId()));
+
+            groupRepository.save(currentGroup);
+        }
+        catch (IllegalArgumentException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
+        }
+        return new ResponseEntity<>("User has been successfully added to group " + currentGroup.getName(), HttpStatusCode.valueOf(200));
+    }
+
+    private void isGroupActive(String groupName) throws IllegalArgumentException {
+        Group currentGroup = groupRepository.getGroupByName(groupName);
+        if (!currentGroup.isActive()) {
+            throw new IllegalArgumentException("This group isn't active!");
+        }
     }
 
     private void assignTeamLead(Group group, User teamLead) {
