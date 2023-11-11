@@ -58,6 +58,17 @@ public class UserController {
         return new ResponseEntity<>("User successfully added.", HttpStatusCode.valueOf(201));
     }
 
+    @GetMapping("/getUserById")
+    public ResponseEntity<UserDTO> getUserById(@RequestParam UUID userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            return new ResponseEntity<>(new UserDTO(user), HttpStatusCode.valueOf(200));
+        } else {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
     @GetMapping("/getUsersByRole")
     public ResponseEntity<List<UserDTO>> getUsersByRole(@RequestParam String role) {
 
@@ -130,7 +141,7 @@ public class UserController {
     public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
         @RequestBody UserDataChangeDTO modifiedData) {
 
-        User user = userRepository.getUserById(modifiedData.getUserId());
+        User user = userRepository.findById(modifiedData.getUserId()).orElse(null);
         if (user != null) {
             user.changePersonalData(modifiedData);
             userRepository.save(user);
