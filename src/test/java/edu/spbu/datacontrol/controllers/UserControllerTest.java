@@ -38,25 +38,21 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
     @Test
     void addUserTest() throws Exception {
 
-        ObjectMapper userAdditionDTOMapper = new ObjectMapper();
-        userAdditionDTOMapper.registerModule(new JavaTimeModule());
-
         UserAdditionDTO userData = generateSimpleUser();
 
-        addUser(userAdditionDTOMapper, userData);
+        addUser(userData);
     }
 
     @Test
     void dismissUserTest() throws Exception {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
         UserAdditionDTO user = generateSimpleUser();
-        addUser(objectMapper, user);
+        addUser(user);
 
         String usersListJson = this.mockMvc.perform(
             get("/api/user/getUsersByRole").param("role", user.getRole())
@@ -82,11 +78,8 @@ class UserControllerTest {
     @Test
     void getDismissedUserByRoleAndGrade() throws Exception {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
         UserAdditionDTO user = generateSimpleUser();
-        addUser(objectMapper, user);
+        addUser(user);
 
         String usersListJson = this.mockMvc.perform(
             get("/api/user/getUsersByRole").param("role", user.getRole())
@@ -121,15 +114,12 @@ class UserControllerTest {
     @Test
     void getUsersBySupervisorIdTest() throws Exception {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
         UserAdditionDTO supervisor = generateSimpleUser();
         supervisor.setRole("supervisor");
         UserAdditionDTO subordinate = generateSimpleUser();
         subordinate.setSupervisorName(supervisor.getName());
 
-        addUser(objectMapper, supervisor);
+        addUser(supervisor);
 
         UserDTO expected = new UserDTO();
         expected.setProject(subordinate.getProject());
@@ -137,13 +127,14 @@ class UserControllerTest {
         expected.setEmail(subordinate.getEmail());
         expected.setDepartment(subordinate.getDepartment());
 
-        addUser(objectMapper, subordinate);
+        addUser(subordinate);
 
         String usersListJson = this.mockMvc.perform(
             get("/api/user/getUsersByRole").param("role", "supervisor")
         ).andReturn().getResponse().getContentAsString();
 
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
+        });
 
         // TODO: change to getting Id by users name when implemented
         UUID id = usersList.get(0).getId();
@@ -151,10 +142,12 @@ class UserControllerTest {
             get("/api/user/getUsersBySupervisorID").param("supervisorId", id.toString())
         ).andReturn().getResponse().getContentAsString();
 
-        usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
+        usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
+        });
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
         assertTrue(usersList.stream().anyMatch(u -> u.getEmail().equals(expected.getEmail())));
-        assertTrue(usersList.stream().anyMatch(u -> u.getDepartment().equals(expected.getDepartment())));
+        assertTrue(
+            usersList.stream().anyMatch(u -> u.getDepartment().equals(expected.getDepartment())));
         assertTrue(usersList.stream().anyMatch(u -> u.getProject().equals(expected.getProject())));
 
     }
@@ -176,13 +169,12 @@ class UserControllerTest {
         getEndpointTest("getUsersByGrade", user, params);
     }
 
-
     private void getEndpointTest(String methodUrl, UserAdditionDTO user, MultiValueMap<String, String> params) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
         UserDTO expected = getUserDTOFromUserAdditionDTO(user);
-        addUser(objectMapper, user);
+        addUser(user);
 
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/" + methodUrl).params(params)
@@ -196,7 +188,8 @@ class UserControllerTest {
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
     }
 
-    private void addUser(ObjectMapper objectMapper, UserAdditionDTO user) throws Exception {
+    private void addUser(UserAdditionDTO user) throws Exception {
+
         String json = objectMapper.writeValueAsString(user);
         this.mockMvc.perform(
                 post("/api/user/add")
