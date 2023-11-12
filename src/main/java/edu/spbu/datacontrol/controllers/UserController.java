@@ -4,6 +4,7 @@ import edu.spbu.datacontrol.models.Event;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.UserDataChangeDTO;
 import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.Grade;
@@ -12,11 +13,13 @@ import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,6 +58,17 @@ public class UserController {
         return new ResponseEntity<>("User successfully added.", HttpStatusCode.valueOf(201));
     }
 
+    @GetMapping("/getUserById")
+    public ResponseEntity<UserDTO> getUserById(@RequestParam UUID userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            return new ResponseEntity<>(new UserDTO(user), HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+    }
+
     @GetMapping("/getUsersByRole")
     public ResponseEntity<List<UserDTO>> getUsersByRole(@RequestParam String role) {
 
@@ -71,6 +85,7 @@ public class UserController {
 
     @GetMapping("/getUsersByGrade")
     public ResponseEntity<List<UserDTO>> getUsersByGrade(@RequestParam String grade) {
+
         try {
             return new ResponseEntity<>(
                 userRepository.getUsersByGradeAndIsActiveTrue(
@@ -84,17 +99,18 @@ public class UserController {
 
     @GetMapping("/getUsersBySupervisorID")
     public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
+
         try {
             User user = userRepository.getUserById(supervisorId);
             if (user.getRole() == Role.SUPERVISOR) {
-            return new ResponseEntity<>(
-                userRepository.getUsersBySupervisor(user).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                return new ResponseEntity<>(
+                    userRepository.getUsersBySupervisor(user).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
             }
-            else {
-                throw new IllegalArgumentException("This user isn't supervisor");
-            }
+
+            throw new IllegalArgumentException("This user isn't supervisor");
+
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
@@ -103,6 +119,7 @@ public class UserController {
     @PostMapping("/dismissUserById")
     public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
         @RequestParam String description) {
+
         User dismissedUser = userRepository.findById(userId).orElse(null);
         if (dismissedUser != null) {
             dismissedUser.setActive(false);
@@ -115,12 +132,30 @@ public class UserController {
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
                 HttpStatusCode.valueOf(200));
-        } else {
-            return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
         }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
+    }
+
+    @PostMapping("/changeUsersPersonalData")
+    public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
+        @RequestBody UserDataChangeDTO modifiedData) {
+
+        User user = userRepository.findById(modifiedData.getUserId()).orElse(null);
+        if (user != null) {
+            user.changePersonalData(modifiedData);
+            userRepository.save(user);
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, reason));
+
+            return new ResponseEntity<>("User's personal data was successfully modified",
+                HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
+
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
                 Role.SUPERVISOR);
 
@@ -132,6 +167,7 @@ public class UserController {
     }
 
     private void assignTeamLead(User user, String teamLeadName) throws IllegalArgumentException {
+
         List<User> possibleTeamLeads = userRepository.getUsersByNameAndRole(teamLeadName,
                 Role.TEAM_LEAD);
 
@@ -143,6 +179,7 @@ public class UserController {
     }
 
     private List<User> filterUsersByProject(List<User> users, Role role, String project) {
+
         users = users.stream()
                 .filter(t -> t.getProject().equals(project)).toList();
 
@@ -155,6 +192,7 @@ public class UserController {
     }
 
     private void assignProductOwners(User user, List<String> productOwnersNames) {
+
         List<User> filteredProductOwners = userRepository.getUsersByNameInAndRole(
                 productOwnersNames, Role.PRODUCT_OWNER);
 

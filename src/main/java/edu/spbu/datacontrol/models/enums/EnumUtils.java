@@ -6,10 +6,8 @@ public class EnumUtils {
 
     public static <T extends Enum<T>> T fromString(Class<T> enumeration, String text) {
 
-        String processedText = text.replace(" ", "_");
-
         for (T enumValue : enumeration.getEnumConstants()) {
-            if (enumValue.toString().equalsIgnoreCase(processedText)) {
+            if (enumValue.toString().equalsIgnoreCase(text)) {
                 return enumValue;
             }
         }
