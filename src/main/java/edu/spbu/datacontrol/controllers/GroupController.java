@@ -7,6 +7,7 @@ import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,24 @@ public class GroupController {
         }
 
         return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
+    }
+
+    @PatchMapping ("/disband")
+    public ResponseEntity<String> disbandGroup(@RequestBody Group groupInfoDTO) {
+
+        if (groupInfoDTO.isActive() != true || groupInfoDTO == null) {//тут не совсем уверен начсет такого условия
+            return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
+        } else {
+            groupInfoDTO.setActive(false);
+            groupInfoDTO.setName(null);
+            groupInfoDTO.setType(null);
+            groupInfoDTO.setDescription(null);
+
+            groupRepository.save(groupInfoDTO);
+
+            return new ResponseEntity<>("Group was successfully disbanded",
+                    HttpStatusCode.valueOf(200));
+        }
     }
 
     private void assignTeamLead(Group group, User teamLead) {
