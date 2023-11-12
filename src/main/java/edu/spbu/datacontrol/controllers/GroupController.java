@@ -51,16 +51,24 @@ public class GroupController {
     @PostMapping("/accept")
     public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
         Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
-        if (!group.isActive()) {
-            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+        User newMember = userRepository.getUserById(userDTO.getId());
+        if (group != null) {
+            if (!group.isActive()) {
+                return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+            }
+
+            List<User> currentMembers = group.getMembers();
+            if(currentMembers.contains(newMember)) {
+                return new ResponseEntity<>("This user is already in the group!", HttpStatusCode.valueOf(409));
+            }
+            currentMembers.add(newMember);
+            groupRepository.save(group);
+
+            return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
         }
-
-        List<User> currentMembers = group.getMembers();
-        currentMembers.add(userRepository.getUserById(userDTO.getId()));
-        groupRepository.save(group);
-
-        return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
+        return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
     }
+
 
     @PatchMapping ("/disband")
     public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
@@ -81,7 +89,7 @@ public class GroupController {
                     HttpStatusCode.valueOf(200));
 
         }
-        return new ResponseEntity<>("This group doesn't found", HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
 
     }
 
