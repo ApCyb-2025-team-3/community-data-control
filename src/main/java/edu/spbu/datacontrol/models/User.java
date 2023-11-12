@@ -1,14 +1,25 @@
 package edu.spbu.datacontrol.models;
 
-import jakarta.persistence.*;
-
+import edu.spbu.datacontrol.models.enums.EnumUtils;
+import edu.spbu.datacontrol.models.enums.Grade;
+import edu.spbu.datacontrol.models.enums.MentorshipStatus;
+import edu.spbu.datacontrol.models.enums.Role;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
-import edu.spbu.datacontrol.models.enums.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -86,7 +97,19 @@ public class User {
 
     public User() {}
 
+    public void changePersonalData(UserDataChangeDTO modifiedData) {
+
+        this.name = modifiedData.getName() != null ? modifiedData.getName() : this.name;
+        this.dob = modifiedData.getDob() != null ? modifiedData.getDob() : this.dob;
+        this.email = modifiedData.getEmail() != null ? modifiedData.getEmail() : this.email;
+        this.phoneNumber = modifiedData.getPhoneNumber() != null ? modifiedData.getPhoneNumber()
+            : this.phoneNumber;
+        this.department =
+            modifiedData.getDepartment() != null ? modifiedData.getDepartment() : this.department;
+    }
+
     public boolean hasRole(MentorshipStatus role){
         return role == mentorStatus;
+
     }
 }
