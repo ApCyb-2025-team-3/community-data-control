@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -45,6 +46,20 @@ public class GroupController {
         }
 
         return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/accept")
+    public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
+        Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+        }
+
+        List<User> currentMembers = group.getMembers();
+        currentMembers.add(userRepository.getUserById(userDTO.getId()));
+        groupRepository.save(group);
+
+        return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
     }
 
     @PatchMapping ("/disband")
