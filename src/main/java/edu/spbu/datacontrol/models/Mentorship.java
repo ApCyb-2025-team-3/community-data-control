@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
-@Table(name = "mentorship")
+@Table(name = "mentorships")
 public class Mentorship {
 
   @Id

@@ -87,6 +87,6 @@ public class User {
     public User() {}
 
     public boolean hasRole(MentorshipStatus role){
-        return (role == this.mentorStatus);
+        return role == mentorStatus;
     }
 }
