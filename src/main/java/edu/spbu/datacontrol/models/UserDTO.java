@@ -18,6 +18,10 @@ public class UserDTO {
 
     private String department;
 
+    private String role;
+
+    private String grade;
+
     public UserDTO() {}
 
     public UserDTO(User user) {
@@ -26,5 +30,7 @@ public class UserDTO {
         this.email = user.getEmail();
         this.project = user.getProject();
         this.department = user.getDepartment();
+        this.role = user.getRole().toString();
+        this.grade = user.getGrade().toString();
     }
 }
