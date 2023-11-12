@@ -141,14 +141,11 @@ class UserControllerTest {
             get("/api/user/getUsersBySupervisorID").param("supervisorId", id.toString())
         ).andReturn().getResponse().getContentAsString();
 
-        usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
         assertTrue(usersList.stream().anyMatch(u -> u.getEmail().equals(expected.getEmail())));
-        assertTrue(
-            usersList.stream().anyMatch(u -> u.getDepartment().equals(expected.getDepartment())));
+        assertTrue(usersList.stream().anyMatch(u -> u.getDepartment().equals(expected.getDepartment())));
         assertTrue(usersList.stream().anyMatch(u -> u.getProject().equals(expected.getProject())));
-
     }
 
 

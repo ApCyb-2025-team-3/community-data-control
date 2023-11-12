@@ -64,9 +64,9 @@ public class UserController {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             return new ResponseEntity<>(new UserDTO(user), HttpStatusCode.valueOf(200));
-        } else {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
+
+        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
     }
 
     @GetMapping("/getUsersByRole")
@@ -103,14 +103,14 @@ public class UserController {
         try {
             User user = userRepository.getUserById(supervisorId);
             if (user.getRole() == Role.SUPERVISOR) {
-            return new ResponseEntity<>(
-                userRepository.getUsersBySupervisor(user).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                return new ResponseEntity<>(
+                    userRepository.getUsersBySupervisor(user).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
             }
-            else {
-                throw new IllegalArgumentException("This user isn't supervisor");
-            }
+
+            throw new IllegalArgumentException("This user isn't supervisor");
+
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
@@ -132,9 +132,9 @@ public class UserController {
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
                 HttpStatusCode.valueOf(200));
-        } else {
-            return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
         }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
     }
 
     @PostMapping("/changeUsersPersonalData")
@@ -149,9 +149,9 @@ public class UserController {
 
             return new ResponseEntity<>("User's personal data was successfully modified",
                 HttpStatusCode.valueOf(200));
-        } else {
-            return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
         }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
