@@ -47,19 +47,14 @@ public class GroupController {
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<String> acceptUser(@RequestBody Group group, @RequestBody UserDTO userDTO) {
-        try {
-            if (!group.isActive()) {
-                throw new IllegalArgumentException("This group isn't active!");
-            }
-        }
-        catch (IllegalArgumentException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
+    public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
+        Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
         }
 
         List<User> currentMembers = group.getMembers();
         currentMembers.add(userRepository.getUserById(userDTO.getId()));
-
         groupRepository.save(group);
 
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
