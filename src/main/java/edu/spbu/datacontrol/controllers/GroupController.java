@@ -56,12 +56,12 @@ public class GroupController {
         if (disbandedGroup != null) {
 
             Date disbandmentDate = new Date();
+            disbandedGroup.setDisbandmentDate(disbandmentDate);
+            disbandedGroup.setDisbandmentReason(disbandmentReason);
             disbandedGroup.setActive(false);
             disbandedGroup.setTeamLead(null);
             dismissGroupMembers(disbandedGroup);
             groupRepository.save(disbandedGroup);
-            disbandedGroup.setDisbandmentDate(disbandmentDate);
-            disbandedGroup.setDisbandmentReason(disbandmentReason);
             return new ResponseEntity<>("Group was successfully disbanded",
                     HttpStatusCode.valueOf(200));
 
