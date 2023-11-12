@@ -9,10 +9,7 @@ import edu.spbu.datacontrol.models.Mentorship;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.UUID;
@@ -51,7 +48,7 @@ public class MentorshipController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createMentorship(@RequestBody UUID mentorId, @RequestBody UUID menteeId, @RequestBody Date disbadmentData) {
+    public ResponseEntity<String> createMentorship(@RequestParam UUID mentorId, @RequestParam UUID menteeId, @RequestParam Date disbandmentDate) {
 
         User mentor = userRepository.getUserById(mentorId);
         User mentee = userRepository.getUserById(menteeId);
@@ -59,7 +56,7 @@ public class MentorshipController {
         if (!mentor.hasRole(MentorshipStatus.MENTOR) || !mentee.hasRole(MentorshipStatus.MENTEE)) {
             return new ResponseEntity<>("The mentor or mentee is incorrectly specified.", HttpStatusCode.valueOf(409));
         }
-        mentorshipRepository.save(new Mentorship(mentor, mentee, disbadmentData));
+        mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
         return new ResponseEntity<>("Mentorship is added.", HttpStatusCode.valueOf(201));
 
     }
