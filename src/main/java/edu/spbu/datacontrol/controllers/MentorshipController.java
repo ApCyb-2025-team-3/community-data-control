@@ -5,13 +5,13 @@ import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import edu.spbu.datacontrol.models.Mentorship;
+
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -26,11 +26,10 @@ public class MentorshipController {
     }
 
     @PostMapping("/becomeMentee")
-    public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO){
+    public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
-        }
-        catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
         }
@@ -41,12 +40,25 @@ public class MentorshipController {
     public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);
-        }
-        catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
         }
         return new ResponseEntity<>("The user has become mentor now", HttpStatusCode.valueOf(200));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createMentorship(@RequestParam UUID mentorId, @RequestParam UUID menteeId, @RequestParam Date disbandmentDate) {
+
+        User mentor = userRepository.getUserById(mentorId);
+        User mentee = userRepository.getUserById(menteeId);
+
+        if (!mentor.hasRole(MentorshipStatus.MENTOR) || !mentee.hasRole(MentorshipStatus.MENTEE)) {
+            return new ResponseEntity<>("The mentor or mentee is incorrectly specified.", HttpStatusCode.valueOf(409));
+        }
+        mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
+        return new ResponseEntity<>("Mentorship is added.", HttpStatusCode.valueOf(201));
+
     }
 
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {

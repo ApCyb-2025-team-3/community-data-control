@@ -107,4 +107,9 @@ public class User {
         this.department =
             modifiedData.getDepartment() != null ? modifiedData.getDepartment() : this.department;
     }
+
+    public boolean hasRole(MentorshipStatus role){
+        return role == mentorStatus;
+
+    }
 }
