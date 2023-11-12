@@ -53,11 +53,15 @@ public class MentorshipController {
         User mentor = userRepository.getUserById(mentorId);
         User mentee = userRepository.getUserById(menteeId);
 
+        if (mentor == null || mentee == null) {
+            return new ResponseEntity<>("No mentor or mentee with this id found.", HttpStatusCode.valueOf(404));
+        }
+
         if (!mentor.hasRole(MentorshipStatus.MENTOR) || !mentee.hasRole(MentorshipStatus.MENTEE)) {
             return new ResponseEntity<>("The mentor or mentee is incorrectly specified.", HttpStatusCode.valueOf(409));
         }
         mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
-        return new ResponseEntity<>("Mentorship is added.", HttpStatusCode.valueOf(201));
+        return new ResponseEntity<>("Mentorship is created.", HttpStatusCode.valueOf(201));
 
     }
 
