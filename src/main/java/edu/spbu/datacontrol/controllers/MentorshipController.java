@@ -70,7 +70,7 @@ public class MentorshipController {
     public ResponseEntity<List<UserDTO>> getAllMentors(){
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByMentorshipStatusIsActiveTrue(MentorshipStatus.MENTOR)
+                    userRepository.getUsersByMentorshipStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
                             .stream()
                             .map(UserDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
@@ -83,7 +83,7 @@ public class MentorshipController {
     public ResponseEntity<List<UserDTO>> getAllMentees(){
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByMentorshipStatusIsActiveTrue(MentorshipStatus.MENTEE)
+                    userRepository.getUsersByMentorshipStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
                             .stream()
                             .map(UserDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
