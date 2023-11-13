@@ -26,7 +26,7 @@ public class MentorshipController {
         this.mentorshipRepository = mentorshipRepository;
     }
 
-    @PostMapping("/becomeMentee")
+    @PatchMapping("/becomeMentee")
     public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
@@ -37,7 +37,7 @@ public class MentorshipController {
         return new ResponseEntity<>("The user has become mentee now", HttpStatusCode.valueOf(200));
     }
 
-    @PostMapping("/becomeMentor")
+    @PatchMapping("/becomeMentor")
     public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);

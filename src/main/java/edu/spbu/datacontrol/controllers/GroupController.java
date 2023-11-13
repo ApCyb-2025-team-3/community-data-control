@@ -50,8 +50,10 @@ public class GroupController {
         return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
     }
 
-    @PostMapping("/accept")
+    @PatchMapping("/accept")
     public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
+        //Чет так подумал, тут же и для юзера, и для группы, можно чисто ID запрашивать в качестве параметров.
+        //Как мы вообще определяем, когда DTO класс передаем, а когда ID?
         Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
         User newMember = userRepository.getUserById(userDTO.getId());
         if (group == null) {
@@ -71,7 +73,6 @@ public class GroupController {
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
 
     }
-
 
     @PatchMapping ("/disband")
     public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
@@ -94,6 +95,28 @@ public class GroupController {
         }
         return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
 
+    }
+
+    @PatchMapping("/exclude")
+    public ResponseEntity<String> excludeUser(@RequestBody UserDTO userDTO, @RequestBody GroupInfoDTO groupInfoDTO) {
+        //Тут тот же самый вопрос
+        Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
+        User user = userRepository.getUserById(userDTO.getId());
+        if (group == null || !group.isActive()) {
+            return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+        }
+        List<User> groupMembers = group.getMembers();
+        if (!groupMembers.contains(user)) {
+            return new ResponseEntity<>("The user isn't member of this group!", HttpStatusCode.valueOf(409));
+        }
+        user.getGroups().remove(group);
+        groupMembers.remove(user);
+        //Надо ли здесь проверять, не последний ли это член?
+        //Если да, то вызывать disbandGroup или просто ставить, что она неактивна?
+        userRepository.save(user);
+        groupRepository.save(group);
+
+        return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
     }
 
     private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
