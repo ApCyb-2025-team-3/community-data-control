@@ -4,6 +4,8 @@ import edu.spbu.datacontrol.models.Group;
 import edu.spbu.datacontrol.models.GroupInfoDTO;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.enums.GroupType;
+import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -96,12 +98,23 @@ public class GroupController {
 
     private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
         List<User> currentMembers = group.getMembers();
-        if (currentMembers.contains(teamLead)) {
-            throw new IllegalArgumentException("This user is already in the group!");
+        if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(teamLead)) {
+            throw new IllegalArgumentException("This user is in a work team already!");
         }
-        currentMembers.add(teamLead);
+        if (!currentMembers.contains(teamLead)) {
+            currentMembers.add(teamLead);
+        }
         group.setTeamLead(teamLead);
-        groupRepository.save(group);
+    }
+
+    private boolean isInWorkTeam (User user) {
+        List<Group> userGroups = user.getGroups();
+        for (Group group : userGroups) {
+            if (group.getType() == GroupType.WORKING_TEAM) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void dismissGroupMembers(Group group) {
