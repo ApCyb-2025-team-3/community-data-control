@@ -1,9 +1,7 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.Group;
-import edu.spbu.datacontrol.models.GroupInfoDTO;
-import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -92,6 +90,23 @@ public class GroupController {
         }
         return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
 
+    }
+
+    @PatchMapping ("/update")
+    public  ResponseEntity<String> updateGroup(@RequestBody GroupDTO changedGroup,
+                                               @RequestBody UserDTO teamLeadDTO) {
+        Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
+        if (group != null) {
+            group.changeGroupData(changedGroup);
+            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
+            assignTeamLead(group, teamLead);
+            groupRepository.save(group);
+
+            return new ResponseEntity<>("Group was successfully modified",
+                    HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
     }
 
     private void assignTeamLead(Group group, User teamLead) {
