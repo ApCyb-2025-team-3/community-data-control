@@ -52,21 +52,22 @@ public class GroupController {
     public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
         Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
         User newMember = userRepository.getUserById(userDTO.getId());
-        if (group != null) {
-            if (!group.isActive()) {
-                return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
-            }
-
-            List<User> currentMembers = group.getMembers();
-            if(currentMembers.contains(newMember)) {
-                return new ResponseEntity<>("This user is already in the group!", HttpStatusCode.valueOf(409));
-            }
-            currentMembers.add(newMember);
-            groupRepository.save(group);
-
-            return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
+        if (group == null) {
+            return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
-        return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+        }
+
+        List<User> currentMembers = group.getMembers();
+        if(currentMembers.contains(newMember)) {
+            return new ResponseEntity<>("This user is already in the group!", HttpStatusCode.valueOf(409));
+        }
+        currentMembers.add(newMember);
+        groupRepository.save(group);
+
+        return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
+
     }
 
 
