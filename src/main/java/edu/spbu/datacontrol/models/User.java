@@ -54,6 +54,9 @@ public class User {
     @OneToMany
     private List<User> productOwners;
 
+    @OneToMany
+    private List<Group> groups;
+
     private String project;
 
     private String department;
