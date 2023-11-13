@@ -94,13 +94,21 @@ public class GroupController {
 
     }
 
-    private void assignTeamLead(Group group, User teamLead) {
-        // for this we need to realize applyUser method
-        throw new UnsupportedOperationException("Method isn't implemented.");
+    private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
+        List<User> currentMembers = group.getMembers();
+        if (currentMembers.contains(teamLead)) {
+            throw new IllegalArgumentException("This user is already in the group!");
+        }
+        currentMembers.add(teamLead);
+        group.setTeamLead(teamLead);
+        groupRepository.save(group);
     }
 
     private void dismissGroupMembers(Group group) {
-        // for this we need to realize applyUser method
-        throw new UnsupportedOperationException("Method isn't implemented.");
+        List<User> members = group.getMembers();
+        for (User member : members) {
+            member.getGroups().remove(group);
+        }
+        members.clear();
     }
 }
