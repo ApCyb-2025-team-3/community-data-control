@@ -93,12 +93,11 @@ public class GroupController {
     }
 
     @PatchMapping ("/update")
-    public  ResponseEntity<String> updateGroup(@RequestBody GroupDTO changedGroup,
-                                               @RequestBody UserDTO teamLeadDTO) {
+    public  ResponseEntity<String> updateGroup(@RequestBody GroupDTO changedGroup) {
         Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
         if (group != null) {
             group.changeGroupData(changedGroup);
-            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
+            User teamLead = userRepository.getUserById((changedGroup.getTeamLead()).getId());
             assignTeamLead(group, teamLead);
             groupRepository.save(group);
 
