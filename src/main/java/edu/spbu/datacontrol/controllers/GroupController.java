@@ -97,7 +97,7 @@ public class GroupController {
         Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
         if (group != null) {
             group.changeGroupData(changedGroup);
-            User teamLead = userRepository.getUserById((changedGroup.getTeamLead()).getId());
+            User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
             assignTeamLead(group, teamLead);
             groupRepository.save(group);
 

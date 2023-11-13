@@ -17,10 +17,8 @@ public class GroupDTO {
 
     private String name;
 
-    private GroupType type;
-
     private String description;
 
-    private User teamLead;
+    private UUID teamLead;
 
 }
