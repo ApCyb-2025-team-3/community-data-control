@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -63,6 +64,32 @@ public class MentorshipController {
         mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
         return new ResponseEntity<>("Mentorship is created.", HttpStatusCode.valueOf(201));
 
+    }
+
+    @GetMapping("/getAllMentors")
+    public ResponseEntity<List<UserDTO>> getAllMentors(){
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getAllMentees")
+    public ResponseEntity<List<UserDTO>> getAllMentees(){
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
     }
 
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
