@@ -13,7 +13,7 @@ public class GroupInfoDTO {
 
     private String description;
 
-    GroupInfoDTO(String name, String type, String description) {
+    public GroupInfoDTO(String name, String type, String description) {
         this.name = name;
         this.type = type;
         this.description = description;
