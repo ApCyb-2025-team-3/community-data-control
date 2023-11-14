@@ -108,8 +108,8 @@ public class User {
             modifiedData.getDepartment() != null ? modifiedData.getDepartment() : this.department;
     }
 
-    public boolean hasRole(MentorshipStatus role){
-        return role == mentorStatus;
+    public boolean hasMentorshipStatus(MentorshipStatus status){
+        return status == mentorStatus;
 
     }
 }
