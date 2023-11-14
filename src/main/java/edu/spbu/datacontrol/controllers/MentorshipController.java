@@ -26,7 +26,7 @@ public class MentorshipController {
         this.mentorshipRepository = mentorshipRepository;
     }
 
-    @PatchMapping("/becomeMentee")
+    @PostMapping("/becomeMentee")
     public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
@@ -37,7 +37,7 @@ public class MentorshipController {
         return new ResponseEntity<>("The user has become mentee now", HttpStatusCode.valueOf(200));
     }
 
-    @PatchMapping("/becomeMentor")
+    @PostMapping("/becomeMentor")
     public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);
@@ -58,7 +58,7 @@ public class MentorshipController {
             return new ResponseEntity<>("No mentor or mentee with this id found.", HttpStatusCode.valueOf(404));
         }
 
-        if (!mentor.hasRole(MentorshipStatus.MENTOR) || !mentee.hasRole(MentorshipStatus.MENTEE)) {
+        if (!mentor.hasMentorshipStatus(MentorshipStatus.MENTOR) || !mentee.hasMentorshipStatus(MentorshipStatus.MENTEE)) {
             return new ResponseEntity<>("The mentor or mentee is incorrectly specified.", HttpStatusCode.valueOf(409));
         }
         mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));

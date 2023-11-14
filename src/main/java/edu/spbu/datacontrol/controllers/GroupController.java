@@ -51,11 +51,9 @@ public class GroupController {
     }
 
     @PatchMapping("/accept")
-    public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
-        //Чет так подумал, тут же и для юзера, и для группы, можно чисто ID запрашивать в качестве параметров.
-        //Как мы вообще определяем, когда DTO класс передаем, а когда ID?
-        Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
-        User newMember = userRepository.getUserById(userDTO.getId());
+    public ResponseEntity<String> acceptUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
+        Group group = groupRepository.findById(groupId).orElse(null);
+        User newMember = userRepository.findById(userId).orElse(null);
         if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
@@ -98,21 +96,24 @@ public class GroupController {
     }
 
     @PatchMapping("/exclude")
-    public ResponseEntity<String> excludeUser(@RequestBody UserDTO userDTO, @RequestBody GroupInfoDTO groupInfoDTO) {
-        //Тут тот же самый вопрос
-        Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
-        User user = userRepository.getUserById(userDTO.getId());
-        if (group == null || !group.isActive()) {
+    public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {с
+        Group group = groupRepository.findById(groupId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
+        if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+        }
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
         }
         List<User> groupMembers = group.getMembers();
         if (!groupMembers.contains(user)) {
             return new ResponseEntity<>("The user isn't member of this group!", HttpStatusCode.valueOf(409));
         }
+        if (user.getId() == group.getTeamLead().getId()) {
+            return new ResponseEntity<>("This user is team leader, you can't exclude him!", HttpStatusCode.valueOf(409));
+        }
         user.getGroups().remove(group);
         groupMembers.remove(user);
-        //Надо ли здесь проверять, не последний ли это член?
-        //Если да, то вызывать disbandGroup или просто ставить, что она неактивна?
         userRepository.save(user);
         groupRepository.save(group);
 

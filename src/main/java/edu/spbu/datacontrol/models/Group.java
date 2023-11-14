@@ -51,5 +51,12 @@ public class Group {
         this.description = groupInfo.getDescription();
     }
 
+    public void changeGroupData(GroupDTO modifiedData) {
+
+        this.name = modifiedData.getName() != null ? modifiedData.getName() : this.name;
+        this.description = modifiedData.getDescription() != null ? modifiedData.getDescription()
+                : this.description;
+    }
+
     public Group() {}
 }

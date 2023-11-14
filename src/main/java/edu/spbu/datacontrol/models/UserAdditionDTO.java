@@ -23,8 +23,6 @@ public class UserAdditionDTO {
 
     private List<String> productOwnersNames;
 
-    private List<String> groupsNames;
-
     private String project;
 
     private String department;
