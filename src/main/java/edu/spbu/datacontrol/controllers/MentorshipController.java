@@ -92,6 +92,34 @@ public class MentorshipController {
         }
     }
 
+    @GetMapping("/getFreeMentors")
+    public ResponseEntity<List<UserDTO>> getFreeMentors(){
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                            .stream()
+                            .filter(user -> isInMentorship(user.getId()))
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getFreeMentees")
+    public ResponseEntity<List<UserDTO>> getFreeMentees(){
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
+                            .stream()
+                            .filter(user -> isInMentorship(user.getId()))
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
         if (isInMentorship(userId)) {
             throw new IllegalArgumentException("This user is in mentorship pair already!");
