@@ -96,7 +96,7 @@ public class GroupController {
     }
 
     @PatchMapping("/exclude")
-    public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {с
+    public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
         Group group = groupRepository.findById(groupId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
         if (group == null) {
