@@ -106,15 +106,10 @@ public class UserController {
     @GetMapping("/getDismissedUsers")
     public ResponseEntity<List<UserDTO>> getDismissedUsers() {
 
-        try {
-            return new ResponseEntity<>(
-                    userRepository.getUsersByIsActiveFalse().stream()
-                            .map(UserDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
-        }
+        return new ResponseEntity<>(
+                userRepository.getUsersByIsActiveFalse().stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
     }
 
     @PostMapping("/dismissUserById")
