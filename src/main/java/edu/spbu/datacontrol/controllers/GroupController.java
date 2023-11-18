@@ -33,6 +33,7 @@ public class GroupController {
 
             User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
+            newGroup.setActive(true);
 
             groupRepository.save(newGroup);
 
