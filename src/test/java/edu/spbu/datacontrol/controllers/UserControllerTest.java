@@ -16,6 +16,7 @@ import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.UserDataChangeDTO;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +141,7 @@ class UserControllerTest {
         UUID id = usersList.get(0).getId();
 
         usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersBySupervisorID").param("supervisorId", id.toString())
+                get("/api/user/getUsersBySupervisorId").param("supervisorId", id.toString())
         ).andReturn().getResponse().getContentAsString();
 
         usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
@@ -228,6 +229,22 @@ class UserControllerTest {
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(user.getName())));
+    }
+
+    @Test
+    void changeUserGradeTest() throws Exception {
+        UserAdditionDTO user = generateSimpleUser();
+        addUser(user);
+
+        UUID userId = getUserId(user);
+        this.mockMvc.perform(post("/api/user/changeUserGrade")
+            .param("userId", userId.toString())
+            .param("grade", "Senior")
+            .param("reason", "For testing purpose.")
+        ).andExpect(status().isOk());
+
+        UserDTO modifiedUser = getUserById(userId);
+        assertEquals("Senior", modifiedUser.getGrade());
     }
 
     private void getEndpointTest(String methodUrl, UserAdditionDTO user,

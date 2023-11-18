@@ -1,7 +1,11 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.*;
-import edu.spbu.datacontrol.models.enums.EventType;
+import edu.spbu.datacontrol.models.Group;
+import edu.spbu.datacontrol.models.GroupInfoDTO;
+import edu.spbu.datacontrol.models.User;
+import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.enums.GroupType;
+import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -46,10 +50,10 @@ public class GroupController {
         return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
     }
 
-    @PostMapping("/accept")
-    public ResponseEntity<String> acceptUser(@RequestBody GroupInfoDTO groupInfoDTO, @RequestBody UserDTO userDTO) {
-        Group group = groupRepository.getGroupByName(groupInfoDTO.getName());
-        User newMember = userRepository.getUserById(userDTO.getId());
+    @PatchMapping("/accept")
+    public ResponseEntity<String> acceptUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
+        Group group = groupRepository.findById(groupId).orElse(null);
+        User newMember = userRepository.findById(userId).orElse(null);
         if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
@@ -67,7 +71,6 @@ public class GroupController {
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
 
     }
-
 
     @PatchMapping ("/disband")
     public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
@@ -92,29 +95,57 @@ public class GroupController {
 
     }
 
-    @PatchMapping ("/update")
-    public  ResponseEntity<String> updateGroup(@RequestBody GroupDTO changedGroup) {
-        Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
-        if (group != null) {
-            group.changeGroupData(changedGroup);
-            User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
-            assignTeamLead(group, teamLead);
-            groupRepository.save(group);
-
-            return new ResponseEntity<>("Group was successfully modified",
-                    HttpStatusCode.valueOf(200));
+    @PatchMapping("/exclude")
+    public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
+        Group group = groupRepository.findById(groupId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
+        if (group == null) {
+            return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+        }
+        List<User> groupMembers = group.getMembers();
+        if (!groupMembers.contains(user)) {
+            return new ResponseEntity<>("The user isn't member of this group!", HttpStatusCode.valueOf(409));
+        }
+        if (user.getId() == group.getTeamLead().getId()) {
+            return new ResponseEntity<>("This user is team leader, you can't exclude him!", HttpStatusCode.valueOf(409));
+        }
+        user.getGroups().remove(group);
+        groupMembers.remove(user);
+        userRepository.save(user);
+        groupRepository.save(group);
 
-        return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
     }
 
-    private void assignTeamLead(Group group, User teamLead) {
-        // for this we need to realize applyUser method
-        throw new UnsupportedOperationException("Method isn't implemented.");
+    private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
+        List<User> currentMembers = group.getMembers();
+        if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(teamLead)) {
+            throw new IllegalArgumentException("This user is in a work team already!");
+        }
+        if (!currentMembers.contains(teamLead)) {
+            currentMembers.add(teamLead);
+        }
+        group.setTeamLead(teamLead);
+    }
+
+    private boolean isInWorkTeam (User user) {
+        List<Group> userGroups = user.getGroups();
+        for (Group group : userGroups) {
+            if (group.getType() == GroupType.WORKING_TEAM) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void dismissGroupMembers(Group group) {
-        // for this we need to realize applyUser method
-        throw new UnsupportedOperationException("Method isn't implemented.");
+        List<User> members = group.getMembers();
+        for (User member : members) {
+            member.getGroups().remove(group);
+        }
+        members.clear();
     }
 }
