@@ -2,7 +2,6 @@ package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.GroupType;
-import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
