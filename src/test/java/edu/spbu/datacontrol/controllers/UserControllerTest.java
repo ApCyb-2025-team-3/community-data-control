@@ -10,11 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.UserDataChangeDTO;
+import edu.spbu.datacontrol.models.UserInfoDTO;
 import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.Grade;
 import edu.spbu.datacontrol.models.enums.Role;
@@ -45,7 +48,8 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(
+            new JavaTimeModule()).setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     @Test
     void addUserTest() throws Exception {
@@ -238,7 +242,12 @@ class UserControllerTest {
     @Test
     void getFullUserInfoTest() throws Exception {
 
+        UserAdditionDTO supervisor = generateSimpleUser();
+        supervisor.setRole("Supervisor");
+        addUser(supervisor);
+
         UserAdditionDTO user = generateSimpleUser();
+        user.setSupervisorName(supervisor.getName());
         addUser(user);
 
         UUID userId = getUserId(user);
@@ -246,14 +255,14 @@ class UserControllerTest {
             get("/api/user/getFullUserInfoById").param("userId", userId.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
-        User result = objectMapper.readValue(userJson, User.class);
+        UserInfoDTO result = objectMapper.readValue(userJson, UserInfoDTO.class);
         assertEquals(userId, result.getId());
         assertEquals(user.getName(), result.getName());
         assertEquals(user.getEmail(), result.getEmail());
         assertEquals(user.getProject(), result.getProject());
         assertEquals(user.getDepartment(), result.getDepartment());
-        assertEquals(EnumUtils.fromString(Role.class, user.getRole()), result.getRole());
-        assertEquals(EnumUtils.fromString(Grade.class, user.getGrade()), result.getGrade());
+        assertEquals(user.getRole(), result.getRole());
+        assertEquals(user.getGrade(), result.getGrade());
     }
 
     @Test
