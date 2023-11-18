@@ -257,7 +257,7 @@ class UserControllerTest {
         assertEquals(user.getDepartment(), result.getDepartment());
         assertEquals(user.getRole(), result.getRole());
         assertEquals(user.getGrade(), result.getGrade());
-        assertEquals(supervisor.getSupervisorName(), result.getSupervisor().getValue());
+        assertEquals(user.getSupervisorName(), result.getSupervisor().getValue());
     }
 
     @Test
