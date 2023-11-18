@@ -94,10 +94,11 @@ public class GroupController {
     @GetMapping("/getActiveGroups")
     public ResponseEntity<List<GroupDTO>> getActiveGroup() {
 
-        return new ResponseEntity<>(
-                groupRepository.getGroupsIsActiveTrue().stream()
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByIsActiveTrue().stream()
                         .map(GroupDTO::new)
                         .toList(), HttpStatusCode.valueOf(200));
+
     }
 
     @PatchMapping("/exclude")
