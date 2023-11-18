@@ -243,7 +243,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         String userJson = this.mockMvc.perform(
-            get("/api/user/getUserById").param("userId", userId.toString())
+            get("/api/user/getFullUserInfoById").param("userId", userId.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         User result = objectMapper.readValue(userJson, User.class);
