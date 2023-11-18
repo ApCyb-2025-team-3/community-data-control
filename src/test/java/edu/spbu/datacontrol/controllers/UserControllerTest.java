@@ -11,9 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.UserDataChangeDTO;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
+import edu.spbu.datacontrol.models.enums.Grade;
+import edu.spbu.datacontrol.models.enums.Role;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 
 import java.io.IOException;
@@ -229,6 +233,27 @@ class UserControllerTest {
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(user.getName())));
+    }
+
+    @Test
+    void getFullUserInfoTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        addUser(user);
+
+        UUID userId = getUserId(user);
+        String userJson = this.mockMvc.perform(
+            get("/api/user/getUserById").param("userId", userId.toString())
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        User result = objectMapper.readValue(userJson, User.class);
+        assertEquals(userId, result.getId());
+        assertEquals(user.getName(), result.getName());
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getProject(), result.getProject());
+        assertEquals(user.getDepartment(), result.getDepartment());
+        assertEquals(EnumUtils.fromString(Role.class, user.getRole()), result.getRole());
+        assertEquals(EnumUtils.fromString(Grade.class, user.getGrade()), result.getGrade());
     }
 
     @Test

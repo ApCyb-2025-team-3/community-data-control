@@ -55,6 +55,17 @@ public class UserController {
         return new ResponseEntity<>(HttpStatusCode.valueOf(404));
     }
 
+    @GetMapping("/getFullUserInfoById")
+    public ResponseEntity<User> getFullUserInfoById(@RequestParam UUID userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+    }
+
     @GetMapping("/getUsersByRole")
     public ResponseEntity<List<UserDTO>> getUsersByRole(@RequestParam String role) {
 
