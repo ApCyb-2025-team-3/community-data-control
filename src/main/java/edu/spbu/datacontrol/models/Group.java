@@ -14,7 +14,7 @@ import java.util.UUID;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
-@Table(name = "groups")
+@Table(name = "subgroups")
 public class Group {
 
     @Id
