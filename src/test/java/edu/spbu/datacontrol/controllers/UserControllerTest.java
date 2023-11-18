@@ -240,7 +240,7 @@ class UserControllerTest {
         this.mockMvc.perform(post("/api/user/changeUserGrade")
             .param("userId", userId.toString())
             .param("grade", "Senior")
-            .param("description", "For testing purpose.")
+            .param("reason", "For testing purpose.")
         ).andExpect(status().isOk());
 
         UserDTO modifiedUser = getUserById(userId);

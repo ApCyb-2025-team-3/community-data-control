@@ -151,7 +151,7 @@ public class UserController {
     }
 
     @PostMapping("/changeUserGrade")
-    public ResponseEntity<String> getUsersByGrade(@RequestParam UUID userId,
+    public ResponseEntity<String> changeUserGrade(@RequestParam UUID userId,
                                                   @RequestParam String grade,
                                                   @RequestParam String reason) {
 
