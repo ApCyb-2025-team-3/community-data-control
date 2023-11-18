@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +34,8 @@ public class GroupController {
 
             User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
-            newGroup.setActive(true);
+            List<User> currentMembers = new ArrayList<>();
+            newGroup.setMembers(currentMembers);
 
             groupRepository.save(newGroup);
 

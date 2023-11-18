@@ -25,7 +25,7 @@ public class GroupDTO {
         this.id = group.getId();
         this.name = group.getName();
         this.description = group.getDescription();
-        this.teamLead = (group.getTeamLead()).getId();
+        this.teamLead = group.getTeamLead().getId();
     }
 
 }
