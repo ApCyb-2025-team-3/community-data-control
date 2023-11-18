@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,10 @@ public class User {
 
     @OneToMany
     private List<User> productOwners;
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<Group> groups;
 
     private String project;
 

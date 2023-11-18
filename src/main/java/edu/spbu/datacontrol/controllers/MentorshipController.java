@@ -26,10 +26,12 @@ public class MentorshipController {
         this.mentorshipRepository = mentorshipRepository;
     }
 
-    @PostMapping("/becomeMentee")
+    @PatchMapping("/becomeMentee")
     public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
+            User user = userRepository.getUserById(userDTO.getId());
+            userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
@@ -37,10 +39,12 @@ public class MentorshipController {
         return new ResponseEntity<>("The user has become mentee now", HttpStatusCode.valueOf(200));
     }
 
-    @PostMapping("/becomeMentor")
+    @PatchMapping("/becomeMentor")
     public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);
+            User user = userRepository.getUserById(userDTO.getId());
+            userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
@@ -92,13 +96,40 @@ public class MentorshipController {
         }
     }
 
+    @GetMapping("/getFreeMentors")
+    public ResponseEntity<List<UserDTO>> getFreeMentors(){
+        try {
+            return new ResponseEntity<>(
+                userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                    .stream()
+                    .filter(user -> isInMentorship(user.getId()))
+                    .map(UserDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getFreeMentees")
+    public ResponseEntity<List<UserDTO>> getFreeMentees(){
+        try {
+            return new ResponseEntity<>(
+                userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
+                    .stream()
+                    .filter(user -> isInMentorship(user.getId()))
+                    .map(UserDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
         if (isInMentorship(userId)) {
             throw new IllegalArgumentException("This user is in mentorship pair already!");
         }
         User user = userRepository.getUserById(userId);
         user.setMentorStatus(mentorStatus);
-        userRepository.save(user);
     }
 
     private boolean isInMentorship(UUID userId) {
