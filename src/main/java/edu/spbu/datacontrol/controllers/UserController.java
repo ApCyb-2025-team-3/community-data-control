@@ -84,7 +84,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUsersBySupervisorID")
+    @GetMapping("/getUsersBySupervisorId")
     public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
 
         try {

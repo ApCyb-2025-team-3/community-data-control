@@ -140,7 +140,7 @@ class UserControllerTest {
         UUID id = usersList.get(0).getId();
 
         usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersBySupervisorID").param("supervisorId", id.toString())
+                get("/api/user/getUsersBySupervisorId").param("supervisorId", id.toString())
         ).andReturn().getResponse().getContentAsString();
 
         usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
