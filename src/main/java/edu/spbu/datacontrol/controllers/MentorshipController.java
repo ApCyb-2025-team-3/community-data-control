@@ -26,10 +26,12 @@ public class MentorshipController {
         this.mentorshipRepository = mentorshipRepository;
     }
 
-    @PostMapping("/becomeMentee")
+    @PatchMapping("/becomeMentee")
     public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
+            User user = userRepository.getUserById(userDTO.getId());
+            userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
@@ -37,10 +39,12 @@ public class MentorshipController {
         return new ResponseEntity<>("The user has become mentee now", HttpStatusCode.valueOf(200));
     }
 
-    @PostMapping("/becomeMentor")
+    @PatchMapping("/becomeMentor")
     public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
         try {
             changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);
+            User user = userRepository.getUserById(userDTO.getId());
+            userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
@@ -126,7 +130,6 @@ public class MentorshipController {
         }
         User user = userRepository.getUserById(userId);
         user.setMentorStatus(mentorStatus);
-        userRepository.save(user);
     }
 
     private boolean isInMentorship(UUID userId) {
