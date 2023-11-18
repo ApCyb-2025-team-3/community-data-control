@@ -4,12 +4,10 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.GroupType;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -27,30 +25,24 @@ public class GroupController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
-                                              @RequestBody UserDTO teamLeadDTO) {
+    public ResponseEntity<String> createGroup(@RequestBody GroupCreationDTO groupCreationDTO, @RequestParam UUID teamLeadId) {
         try {
-            Group newGroup = new Group(groupInfoDTO);
+            Group newGroup = new Group(groupCreationDTO);
 
-            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
+            User teamLead = userRepository.getUserById(teamLeadId);
             assignTeamLead(newGroup, teamLead);
-
             groupRepository.save(newGroup);
 
+            return new ResponseEntity<>("Group successfully created.", HttpStatusCode.valueOf(201));
         } catch (Exception e) {
-            return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST
-            );
+            return new ResponseEntity<>(e.getMessage(), HttpStatusCode.valueOf(409));
         }
-
-        return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
     }
 
     @PatchMapping("/accept")
     public ResponseEntity<String> acceptUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
-        Group group = groupRepository.findById(groupId).orElse(null);
-        User newMember = userRepository.findById(userId).orElse(null);
+        Group group = groupRepository.getGroupsById(groupId);
+        User newMember = userRepository.getUserById(userId);
         if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
@@ -66,30 +58,24 @@ public class GroupController {
         groupRepository.save(group);
 
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
-
     }
 
     @PatchMapping ("/disband")
-    public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
-                                               @RequestParam String disbandmentReason) {
+    public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId, @RequestParam String disbandmentReason) {
 
-        Group disbandedGroup = groupRepository.findById(groupId).orElse(null);
-
-        if (disbandedGroup != null) {
-
-            Date disbandmentDate = new Date();
-            disbandedGroup.setDisbandmentDate(disbandmentDate);
-            disbandedGroup.setDisbandmentReason(disbandmentReason);
-            disbandedGroup.setActive(false);
-            disbandedGroup.setTeamLead(null);
-            dismissGroupMembers(disbandedGroup);
-            groupRepository.save(disbandedGroup);
-            return new ResponseEntity<>("Group was successfully disbanded",
-                    HttpStatusCode.valueOf(200));
-
+        Group disbandedGroup = groupRepository.getGroupsById(groupId);
+        if (disbandedGroup == null) {
+            return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
-        return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
 
+        disbandedGroup.setDisbandmentDate(new Date());
+        disbandedGroup.setDisbandmentReason(disbandmentReason);
+        disbandedGroup.setActive(false);
+        disbandedGroup.setTeamLead(null);
+        dismissGroupMembers(disbandedGroup);
+        groupRepository.save(disbandedGroup);
+
+        return new ResponseEntity<>("Group was successfully disbanded", HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/getActiveGroups")
@@ -104,8 +90,8 @@ public class GroupController {
 
     @PatchMapping("/exclude")
     public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
-        Group group = groupRepository.findById(groupId).orElse(null);
-        User user = userRepository.findById(userId).orElse(null);
+        Group group = groupRepository.getGroupsById(groupId);
+        User user = userRepository.getUserById(userId);
         if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }

@@ -47,10 +47,10 @@ public class Group {
     @LastModifiedDate
     private Date updatedDate;
 
-    public Group(GroupInfoDTO groupInfo) {
-        this.name = groupInfo.getName();
-        this.type = EnumUtils.fromString(GroupType.class, groupInfo.getType());
-        this.description = groupInfo.getDescription();
+    public Group(GroupCreationDTO groupCreationDTO) {
+        this.name = groupCreationDTO.getName();
+        this.type = EnumUtils.fromString(GroupType.class, groupCreationDTO.getType());
+        this.description = groupCreationDTO.getDescription();
         this.members = new ArrayList<>();
     }
 
