@@ -84,7 +84,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUsersBySupervisorID")
+    @GetMapping("/getUsersBySupervisorId")
     public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
 
         try {
@@ -145,6 +145,27 @@ public class UserController {
 
             return new ResponseEntity<>("User's personal data was successfully modified",
                     HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
+    }
+
+    @PostMapping("/changeUserGrade")
+    public ResponseEntity<String> changeUserGrade(@RequestParam UUID userId,
+                                                  @RequestParam String grade,
+                                                  @RequestParam String reason) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            try {
+                user.setGrade(EnumUtils.fromString(Grade.class, grade));
+                userRepository.save(user);
+                eventLog.save(new Event(user.getId(), EventType.CHANGE_GRADE, reason));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>("Unknown grade is sent", HttpStatusCode.valueOf(400));
+            }
+            return new ResponseEntity<>("User's grade was successfully changed",
+                HttpStatusCode.valueOf(200));
         }
 
         return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
