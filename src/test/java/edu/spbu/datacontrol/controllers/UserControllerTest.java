@@ -10,20 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.UserDataChangeDTO;
 import edu.spbu.datacontrol.models.UserInfoDTO;
-import edu.spbu.datacontrol.models.enums.EnumUtils;
-import edu.spbu.datacontrol.models.enums.Grade;
-import edu.spbu.datacontrol.models.enums.Role;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -263,6 +257,7 @@ class UserControllerTest {
         assertEquals(user.getDepartment(), result.getDepartment());
         assertEquals(user.getRole(), result.getRole());
         assertEquals(user.getGrade(), result.getGrade());
+        assertEquals(user.getSupervisorName(), result.getSupervisor().getId().toString());
     }
 
     @Test

@@ -71,7 +71,7 @@ public class UserInfoDTO {
     }
 
     @Getter
-    private static class Pair<K, V> {
+    public static class Pair<K, V> {
 
         private K id;
         private V value;
