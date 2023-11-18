@@ -7,6 +7,8 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -49,6 +51,7 @@ public class Group {
         this.name = groupInfo.getName();
         this.type = EnumUtils.fromString(GroupType.class, groupInfo.getType());
         this.description = groupInfo.getDescription();
+        this.members = new ArrayList<>();
     }
 
     public void changeGroupData(GroupDTO modifiedData) {

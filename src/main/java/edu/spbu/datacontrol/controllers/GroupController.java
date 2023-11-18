@@ -34,8 +34,6 @@ public class GroupController {
 
             User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
-            List<User> currentMembers = new ArrayList<>();
-            newGroup.setMembers(currentMembers);
 
             groupRepository.save(newGroup);
 
@@ -97,7 +95,7 @@ public class GroupController {
     @GetMapping("/getActiveGroups")
     public ResponseEntity<List<GroupDTO>> getActiveGroup() {
 
-            return new ResponseEntity<>(
+        return new ResponseEntity<>(
                 groupRepository.getGroupsByIsActiveTrue().stream()
                         .map(GroupDTO::new)
                         .toList(), HttpStatusCode.valueOf(200));
