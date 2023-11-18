@@ -1,9 +1,6 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.Group;
-import edu.spbu.datacontrol.models.GroupInfoDTO;
-import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.GroupType;
 import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
@@ -93,6 +90,15 @@ public class GroupController {
         }
         return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
 
+    }
+
+    @GetMapping("/getActiveGroups")
+    public ResponseEntity<List<GroupDTO>> getActiveGroup() {
+
+        return new ResponseEntity<>(
+                groupRepository.getGroupsIsActiveTrue().stream()
+                        .map(GroupDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
     }
 
     @PatchMapping("/exclude")
