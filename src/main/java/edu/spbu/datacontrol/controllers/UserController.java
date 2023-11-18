@@ -150,6 +150,27 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
     }
 
+    @PostMapping("/changeUserGrade")
+    public ResponseEntity<String> getUsersByGrade(@RequestParam UUID userId,
+                                                  @RequestParam String grade,
+                                                  @RequestParam String reason) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            try {
+                user.setGrade(EnumUtils.fromString(Grade.class, grade));
+                userRepository.save(user);
+                eventLog.save(new Event(user.getId(), EventType.CHANGE_GRADE, reason));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>("Unknown grade is sent", HttpStatusCode.valueOf(400));
+            }
+            return new ResponseEntity<>("User's grade was successfully changed",
+                HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
+    }
+
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
 
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
