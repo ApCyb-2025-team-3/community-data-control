@@ -156,6 +156,7 @@ class UserControllerTest {
 
     @Test
     void getUsersByRoleTest() throws Exception {
+
         UserAdditionDTO user = generateSimpleUser();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("role", user.getRole());
@@ -164,10 +165,20 @@ class UserControllerTest {
 
     @Test
     void getUsersByGradeTest() throws Exception {
+
         UserAdditionDTO user = generateSimpleUser();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grade", user.getGrade());
         getEndpointTest("getUsersByGrade", user, params);
+    }
+
+    @Test
+    void getUsersByDepartmentTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("department", user.getDepartment());
+        getEndpointTest("getUsersByDepartment", user, params);
     }
 
     @Test
@@ -216,6 +227,7 @@ class UserControllerTest {
 
     @Test
     void getDismissedUsersTest() throws Exception {
+
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
@@ -246,7 +258,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         String userJson = this.mockMvc.perform(
-            get("/api/user/getFullUserInfoById").param("userId", userId.toString())
+                get("/api/user/getFullUserInfoById").param("userId", userId.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         UserInfoDTO result = objectMapper.readValue(userJson, UserInfoDTO.class);
@@ -262,14 +274,15 @@ class UserControllerTest {
 
     @Test
     void changeUserGradeTest() throws Exception {
+
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
         UUID userId = getUserId(user);
         this.mockMvc.perform(post("/api/user/changeUserGrade")
-            .param("userId", userId.toString())
-            .param("grade", "Senior")
-            .param("reason", "For testing purpose.")
+                .param("userId", userId.toString())
+                .param("grade", "Senior")
+                .param("reason", "For testing purpose.")
         ).andExpect(status().isOk());
 
         UserDTO modifiedUser = getUserById(userId);
@@ -359,6 +372,7 @@ class UserControllerTest {
     }
 
     private UserDTO getUserDTOFromUserAdditionDTO(UserAdditionDTO userAdditionDTO) {
+
         UserDTO expected = new UserDTO();
         expected.setName(userAdditionDTO.getName());
         expected.setEmail(userAdditionDTO.getEmail());
@@ -366,5 +380,4 @@ class UserControllerTest {
         expected.setDepartment(userAdditionDTO.getDepartment());
         return expected;
     }
-
 }
