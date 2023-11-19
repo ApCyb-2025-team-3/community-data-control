@@ -64,8 +64,7 @@ class UserControllerTest {
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson,
-                new TypeReference<>() {
-                }
+                new TypeReference<>() {}
         );
         UUID id = usersList.get(0).getId();
 
@@ -108,15 +107,13 @@ class UserControllerTest {
         usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByRole").param("role", user.getRole())
         ).andReturn().getResponse().getContentAsString();
-        result = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        result = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         assertTrue(result.stream().noneMatch(t -> t.getId().equals(userId)));
 
         usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByGrade").param("grade", user.getGrade())
         ).andReturn().getResponse().getContentAsString();
-        result = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        result = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         assertTrue(result.stream().noneMatch(t -> t.getId().equals(userId)));
     }
 
@@ -142,16 +139,14 @@ class UserControllerTest {
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByRole").param("role", "supervisor")
         ).andReturn().getResponse().getContentAsString();
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         UUID id = usersList.get(0).getId();
 
         usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersBySupervisorId").param("supervisorId", id.toString())
         ).andReturn().getResponse().getContentAsString();
 
-        usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
         assertTrue(usersList.stream().anyMatch(u -> u.getEmail().equals(expected.getEmail())));
         assertTrue(usersList.stream().anyMatch(u -> u.getDepartment().equals(expected.getDepartment())));
@@ -255,8 +250,7 @@ class UserControllerTest {
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getDismissedUsers")).andReturn().getResponse().getContentAsString();
 
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(user.getName())));
     }
@@ -315,8 +309,7 @@ class UserControllerTest {
                 get("/api/user/" + methodUrl).params(params)
         ).andReturn().getResponse().getContentAsString();
 
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
     }
@@ -326,8 +319,7 @@ class UserControllerTest {
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByRole").param("role", user.getRole())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         Optional<UserDTO> possibleUser = usersList.stream()
                 .filter(t -> t.getName().equals(user.getName())).findFirst();
