@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
@@ -11,6 +12,7 @@ import lombok.Getter;
 @Getter
 public class UserInfoDTO {
 
+    @NotNull
     private UUID id;
 
     private Date invitedAt;
@@ -26,8 +28,6 @@ public class UserInfoDTO {
     private String phoneNumber;
 
     private Pair<UUID, String> supervisor;
-
-    private Pair<UUID, String> teamLead;
 
     private Map<UUID, String> productOwners;
 
@@ -56,10 +56,6 @@ public class UserInfoDTO {
         User supervisor = user.getSupervisor();
         if (supervisor != null) {
             this.supervisor = new Pair<>(supervisor.getId(), supervisor.getName());
-        }
-        User teamLead = user.getTeamLead();
-        if (teamLead != null) {
-            this.teamLead = new Pair<>(teamLead.getId(), teamLead.getName());
         }
         this.productOwners = user.getProductOwners().stream()
             .collect(Collectors.toMap(User::getId, User::getName));
