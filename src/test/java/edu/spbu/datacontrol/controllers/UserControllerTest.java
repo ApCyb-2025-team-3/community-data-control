@@ -10,13 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.spbu.datacontrol.models.UserAdditionDTO;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.UserDataChangeDTO;
+import edu.spbu.datacontrol.models.UserInfoDTO;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,8 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(
+            new JavaTimeModule()).setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     @Test
     void addUserTest() throws Exception {
@@ -229,6 +231,33 @@ class UserControllerTest {
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(user.getName())));
+    }
+
+    @Test
+    void getFullUserInfoTest() throws Exception {
+
+        UserAdditionDTO supervisor = generateSimpleUser();
+        supervisor.setRole("Supervisor");
+        addUser(supervisor);
+
+        UserAdditionDTO user = generateSimpleUser();
+        user.setSupervisorName(supervisor.getName());
+        addUser(user);
+
+        UUID userId = getUserId(user);
+        String userJson = this.mockMvc.perform(
+            get("/api/user/getFullUserInfoById").param("userId", userId.toString())
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        UserInfoDTO result = objectMapper.readValue(userJson, UserInfoDTO.class);
+        assertEquals(userId, result.getId());
+        assertEquals(user.getName(), result.getName());
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getProject(), result.getProject());
+        assertEquals(user.getDepartment(), result.getDepartment());
+        assertEquals(user.getRole(), result.getRole());
+        assertEquals(user.getGrade(), result.getGrade());
+        assertEquals(user.getSupervisorName(), result.getSupervisor().getValue());
     }
 
     @Test
