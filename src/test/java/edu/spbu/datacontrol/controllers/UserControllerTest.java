@@ -182,6 +182,15 @@ class UserControllerTest {
     }
 
     @Test
+    void getUsersByProjectTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("project", user.getProject());
+        getEndpointTest("getUsersByProject", user, params);
+    }
+
+    @Test
     void getUserByIdTest() throws Exception {
 
         UserAdditionDTO user = generateSimpleUser();

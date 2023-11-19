@@ -132,6 +132,15 @@ public class UserController {
                         .toList(), HttpStatusCode.valueOf(200));
     }
 
+    @GetMapping("/getUsersByProject")
+    public ResponseEntity<List<UserDTO>> getUsersByProject(@RequestParam String project) {
+
+        return new ResponseEntity<>(
+                userRepository.getUsersByProjectAndIsActiveTrue(project).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
+    }
+
     @PostMapping("/dismissUserById")
     public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
                                                   @RequestParam String description) {
