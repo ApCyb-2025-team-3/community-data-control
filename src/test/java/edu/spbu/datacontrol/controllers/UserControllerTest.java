@@ -91,8 +91,7 @@ class UserControllerTest {
         ).andReturn().getResponse().getContentAsString();
 
         // TODO: change to getting Id by user name when implemented
-        List<UserDTO> result = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        List<UserDTO> result = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         Optional<UserDTO> possibleUser = result.stream().filter(t -> t.getName().equals(user.getName()))
                 .findFirst();
 
