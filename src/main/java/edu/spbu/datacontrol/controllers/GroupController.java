@@ -30,8 +30,8 @@ public class GroupController {
     public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
                                               @RequestBody UserDTO teamLeadDTO) {
         try {
-            List<Group> currentGroups = groupRepository.getGroupsByName(groupInfoDTO.getName());
-            if(!currentGroups.isEmpty()){
+            Group currentGroups = groupRepository.getGroupByName(groupInfoDTO.getName());
+            if(currentGroups != null){
                 return new ResponseEntity<>("A group with this name already exists!", HttpStatusCode.valueOf(409));
             }
             Group newGroup = new Group(groupInfoDTO);
