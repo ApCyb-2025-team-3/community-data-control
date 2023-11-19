@@ -30,7 +30,6 @@ public class UserController {
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
         try {
             this.assignSupervisor(newUser, userData.getSupervisorName());
-            this.assignTeamLead(newUser, userData.getTeamLeadName());
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
                     "Wrong users were sent to assign as supervisor and team lead.",
@@ -140,7 +139,6 @@ public class UserController {
         if (dismissedUser != null) {
             dismissedUser.setActive(false);
             dismissedUser.setProject(null);
-            dismissedUser.setTeamLead(null);
             dismissedUser.setProductOwners(null);
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             userRepository.save(dismissedUser);
@@ -201,18 +199,6 @@ public class UserController {
                     user.getProject());
         }
         user.setSupervisor(!possibleSupervisors.isEmpty() ? possibleSupervisors.get(0) : null);
-    }
-
-    private void assignTeamLead(User user, String teamLeadName) throws IllegalArgumentException {
-
-        List<User> possibleTeamLeads = userRepository.getUsersByNameAndRole(teamLeadName,
-                Role.TEAM_LEAD);
-
-        if (possibleTeamLeads.size() > 1) {
-            possibleTeamLeads = filterUsersByProject(possibleTeamLeads, Role.TEAM_LEAD,
-                    user.getProject());
-        }
-        user.setTeamLead(!possibleTeamLeads.isEmpty() ? possibleTeamLeads.get(0) : null);
     }
 
     private List<User> filterUsersByProject(List<User> users, Role role, String project) {
