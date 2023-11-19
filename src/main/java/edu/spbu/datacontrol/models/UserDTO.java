@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.models;
 
 
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
+    @NotNull
     private UUID id;
 
     private String name;
@@ -18,6 +20,10 @@ public class UserDTO {
 
     private String department;
 
+    private String role;
+
+    private String grade;
+
     public UserDTO() {}
 
     public UserDTO(User user) {
@@ -26,5 +32,7 @@ public class UserDTO {
         this.email = user.getEmail();
         this.project = user.getProject();
         this.department = user.getDepartment();
+        this.role = user.getRole().toString();
+        this.grade = user.getGrade().toString();
     }
 }

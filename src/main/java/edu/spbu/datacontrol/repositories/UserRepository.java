@@ -2,6 +2,7 @@ package edu.spbu.datacontrol.repositories;
 
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.enums.Grade;
+import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.models.enums.Role;
 
 import java.util.UUID;
@@ -26,11 +27,19 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByNameInAndRole(List<String> names, Role role);
 
-    List<User> getUsersByRole(Role role);
+    List<User> getUsersByRoleAndIsActiveTrue(Role role);
 
     List<User> getUsersBySupervisor(User supervisor);
 
     List<User> findAllByOrderByName();
 
-    List<User> getUsersByGrade(Grade grade);
+    List<User> getUsersByGradeAndIsActiveTrue(Grade grade);
+
+    List<User> getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus mentorStatus);
+
+    List<User> getUsersByIsActiveFalse();
+
+    List<User> getUsersByDepartmentAndIsActiveTrue(String department);
+
+    List<User> getUsersByProjectAndIsActiveTrue(String project);
 }

@@ -17,4 +17,9 @@ public enum Role {
     Role(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return this.getDescription();
+    }
 }

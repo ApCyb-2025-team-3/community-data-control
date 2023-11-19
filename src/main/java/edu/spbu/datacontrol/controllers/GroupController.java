@@ -1,47 +1,158 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.Event;
-import edu.spbu.datacontrol.models.Group;
-import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.enums.EventType;
+import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.GroupType;
-import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.GroupRepository;
+import edu.spbu.datacontrol.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/group")
 public class GroupController {
-    private GroupRepository groupRepository;
-    private EventRepository eventLog;
+    private final GroupRepository groupRepository;
 
-    public GroupController(GroupRepository groupRepository, EventRepository eventRepository) {
+    private final UserRepository userRepository;
 
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
-        this.eventLog = eventRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/create")
-    public String createGroup(@RequestParam String type, @RequestParam String name, @RequestParam String description, @RequestParam User teamLead) {
-
-        GroupType groupType = GroupType.valueOf(type);
-        Group newGroup = new Group(groupType, name, description, teamLead);
+    public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
+                                              @RequestBody UserDTO teamLeadDTO) {
         try {
+            Group newGroup = new Group(groupInfoDTO);
+
+            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(409), e.getMessage());
+
+            groupRepository.save(newGroup);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST
+            );
         }
 
-        newGroup = groupRepository.save(newGroup);
-        Event groupCreation = new Event(newGroup.getId(), EventType.CREATE_GROUP, "");
-        eventLog.save(groupCreation);
-
-        return "Group successfully created.";
+        return new ResponseEntity<>("Group successfully created.", HttpStatus.CREATED);
     }
 
-    public void assignTeamLead(Group group, User teamLead) {
+    @PatchMapping("/accept")
+    public ResponseEntity<String> acceptUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
+        Group group = groupRepository.findById(groupId).orElse(null);
+        User newMember = userRepository.findById(userId).orElse(null);
+        if (group == null) {
+            return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+        }
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+        }
 
+        List<User> currentMembers = group.getMembers();
+        if(currentMembers.contains(newMember)) {
+            return new ResponseEntity<>("This user is already in the group!", HttpStatusCode.valueOf(409));
+        }
+        currentMembers.add(newMember);
+        groupRepository.save(group);
+
+        return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
+
+    }
+
+    @PatchMapping ("/disband")
+    public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
+                                               @RequestParam String disbandmentReason) {
+
+        Group disbandedGroup = groupRepository.findById(groupId).orElse(null);
+
+        if (disbandedGroup != null) {
+
+            Date disbandmentDate = new Date();
+            disbandedGroup.setDisbandmentDate(disbandmentDate);
+            disbandedGroup.setDisbandmentReason(disbandmentReason);
+            disbandedGroup.setActive(false);
+            disbandedGroup.setTeamLead(null);
+            dismissGroupMembers(disbandedGroup);
+            groupRepository.save(disbandedGroup);
+            return new ResponseEntity<>("Group was successfully disbanded",
+                    HttpStatusCode.valueOf(200));
+
+        }
+        return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+
+    }
+
+    @GetMapping("/getActiveGroups")
+    public ResponseEntity<List<GroupDTO>> getActiveGroup() {
+
+        return new ResponseEntity<>(
+                groupRepository.getGroupsByIsActiveTrue().stream()
+                        .map(GroupDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
+
+    }
+
+    @PatchMapping("/exclude")
+    public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
+        Group group = groupRepository.findById(groupId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
+        if (group == null) {
+            return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+        }
+        if (!group.isActive()) {
+            return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
+        }
+        List<User> groupMembers = group.getMembers();
+        if (!groupMembers.contains(user)) {
+            return new ResponseEntity<>("The user isn't member of this group!", HttpStatusCode.valueOf(409));
+        }
+        if (user.getId() == group.getTeamLead().getId()) {
+            return new ResponseEntity<>("This user is team leader, you can't exclude him!", HttpStatusCode.valueOf(409));
+        }
+        user.getGroups().remove(group);
+        groupMembers.remove(user);
+        userRepository.save(user);
+        groupRepository.save(group);
+
+        return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
+    }
+
+    private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
+        List<User> currentMembers = group.getMembers();
+        if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(teamLead)) {
+            throw new IllegalArgumentException("This user is in a work team already!");
+        }
+        if (!currentMembers.contains(teamLead)) {
+            currentMembers.add(teamLead);
+        }
+        group.setTeamLead(teamLead);
+    }
+
+    private boolean isInWorkTeam (User user) {
+        List<Group> userGroups = user.getGroups();
+        for (Group group : userGroups) {
+            if (group.getType() == GroupType.WORKING_TEAM) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void dismissGroupMembers(Group group) {
+        List<User> members = group.getMembers();
+        for (User member : members) {
+            member.getGroups().remove(group);
+        }
+        members.clear();
     }
 }
