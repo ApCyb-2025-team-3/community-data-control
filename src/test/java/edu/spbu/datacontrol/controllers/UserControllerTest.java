@@ -138,8 +138,7 @@ class UserControllerTest {
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByRole").param("role", "supervisor")
         ).andReturn().getResponse().getContentAsString();
-        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
-        });
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         UUID id = usersList.get(0).getId();
 
         usersListJson = this.mockMvc.perform(
@@ -179,6 +178,16 @@ class UserControllerTest {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("department", user.getDepartment());
         getEndpointTest("getUsersByDepartment", user, params);
+    }
+
+    @Test
+    void getUsersByProjectTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        user.setProject("TestProject");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("project", user.getProject());
+        getEndpointTest("getUsersByProject", user, params);
     }
 
     @Test
