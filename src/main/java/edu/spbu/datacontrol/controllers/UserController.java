@@ -123,6 +123,15 @@ public class UserController {
                         .toList(), HttpStatusCode.valueOf(200));
     }
 
+    @GetMapping("/getUsersByDepartment")
+    public ResponseEntity<List<UserDTO>> getUsersByDepartment(@RequestParam String department) {
+
+        return new ResponseEntity<>(
+                userRepository.getUsersByDepartmentAndIsActiveTrue(department).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatusCode.valueOf(200));
+    }
+
     @PostMapping("/dismissUserById")
     public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
                                                   @RequestParam String description) {
@@ -176,7 +185,7 @@ public class UserController {
                 return new ResponseEntity<>("Unknown grade is sent", HttpStatusCode.valueOf(400));
             }
             return new ResponseEntity<>("User's grade was successfully changed",
-                HttpStatusCode.valueOf(200));
+                    HttpStatusCode.valueOf(200));
         }
 
         return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
