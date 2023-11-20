@@ -4,6 +4,7 @@ import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.enums.Grade;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.models.enums.Role;
+import edu.spbu.datacontrol.models.Group;
 
 import java.util.UUID;
 
@@ -36,6 +37,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     List<User> getUsersByGradeAndIsActiveTrue(Grade grade);
 
     List<User> getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus mentorStatus);
+
+    List<User> getUsersByGroupsContainsAndIsActiveTrue(Group group);
 
     List<User> getUsersByIsActiveFalse();
 
