@@ -30,13 +30,13 @@
     /* height: 860px; */
     padding: 20px 0px;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 50px;
 }
 
 .upperBlocks {
     display: flex;
-    width: 76.176%;
+    width: 95%;
     justify-content: center;
     align-items: flex-start;
     gap: 5rem;
@@ -44,18 +44,18 @@
 
 .listBlock {
     display: flex;
-    width: 41.7%;
-    height: 35rem;
+    flex-grow: 1;
+    width: 100%;
+    height: 90rem;
     padding: 3.5rem 45px;
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
-    border-radius: 30px;
-    border: 3px solid #000;
 }
 
 .listBlockControlPanel {
     display: flex;
+    flex-direction: column;
     width: 100%;
     height: 4.5rem;
     align-items: center;
@@ -64,8 +64,10 @@
 
 .controlPanelAddButton {
     display: flex;
-    width: 40%;
-    height: 4.5rem;
+    width: 100%;
+    height: 6rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
     justify-content: center;
     align-items: center;
 
@@ -81,10 +83,45 @@
     line-height: normal;
 }
 
+.listBlockControlPanel p {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #000;
+    flex-grow: 1;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.listBlockControlPanel select {
+    width: 100%;
+    flex-grow: 1;
+    height: 4.2rem;
+    margin-bottom: 1rem;
+    padding-inline: 10px;
+    align-items: center;
+    justify-content: space-between;
+
+    border-radius: 10px;
+    border: 2px solid #000;
+    background: none;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
 .listBlockControlPanel form {
     display: flex;
-    width: 50%;
+    flex-grow: 1;
     height: 4.2rem;
+    margin-bottom: 1rem;
     padding-inline: 10px;
     align-items: center;
     justify-content: space-between;
@@ -127,12 +164,14 @@
 
 .listBlockTable {
     display: flex;
-    width: 93.33%;
-    height: 33.5rem;
+    width: 60rem;
+    height: 95rem;
+    padding-top: 5rem;
     margin: 0;
     flex-direction: column;
     align-items: flex-start;
     padding-right: 2rem;
+    gap: 8rem;
 
     overflow: scroll;
     overflow-x: hidden;
@@ -141,26 +180,11 @@
 .listBlockTable li {
     display: flex;
     width: 100%;
-    height: 3rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    height: 35rem;
     align-items: center;
     justify-content: space-between;
-}
-
-.liName {
-    color: #000;
-
-    width: 91.56%;
-    height: 3.0rem;
-
-    text-align: flex-start;
-    font-family: 'Inter', sans-serif;
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
-
-    overflow: hidden;
-    white-space: nowrap;
 }
 
 .listBlockTable li button {
@@ -177,14 +201,26 @@
     height: 2rem;
 }
 
+.userListInfoBlock {
+    display: flex;
+    flex-grow: 1;
+    height: 35rem;
+    margin-bottom: 1rem;
+    padding: 3.5rem 25px;
+    flex-direction: column;
+    align-items: flex-start;
+
+    border-radius: 30px;
+    border: 3px solid #000;
+}
+
 .mainInfoBlock {
     display: flex;
-    width: 54.44%;
-    height: 35rem;
+    width: 30%;
+    height: 90rem;
     padding: 3.5rem 45px;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.5rem;
 
     border-radius: 30px;
     border: 3px solid #000;
@@ -194,6 +230,7 @@
     display: flex;
     width: 100%;
     align-items: center;
+    margin-bottom: 1rem;
     gap: 8.33%;
 }
 
@@ -473,14 +510,12 @@
 
 .mentorshipBlock {
     display: flex;
-    width: calc(47.876% - 90px);
+    flex-grow: 1;
+    width: 100%;
     height: 30rem;
-    padding: 3.5rem 45px;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    border-radius: 30px;
-    border: 3px solid #000;
 }
 
 .mentorshipBlock p {
@@ -489,7 +524,7 @@
     font-family: 'Inter', sans-serif;
     font-size: 2.4rem;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 600;
     line-height: normal;
 }
 
@@ -501,6 +536,23 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+}
+
+.mentorshipBlockBody p {
+    display: flex;
+    flex-grow: 1;
+    height: 7rem;
+    margin-left: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
 }
 
 .mentorshipBlockBodyRole {
