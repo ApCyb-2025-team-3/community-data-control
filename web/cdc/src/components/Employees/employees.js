@@ -58,8 +58,9 @@ function Employees() {
                                 className={`${classes.bodyRoleName}`}>{role}
                             </div>
                         </div>
-                        <div>
+                        <div className={`${classes.bodyMoreButton}`}>
                             <button>
+                                Подробнее
                                 <img src={info} alt="info"/>
                             </button>
                         </div>
@@ -165,7 +166,8 @@ function Employees() {
                         <p>Роль:</p>
                         <div className={`${classes.bodyRoleName}`}>Scala-developer</div>
                     </div>
-                        <div style={{marginTop: 3 + 'rem'}}>
+                    </div>
+                    <div style={{marginTop: 3 + 'rem'}}>
                         <div className={`${classes.teamGrBlockTeam}`}>
                             <p>Команда:</p>
                             <div
@@ -193,42 +195,41 @@ function Employees() {
                                 </li>
                             </ul>
                         </div>
-                        </div>
-                        <div style={{marginTop: 3 + 'rem'}}>
-                            <div className={`${classes.mentorshipBlock}`}>
-                                <p>Менторство</p>
-                                <div className={`${classes.mentorshipBlockBody}`}>
-                                    <div className={`${classes.mentorshipBlockBodyRole}`}>
-                                        <p>Роль:</p>
-                                        <div
-                                            className={`${classes.mentorshipBlockBodyRoleMentee}`}
-                                            style={{ display: "none" }}
-                                        >
-                                            менти
-                                        </div>
-                                        <div className={`${classes.mentorshipBlockBodyRoleMentor}`}>ментор</div>
-                                    </div>
+                    </div>
+                    <div style={{marginTop: 1 + 'rem'}}>
+                        <div className={`${classes.mentorshipBlock}`}>
+                            <p>Менторство</p>
+                            <div className={`${classes.mentorshipBlockBody}`}>
+                                <div className={`${classes.mentorshipBlockBodyRole}`}>
+                                    <p>Роль:</p>
                                     <div
-                                        className={`${classes.mentorshipBlockBodyMentor}`}
+                                        className={`${classes.mentorshipBlockBodyRoleMentee}`}
                                         style={{ display: "none" }}
                                     >
-                                        <p>Ментор:</p>
-                                        <div className={`${classes.mentorshipBlockBodyMentorName}`}>
-                                            Mironov Semyon Vitalievich
-                                        </div>
+                                        менти
                                     </div>
-                                    <div className={`${classes.mentorshipBlockBodyMentees}`}>
-                                        <p>Менти:</p>
-                                        <ul className={`${classes.menteesTable}`}>
-                                            <li>
-                                                <img src={dot} alt="dot" />
-                                                <div className={`${classes.menteesTableTitle}`}>Kafka_team</div>
-                                                <button>
-                                                    <img src={remove} alt="remove" />
-                                                </button>
-                                            </li>
-                                        </ul>
+                                    <div className={`${classes.mentorshipBlockBodyRoleMentor}`}>ментор</div>
+                                </div>
+                                <div
+                                    className={`${classes.mentorshipBlockBodyMentor}`}
+                                    style={{ display: "none" }}
+                                >
+                                    <p>Ментор:</p>
+                                    <div className={`${classes.mentorshipBlockBodyMentorName}`}>
+                                        Mironov Semyon Vitalievich
                                     </div>
+                                </div>
+                                <div className={`${classes.mentorshipBlockBodyMentees}`}>
+                                    <p>Менти:</p>
+                                    <ul className={`${classes.menteesTable}`}>
+                                        <li>
+                                            <img src={dot} alt="dot" />
+                                            <div className={`${classes.menteesTableTitle}`}>Kafka_team</div>
+                                            <button>
+                                                <img src={remove} alt="remove" />
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>

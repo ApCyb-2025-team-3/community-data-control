@@ -44,19 +44,20 @@
 
 .listBlock {
     display: flex;
-    flex-grow: 1;
-    width: 100%;
+    width: 50%;
     height: 90rem;
     padding: 3.5rem 45px;
+    padding-top: 0;
+    margin-top: 0;
     flex-direction: column;
     align-items: flex-start;
-    gap: 15px;
+    gap: 10px;
 }
 
 .listBlockControlPanel {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 60rem;
     height: 4.5rem;
     align-items: center;
     justify-content: space-between;
@@ -85,9 +86,11 @@
 
 .listBlockControlPanel p {
     margin-top: 1rem;
+    width: 95%;
     margin-bottom: 1rem;
-    color: #000;
     flex-grow: 1;
+
+    color: #000;
     text-align: center;
     font-family: 'Inter', sans-serif;
     font-size: 1.8rem;
@@ -97,6 +100,7 @@
 }
 
 .listBlockControlPanel select {
+    display: flex;
     width: 100%;
     flex-grow: 1;
     height: 4.2rem;
@@ -119,6 +123,7 @@
 
 .listBlockControlPanel form {
     display: flex;
+    width: 95%;
     flex-grow: 1;
     height: 4.2rem;
     margin-bottom: 1rem;
@@ -138,7 +143,7 @@
     font-family: 'Inter', sans-serif;
     font-size: 2rem;
     font-style: normal;
-    font-weight: 300;
+    font-weight: 400;
     line-height: normal;
     color: #000;
 
@@ -164,7 +169,7 @@
 
 .listBlockTable {
     display: flex;
-    width: 60rem;
+    width: 50rem;
     height: 95rem;
     padding-top: 5rem;
     margin: 0;
@@ -216,9 +221,10 @@
 
 .mainInfoBlock {
     display: flex;
-    width: 30%;
+    width: 40%;
     height: 90rem;
     padding: 3.5rem 45px;
+    margin-right: 3rem;
     flex-direction: column;
     align-items: flex-start;
 
@@ -345,6 +351,26 @@
 .bodyButtons button img {
     width: 2rem;
     height: 2rem;
+}
+
+.bodyMoreButton {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bodyMoreButton button {
+    display: flex;
+    width: 100%;
+    margin-rigth: 1rem;
+    justify-content: right;
+    align-items: center;
+    gap: 1rem;
+
+    border-radius: 30px;
+    border: 3px solid #000;
 }
 
 .bottomBlocks {
