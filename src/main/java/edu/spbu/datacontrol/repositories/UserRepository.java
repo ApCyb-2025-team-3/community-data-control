@@ -8,7 +8,9 @@ import edu.spbu.datacontrol.models.Group;
 
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -47,4 +49,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     List<User> getUsersByProjectAndIsActiveTrue(String project);
 
     List<User> findByNameContaining(String partialName);
+
+    @Query("SELECT u FROM User u WHERE u.mentorStatus =:mentorStatus  " +
+            "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id OR m.mentee.id = u.id)")
+    List<User> getFreeUsersByMentorStatus(@Param("mentorStatus") MentorshipStatus mentorStatus);
 }
