@@ -298,6 +298,30 @@ class UserControllerTest {
         assertEquals("Senior", modifiedUser.getGrade());
     }
 
+    @Test
+    void getUsersByPartialNameTest() throws Exception {
+
+        UserAdditionDTO user1 = generateSimpleUser();
+        user1.setName("JohnDoe");
+        addUser(user1);
+
+        UserAdditionDTO user2 = generateSimpleUser();
+        user2.setName("JaneDoe");
+        addUser(user2);
+
+        String partialName = "Doe";
+
+        String usersListJson = this.mockMvc.perform(
+                get("/api/user/getUsersByPartialName").param("partialName", partialName)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
+        });
+
+        assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(user1.getName())));
+        assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(user2.getName())));
+    }
+
     private void getEndpointTest(String methodUrl, UserAdditionDTO user,
                                  MultiValueMap<String, String> params) throws Exception {
 

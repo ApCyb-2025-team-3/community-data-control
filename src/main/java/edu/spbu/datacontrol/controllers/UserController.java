@@ -4,6 +4,7 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -196,6 +197,23 @@ public class UserController {
         }
 
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/getUsersByPartialName")
+    public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
+        try {
+            List<User> users = userRepository.getUsersByPartialName(partialName);
+            if (!users.isEmpty()) {
+                return new ResponseEntity<>(
+                        users.stream()
+                                .map(UserDTO::new)
+                                .toList(), HttpStatus.OK);
+            }
+        } catch (DataAccessException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
