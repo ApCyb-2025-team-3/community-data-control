@@ -1,29 +1,15 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.Event;
-import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.UserAdditionDTO;
-import edu.spbu.datacontrol.models.UserDTO;
-import edu.spbu.datacontrol.models.UserDataChangeDTO;
-import edu.spbu.datacontrol.models.enums.EnumUtils;
-import edu.spbu.datacontrol.models.enums.EventType;
-import edu.spbu.datacontrol.models.enums.Grade;
-import edu.spbu.datacontrol.models.enums.MentorshipStatus;
-import edu.spbu.datacontrol.models.enums.Role;
+import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -44,18 +30,17 @@ public class UserController {
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
         try {
             this.assignSupervisor(newUser, userData.getSupervisorName());
-            this.assignTeamLead(newUser, userData.getTeamLeadName());
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
-                "Wrong users were sent to assign as supervisor and team lead.",
-                HttpStatusCode.valueOf(409));
+                    "Wrong users were sent to assign as supervisor and team lead.",
+                    HttpStatus.CONFLICT);
         }
 
         newUser = userRepository.save(newUser);
         Event userAddition = new Event(newUser.getId(), EventType.ADD_USER, "");
         eventLog.save(userAddition);
 
-        return new ResponseEntity<>("User successfully added.", HttpStatusCode.valueOf(201));
+        return new ResponseEntity<>("User successfully added.", HttpStatus.CREATED);
     }
 
     @GetMapping("/getUserById")
@@ -63,10 +48,21 @@ public class UserController {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            return new ResponseEntity<>(new UserDTO(user), HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/getFullUserInfoById")
+    public ResponseEntity<UserInfoDTO> getFullUserInfoById(@RequestParam UUID userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            return new ResponseEntity<>(new UserInfoDTO(user), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/getUsersByRole")
@@ -74,12 +70,12 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByRoleAndIsActiveTrue(EnumUtils.fromString(Role.class, role))
-                    .stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                    userRepository.getUsersByRoleAndIsActiveTrue(EnumUtils.fromString(Role.class, role))
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -88,58 +84,85 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByGradeAndIsActiveTrue(
-                        EnumUtils.fromString(Grade.class, grade)).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
+                    userRepository.getUsersByGradeAndIsActiveTrue(
+                                    EnumUtils.fromString(Grade.class, grade))
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/getUsersBySupervisorID")
+    @GetMapping("/getUsersBySupervisorId")
     public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
 
         try {
             User user = userRepository.getUserById(supervisorId);
             if (user.getRole() == Role.SUPERVISOR) {
                 return new ResponseEntity<>(
-                    userRepository.getUsersBySupervisor(user).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatusCode.valueOf(200));
+                        userRepository.getUsersBySupervisor(user).stream()
+                                .map(UserDTO::new)
+                                .toList(), HttpStatus.OK);
             }
 
             throw new IllegalArgumentException("This user isn't supervisor");
 
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+    }
+
+    @GetMapping("/getDismissedUsers")
+    public ResponseEntity<List<UserDTO>> getDismissedUsers() {
+
+        return new ResponseEntity<>(
+                userRepository.getUsersByIsActiveFalse().stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getUsersByDepartment")
+    public ResponseEntity<List<UserDTO>> getUsersByDepartment(@RequestParam String department) {
+
+        return new ResponseEntity<>(
+                userRepository.getUsersByDepartmentAndIsActiveTrue(department).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getUsersByProject")
+    public ResponseEntity<List<UserDTO>> getUsersByProject(@RequestParam String project) {
+
+        return new ResponseEntity<>(
+                userRepository.getUsersByProjectAndIsActiveTrue(project).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatus.OK);
     }
 
     @PostMapping("/dismissUserById")
     public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
-        @RequestParam String description) {
+                                                  @RequestParam String description) {
 
         User dismissedUser = userRepository.findById(userId).orElse(null);
         if (dismissedUser != null) {
             dismissedUser.setActive(false);
             dismissedUser.setProject(null);
-            dismissedUser.setTeamLead(null);
             dismissedUser.setProductOwners(null);
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             userRepository.save(dismissedUser);
             Event event = new Event(userId, EventType.DISMISS_USER, description);
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
-                HttpStatusCode.valueOf(200));
+                    HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/changeUsersPersonalData")
     public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
-        @RequestBody UserDataChangeDTO modifiedData) {
+                                                          @RequestBody UserDataChangeDTO modifiedData) {
 
         User user = userRepository.findById(modifiedData.getUserId()).orElse(null);
         if (user != null) {
@@ -148,10 +171,31 @@ public class UserController {
             eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, reason));
 
             return new ResponseEntity<>("User's personal data was successfully modified",
-                HttpStatusCode.valueOf(200));
+                    HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("This user doesn't exist", HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/changeUserGrade")
+    public ResponseEntity<String> changeUserGrade(@RequestParam UUID userId,
+                                                  @RequestParam String grade,
+                                                  @RequestParam String reason) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            try {
+                user.setGrade(EnumUtils.fromString(Grade.class, grade));
+                userRepository.save(user);
+                eventLog.save(new Event(user.getId(), EventType.CHANGE_GRADE, reason));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>("Unknown grade is sent", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>("User's grade was successfully changed",
+                    HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
@@ -164,18 +208,6 @@ public class UserController {
                     user.getProject());
         }
         user.setSupervisor(!possibleSupervisors.isEmpty() ? possibleSupervisors.get(0) : null);
-    }
-
-    private void assignTeamLead(User user, String teamLeadName) throws IllegalArgumentException {
-
-        List<User> possibleTeamLeads = userRepository.getUsersByNameAndRole(teamLeadName,
-                Role.TEAM_LEAD);
-
-        if (possibleTeamLeads.size() > 1) {
-            possibleTeamLeads = filterUsersByProject(possibleTeamLeads, Role.TEAM_LEAD,
-                    user.getProject());
-        }
-        user.setTeamLead(!possibleTeamLeads.isEmpty() ? possibleTeamLeads.get(0) : null);
     }
 
     private List<User> filterUsersByProject(List<User> users, Role role, String project) {
