@@ -1,0 +1,52 @@
+html {
+  font-size: 62.5%;
+  height: 100%;
+}
+
+body, #root {
+  width: 100%;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  margin: 0;
+  padding: 0;
+  justify-items: center;
+  align-items: flex-start;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+
+::-webkit-scrollbar {
+  width: 1rem;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.20);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.40);
+}
+
+
+@media screen and (max-width: 1660px) {
+  html {
+      font-size: 50%;
+  }    
+}
