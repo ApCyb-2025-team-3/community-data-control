@@ -1,118 +1,6 @@
-html {
-    font-size: 62.5%;
-    height: 100%;
-}
-
-body {
-    min-height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-
-    margin: 0;
-    padding: 0;
-    justify-items: center;
-    align-items: flex-start;
-}
-
-a {
-    text-decoration: none;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-
-/* Header section */
-
-.wrapper-header-container {
-    display: flex;
-
-    width: 100%;
-    height: 115px;
-
-    max-width: 1920px;
-
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* left block in header */
-
-.header-infobox {
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-    margin-left: 5.2%;
-}
-
-.header-infobox a figure {
-    margin: 0;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.header-infobox a figure img {
-    width: 7.5rem;
-    height: 7.5rem;
-}
-
-.header-infobox a figure p {
-    margin: 0;
-    margin-bottom: 1.5rem;
-
-    color: #000;
-
-    text-align: center;
-    font-family: 'M PLUS 1', sans-serif;
-    font-size: 4.8rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-}
-
-
-/* right block in header */
-
-.header-menu-obtaining {
-    display: flex;
-    width: auto;
-    justify-content: center;
-    align-items: center;
-    margin-right: 5.2%;
-}
-
-.header-menu-obtaining nav {
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-    gap: 6rem;
-}
-
-.header-menu-obtaining nav a {
-    color: #000;
-
-    text-align: center;
-    font-family: 'Inter', sans-serif;
-    font-size: 2.4rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-
-    width: auto;
-}
-
-
 /* blocks section */
 
-.wrapper-blocks {
+.wrapperBlocks {
     display: flex;
 
     width: 100%;
@@ -126,7 +14,7 @@ ul {
     gap: 35px;
 }
 
-.wrapper-blocks p {
+.wrapperBlocks p {
     margin: 0;
     margin-left: 5.73%;
     /* width: 99%; */
@@ -141,7 +29,7 @@ ul {
     line-height: normal;
 }
 
-.blocks-obtaining {
+.blocksObtaining {
     display: flex;
     width: 83.33%;
 
@@ -152,7 +40,7 @@ ul {
     gap: 50px;
 }
 
-.left-block {
+.leftBlock {
     display: flex;
     width: 42%;
     height: 540px;
@@ -164,7 +52,7 @@ ul {
     border: 3px solid #000;
 }
 
-.right-block {
+.rightBlock {
     display: flex;
     width: 54.5%;
     height: 540px;
@@ -177,7 +65,7 @@ ul {
     border: 3px solid #000;
 }
 
-.groups-control-panel {
+.teamsControlPanel {
     display: flex;
     width: 100%;
     height: 32px;
@@ -186,7 +74,7 @@ ul {
     flex-shrink: 0;
 }
 
-.panel-add-group {
+.panelAddTeam {
     display: flex;
     width: 35.55%;
     justify-content: space-between;
@@ -194,7 +82,7 @@ ul {
     gap: 20px;
 }
 
-.panel-add-group p {
+.panelAddTeam p {
     color: #000;
 
     text-align: center;
@@ -205,7 +93,7 @@ ul {
     line-height: normal;
 }
 
-.panel-add-group-button {
+.panelAddTeamButton {
     display: flex;
     width: 30px;
     height: 30px;
@@ -219,12 +107,12 @@ ul {
     background: none;
 }
 
-.panel-add-group-button img {
+.panelAddTeamButton img {
     width: 15px;
     height: 15px;
 }
 
-.panel-switch {
+.panelSwitch {
     display: flex;
     width: 40.66%;
     height: 32px;
@@ -234,7 +122,7 @@ ul {
     flex-shrink: 0;
 }
 
-.switch-all {
+.switchAll {
     padding: 0;
 
     width: 60px;
@@ -252,7 +140,7 @@ ul {
     background: none;
 }
 
-.switch-active {
+.switchActive {
     padding: 0;
 
     width: 120px;
@@ -270,7 +158,7 @@ ul {
     background: none;
 }
 
-.groups-table {
+.teamsTable {
     display: flex;
     width: 91%;
     height: 523px;
@@ -283,7 +171,7 @@ ul {
     padding-right: 2rem;
 }
 
-.groups-table li {
+.teamsTable li {
     display: flex;
     width: 100%;
     height: 3rem;
@@ -292,7 +180,7 @@ ul {
     align-items: center;
 }
 
-.li-l-active {
+.lilActive {
     width: 1rem;
     height: 1rem;
     flex-shrink: 0;
@@ -300,7 +188,7 @@ ul {
     background: #00CA4E;
 }
 
-.li-l-name {
+.lilName {
     display: flex;
     width: 30.23%;
     padding-left: 2.32%;
@@ -317,7 +205,7 @@ ul {
     overflow: hidden;
 }
 
-.li-l-leader {
+.lilLeader {
     display: flex;
     width: 27.9%;
     padding-left: 2.32%;
@@ -334,7 +222,7 @@ ul {
     overflow: hidden;
 }
 
-.li-l-creation {
+.lilCreation {
     display: flex;
     width: 16.23%;
     padding-left: 2.32%;
@@ -351,7 +239,7 @@ ul {
     overflow: hidden;
 }
 
-.li-l-info {
+.lilInfo {
     display: flex;
     width: 4.65%;
     justify-content: center;
@@ -361,14 +249,14 @@ ul {
     background: none;
 }
 
-.li-l-info img {
+.lilInfo img {
     width: 2rem;
     height: 2rem;
 }
 
 
 
-.group-info-heading {
+.teamInfoHeading {
     display: flex;
 
     width: 100%;
@@ -378,16 +266,16 @@ ul {
     align-items: center;
 }
 
-.heading-title {
+.headingTitle {
     display: flex;
 
     width: 75%;
 
     align-items: center;
-    gap: 7.5%;
+    gap: 3%;
 }
 
-.heading-title p {
+.headingTitle p {
     margin: 0;
 
     color: #000;
@@ -398,7 +286,7 @@ ul {
     line-height: normal;
 }
 
-.heading-title-group-name {
+.headingTitleTeamName {
     display: flex;
     width: 74%;
     height: 100%;
@@ -415,7 +303,7 @@ ul {
     overflow: hidden;
 }
 
-.heading-activity {
+.headingActivity {
     display: flex;
     width: 21%;
     padding: 10px 0px;
@@ -424,7 +312,7 @@ ul {
     flex-shrink: 0;
 }
 
-.heading-activity p {
+.headingActivity p {
     margin: 0;
     color: #000;
     font-family: 'Inter', sans-serif;
@@ -434,7 +322,7 @@ ul {
     line-height: normal;
 }
 
-.heading-activity-status {
+.headingActivityStatus {
     display: flex;
     width: 1rem;
     height: 1rem;
@@ -443,7 +331,7 @@ ul {
     background: #00CA4E;
 }
 
-.info-body {
+.infoBody {
     display: flex;
     width: 98.3%;
     height: 515px;
@@ -453,7 +341,7 @@ ul {
     align-items: center;
 }
 
-.body-leacre {
+.bodyLeacre {
     display: flex;
 
     width: 100%;
@@ -463,7 +351,7 @@ ul {
     align-items: center;
 }
 
-.leacre-leader {
+.leacreLeader {
     display: flex;
     width: 73%;
 
@@ -472,7 +360,7 @@ ul {
     gap: 12%;
 }
 
-.leacre-leader p {
+.leacreLeader p {
     margin: 0;
 
     color: #000;
@@ -483,7 +371,7 @@ ul {
     line-height: normal;
 }
 
-.leacre-leader-name {
+.leacreLeaderName {
     color: #000;
     font-family: 'Inter', sans-serif;
     font-size: 2rem;
@@ -495,14 +383,14 @@ ul {
     white-space: nowrap;
 }
 
-.leacre-created {
+.leacreCreated {
     display: flex;
     width: 21.55%;
     justify-content: space-between;
     align-items: center;
 }
 
-.leacre-created p {
+.leacreCreated p {
     margin: 0;
     display: flex;
     width: 60.8%;
@@ -519,7 +407,7 @@ ul {
     line-height: normal;
 }
 
-.leacre-created-date {
+.leacreCreatedDate {
     color: #000;
     font-family: 'Inter', sans-serif;
     font-size: 2rem;
@@ -528,14 +416,14 @@ ul {
     line-height: normal;
 }
 
-.body-description {
+.bodyDescription {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: flex-start;
 }
 
-.body-description p {
+.bodyDescription p {
     margin: 0;
     color: #000;
     font-family: 'Inter', sans-serif;
@@ -545,7 +433,7 @@ ul {
     line-height: normal;
 }
 
-.body-description-text {
+.bodyDescriptionText {
     width: 79.5%;
     height: 120px;
     padding-right: 2rem;
@@ -561,14 +449,14 @@ ul {
     overflow-x: hidden;
 }
 
-.body-members {
+.bodyMembers {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: flex-start;
 }
 
-.body-members p {
+.bodyMembers p {
     margin: 0;
     width: 13.9%;
 
@@ -580,7 +468,7 @@ ul {
     line-height: normal;
 }
 
-.body-members-table {
+.bodyMembersTable {
     margin: 0;
 
     display: flex;
@@ -595,7 +483,7 @@ ul {
     overflow-x: hidden;
 }
 
-.body-members-table li {
+.bodyMembersTable li {
     display: flex;
     width: 100%;
     height: 3rem;
@@ -603,7 +491,7 @@ ul {
     align-items: center;
 }
 
-.li-r-namebox {
+.lirNamebox {
     display: flex;
     width: 44.285%;
     height: 30px;
@@ -611,12 +499,12 @@ ul {
     justify-content: space-between;
 }
 
-.li-r-namebox img {
+.lirNamebox img {
     width: 2rem;
     height: 2rem;
 }
 
-.li-r-namebox-name {
+.lirNameboxName {
     margin-left: 1rem;
     display: flex;
     width: 90.322%;
@@ -633,7 +521,7 @@ ul {
     white-space: nowrap;
 }
 
-.li-r-email {
+.lirEmail {
     display: flex;
     width: 47.143%;
     align-items: center;
@@ -649,7 +537,7 @@ ul {
     white-space: nowrap;
 }
 
-.li-r-remove {
+.lirRemove {
     display: flex;
     width: 2rem;
     justify-content: center;
@@ -659,12 +547,12 @@ ul {
     background: none;
 }
 
-.li-r-remove img {
+.lirRemove img {
     width: 2rem;
     height: 2rem;
 }
 
-.body-update {
+.bodyUpdate {
     display: flex;
     width: 100%;
     height: 30px;
@@ -673,7 +561,7 @@ ul {
     gap: 3%;
 }
 
-.body-update p {
+.bodyUpdate p {
     margin: 0;
     width: 15%;
 
@@ -685,7 +573,7 @@ ul {
     line-height: normal;
 }
 
-.body-update-date {
+.bodyUpdateDate {
     display: flex;
     width: 30%;
     flex-direction: column;
@@ -700,7 +588,7 @@ ul {
     line-height: normal;
 }
 
-.body-buttons {
+.bodyButtons {
     display: flex;
     width: 100%;
     justify-content: flex-end;
@@ -708,7 +596,7 @@ ul {
     gap: 1rem;
 }
 
-.body-buttons button {
+.bodyButtons button {
     display: flex;
     padding: 10px 15px;
     justify-content: center;
@@ -729,7 +617,7 @@ ul {
 
 /* footer section */
 
-.wrapper-footer-container {
+.wrapperFooterContainer {
     display: flex;
 
     width: 100%;
@@ -744,7 +632,7 @@ ul {
 
 /* left block in footer */
 
-.footer-infobox {
+.footerInfobox {
     display: flex;
 
     flex-direction: column;
@@ -754,7 +642,7 @@ ul {
     gap: 10px;
 }
 
-.footer-infobox-copyright {
+.footerInfoboxCopyright {
     margin: 0;
 
     color: #000;
@@ -767,7 +655,7 @@ ul {
     line-height: normal;
 }
 
-.footer-infobox-attribution {
+.footerInfoboxAttribution {
     margin: 0;
 
     color: #000;
@@ -782,45 +670,21 @@ ul {
 
 /* logo on the right side in footer */
 
-.wrapper-footer-container img {
+.wrapperFooterContainer img {
     width: 50px;
     height: 50px;
     margin-right: 5.2%;
 }
 
 
-
-
-::-webkit-scrollbar {
-        width: 1rem;
-    }
-    
-    ::-webkit-scrollbar-track {
-        border-radius: 10px;
-        background: rgba(0, 0, 0, 0.05);
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        background: rgba(0, 0, 0, 0.20);
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.40);
-    }
-
 @media screen and (max-width: 1750px) {
-    html {
-        font-size: 50%;
-    }  
-    
-    .heading-activity {
+    .headingActivity {
         width: auto;
         justify-content: none;
         gap: 2rem
     }
 
-    .leacre-created {
+    .leacreCreated {
         width: auto;
         gap: 2.6rem;
     }

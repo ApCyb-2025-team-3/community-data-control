@@ -1,116 +1,4 @@
-html {
-    font-size: 62.5%;
-    height: 100%;
-}
-
-body {
-    min-height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-
-    margin: 0;
-    padding: 0;
-    justify-items: center;
-    align-items: flex-start;
-}
-
-a {
-    text-decoration: none;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-
-/* Header section */
-
-.wrapper-header-container {
-    display: flex;
-
-    width: 100%;
-    height: 115px;
-
-    max-width: 1920px;
-
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* left block in header */
-
-.header-infobox {
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-    margin-left: 5.2%;
-}
-
-.header-infobox a figure {
-    margin: 0;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.header-infobox a figure img {
-    width: 7.5rem;
-    height: 7.5rem;
-}
-
-.header-infobox a figure p {
-    margin: 0;
-    margin-bottom: 1.5rem;
-
-    color: #000;
-
-    text-align: center;
-    font-family: 'M PLUS 1', sans-serif;
-    font-size: 4.8rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-}
-
-
-/* right block in header */
-
-.header-menu-obtaining {
-    display: flex;
-    width: auto;
-    justify-content: center;
-    align-items: center;
-    margin-right: 5.2%;
-}
-
-.header-menu-obtaining nav {
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-    gap: 6rem;
-}
-
-.header-menu-obtaining nav a {
-    color: #000;
-
-    text-align: center;
-    font-family: 'Inter', sans-serif;
-    font-size: 2.4rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-
-    width: auto;
-}
-
-.wrapper-blocks-container {
+.wrapperBlocksContainer {
     display: flex;
 
     width: 100%;
@@ -125,7 +13,7 @@ ul {
     gap: 15px;
 }
 
-.wrapper-blocks-container-title {
+.wrapperBlocksContainerTitle {
     margin: 0;
     /* margin-left: 11.46%; */
 
@@ -140,7 +28,7 @@ ul {
     line-height: normal;
 }
 
-.blocks-obtaining {
+.blocksObtaining {
     display: flex;
     width: 78.125%;
     flex-direction: column;
@@ -151,12 +39,12 @@ ul {
     gap: 50px;
 }
 
-.blocks-container-blocks {
+.blocksContainerBlocks {
     display: flex;
     width: 100%;
 }
 
-.block-programs {
+.blockPrograms {
     display: flex;
     width: 100%;
     height: 520px;
@@ -169,14 +57,14 @@ ul {
     border: 3px solid #000;
 }
 
-.programs-control-panel {
+.programsControlPanel {
     display: flex;
     width: 19.33%;
     justify-content: space-between;
     align-items: center;
 }
 
-.programs-control-panel p {
+.programsControlPanel p {
     margin: 0;
 
     color: #000;
@@ -188,7 +76,7 @@ ul {
     line-height: normal;
 }
 
-.programs-control-panel button {
+.programsControlPanel button {
     display: flex;
 
     width: 3rem;
@@ -204,12 +92,12 @@ ul {
     background: none;
 }
 
-.programs-control-panel button img {
+.programsControlPanel button img {
     width: 1.5rem;
     height: 1.5rem;
 }
 
-.programs-table {
+.programsTable {
     display: flex;
     width: 100%;
     flex-direction: column;
@@ -217,7 +105,7 @@ ul {
     gap: 5px;
 }
 
-.programs-table-titles {
+.programsTableTitles {
     display: flex;
     width: 100%;
     height: 3rem;
@@ -226,7 +114,7 @@ ul {
     align-items: center;
 }
 
-.programs-table-titles p {
+.programsTableTitles p {
     margin: 0;
     color: #000;
     font-family: 'Inter', sans-serif;
@@ -236,19 +124,19 @@ ul {
     line-height: normal;
 }
 
-.titles-mentor, .titles-mentee {
+.titlesMentor, .titlesMentee {
     width: 31.4%;
 }
 
-.titles-start-date, .titles-end-date {
+.titlesStartDate, .titlesEndDate {
     width: 8.33%;
 }
 
-.titles-complete {
+.titlesComplete {
     width: 7.33%;
 }
 
-.programs-table-body {
+.programsTableBody {
     display: flex;
     width: calc(100% + 1rem);
     height: 405px;
@@ -259,7 +147,7 @@ ul {
     overflow-x: hidden;
 }
 
-.programs-table-body li {
+.programsTableBody li {
     display: flex;
     width: 100%;
     height: 3rem;
@@ -267,7 +155,7 @@ ul {
     align-items: center;
 }
 
-.programs-table-body-mentor, .programs-table-body-mentee {
+.programsTableBodyMentor, .programsTableBodyMentee {
     display: flex;
     width: 31.4%;
     height: 3rem;
@@ -284,7 +172,7 @@ ul {
     white-space: nowrap;
 }
 
-.programs-table-body-start-date, .programs-table-body-end-date {
+.programsTableBodyStartDate, .programsTableBodyEndDate {
     display: flex;
     width: 8.33%;
     justify-content: center;
@@ -300,7 +188,7 @@ ul {
     white-space: nowrap;  
 }
 
-.programs-table-body-complete {
+.programsTableBodyComplete {
     display: flex;
     width: 7.33%;
     justify-content: center;
@@ -310,20 +198,20 @@ ul {
     background: none;
 }
 
-.programs-table-body-complete img {
+.programsTableBodyComplete img {
     width: 2rem;
     height: 2rem;
 }
 
 
-.blocks-fre-men {
+.blocksFreMen {
     display: flex;
     width: calc(106.25% + 1rem);
     align-items: flex-start;
     gap: 50px;
 }
 
-.free-mentors {
+.freeMentors {
     display: flex;
     width: 25%;
     height: 200px;
@@ -336,7 +224,7 @@ ul {
     border: 3px solid #000;
 }
 
-.free-mentors-title {
+.freeMentorsTitle {
     margin: 0;
     
     display: flex;
@@ -356,7 +244,7 @@ ul {
     line-height: normal;
 }
 
-.free-mentors-table {
+.freeMentorsTable {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -369,7 +257,7 @@ ul {
     overflow-x: hidden;
 }
 
-.free-mentors-table li {
+.freeMentorsTable li {
     margin: 0;
 
     display: flex;
@@ -378,7 +266,7 @@ ul {
     align-items: center;
 }
 
-.free-mentors-table li div {
+.freeMentorsTable li div {
     width: 100%;
     height: 3rem;
 
@@ -395,7 +283,7 @@ ul {
     white-space: nowrap;
 }
 
-.block-mentee-by-mentor {
+.blockMenteeByMentor {
     display: flex;
     width: 30%;
     height: 200px;
@@ -408,7 +296,7 @@ ul {
     border: 3px solid #000;
 }
 
-.mentee-by-mentor-heading {
+.menteeByMentorHeading {
     display: flex;
     width: 100%;
     height: 40px;
@@ -416,7 +304,7 @@ ul {
     justify-content: space-between;
 }
 
-.mentee-by-mentor-heading p {
+.menteeByMentorHeading p {
     margin: 0;
     display: flex;
     height: 3rem;
@@ -431,7 +319,7 @@ ul {
     line-height: normal;
 }
 
-.mentee-by-mentor-heading form {
+.menteeByMentorHeading form {
     display: flex;
     width: 176px;
     height: 40px;
@@ -442,7 +330,7 @@ ul {
     border: 2px solid #000;
 }
 
-.mentee-by-mentor-heading form input {
+.menteeByMentorHeading form input {
     width: 70%;
     height: 100%;
 
@@ -461,7 +349,7 @@ ul {
 }
 
 
-.mentee-by-mentor-heading form button {
+.menteeByMentorHeading form button {
     display: flex;
     width: 30px;
     justify-content: center;
@@ -471,12 +359,12 @@ ul {
     background: none;
 }
 
-.mentee-by-mentor-heading form button img {
+.menteeByMentorHeading form button img {
     width: 2rem;
     height: 2rem;
 }
 
-.mentors-by-mentee-table {
+.mentorsByMenteeTable {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -489,7 +377,7 @@ ul {
     overflow-x: hidden;
 }
 
-.mentors-by-mentee-table li {
+.mentorsByMenteeTable li {
     margin: 0;
 
     display: flex;
@@ -498,7 +386,7 @@ ul {
     align-items: center;
 }
 
-.mentors-by-mentee-table li div {
+.mentorsByMenteeTable li div {
     width: 100%;
     height: 3rem;
 
@@ -518,7 +406,7 @@ ul {
 
 /* footer section */
 
-.wrapper-footer-container {
+.wrapperFooterContainer {
     display: flex;
 
     width: 100%;
@@ -533,7 +421,7 @@ ul {
 
 /* left block in footer */
 
-.footer-infobox {
+.footerInfobox {
     display: flex;
 
     flex-direction: column;
@@ -543,7 +431,7 @@ ul {
     gap: 10px;
 }
 
-.footer-infobox-copyright {
+.footerInfoboxCopyright {
     margin: 0;
 
     color: #000;
@@ -556,7 +444,7 @@ ul {
     line-height: normal;
 }
 
-.footer-infobox-attribution {
+.footerInfoboxAttribution {
     margin: 0;
 
     color: #000;
@@ -571,37 +459,8 @@ ul {
 
 /* logo on the right side in footer */
 
-.wrapper-footer-container img {
+.wrapperFooterContainer img {
     width: 50px;
     height: 50px;
     margin-right: 5.2%;
-}
-
-
-
-
-
-
-::-webkit-scrollbar {
-    width: 1rem;
-}
-
-::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.05);
-}
-
-::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.20);
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.40);
-}
-
-@media screen and (max-width: 1750px) {
-    html {
-        font-size: 50%;
-    }  
 }
