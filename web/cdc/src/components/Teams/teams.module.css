@@ -1,0 +1,692 @@
+/* blocks section */
+
+.wrapperBlocks {
+    display: flex;
+
+    width: 100%;
+
+    max-width: 1920px;
+
+    margin-top: 20px;
+    margin-bottom: 70px;
+    flex-direction: column;
+    /* align-items: center; */
+    gap: 35px;
+}
+
+.wrapperBlocks p {
+    margin: 0;
+    margin-left: 5.73%;
+    /* width: 99%; */
+
+    color: #000;
+
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 3.6rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.blocksObtaining {
+    display: flex;
+    width: 83.33%;
+
+    margin-left: 8.33%;
+
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.leftBlock {
+    display: flex;
+    width: 42%;
+    height: 540px;
+    padding: 35px 45px;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    border-radius: 30px;
+    border: 3px solid #000;
+}
+
+.rightBlock {
+    display: flex;
+    width: 54.5%;
+    height: 540px;
+    padding: 35px 45px;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+    border-radius: 30px;
+    border: 3px solid #000;
+}
+
+.teamsControlPanel {
+    display: flex;
+    width: 100%;
+    height: 32px;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.panelAddTeam {
+    display: flex;
+    width: 35.55%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.panelAddTeam p {
+    color: #000;
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.panelAddTeamButton {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 10px;
+    border: 2px solid #000;
+
+    background: none;
+}
+
+.panelAddTeamButton img {
+    width: 15px;
+    height: 15px;
+}
+
+.panelSwitch {
+    display: flex;
+    width: 40.66%;
+    height: 32px;
+
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.switchAll {
+    padding: 0;
+
+    width: 60px;
+
+    color: #000;
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+
+    border: 0;
+    background: none;
+}
+
+.switchActive {
+    padding: 0;
+
+    width: 120px;
+
+    color: rgba(0, 0, 0, 0.50);
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+
+    border: 0;
+    background: none;
+}
+
+.teamsTable {
+    display: flex;
+    width: 91%;
+    height: 523px;
+    flex-direction: column;
+    align-items: flex-start;
+
+    overflow: scroll;
+    overflow-x: hidden;
+
+    padding-right: 2rem;
+}
+
+.teamsTable li {
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    /* padding: 6px 10px; */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lilActive {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #00CA4E;
+}
+
+.lilName {
+    display: flex;
+    width: 30.23%;
+    padding-left: 2.32%;
+    align-items: center;
+
+    color: #000;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+}
+
+.lilLeader {
+    display: flex;
+    width: 27.9%;
+    padding-left: 2.32%;
+    align-items: center;
+
+    color: #000;
+    
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+}
+
+.lilCreation {
+    display: flex;
+    width: 16.23%;
+    padding-left: 2.32%;
+    align-items: center;
+
+    color: #000;
+    
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+}
+
+.lilInfo {
+    display: flex;
+    width: 4.65%;
+    justify-content: center;
+    align-items: center;
+
+    border: 0;
+    background: none;
+}
+
+.lilInfo img {
+    width: 2rem;
+    height: 2rem;
+}
+
+
+
+.teamInfoHeading {
+    display: flex;
+
+    width: 100%;
+    height: 40px;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+.headingTitle {
+    display: flex;
+
+    width: 75%;
+
+    align-items: center;
+    gap: 3%;
+}
+
+.headingTitle p {
+    margin: 0;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 3.2rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.headingTitleTeamName {
+    display: flex;
+    width: 74%;
+    height: 100%;
+    padding: 5px 0px;
+    align-items: center;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+}
+
+.headingActivity {
+    display: flex;
+    width: 21%;
+    padding: 10px 0px;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.headingActivity p {
+    margin: 0;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.headingActivityStatus {
+    display: flex;
+    width: 1rem;
+    height: 1rem;
+
+    border-radius: 20px;
+    background: #00CA4E;
+}
+
+.infoBody {
+    display: flex;
+    width: 98.3%;
+    height: 515px;
+    padding-left: 1.5rem;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bodyLeacre {
+    display: flex;
+
+    width: 100%;
+    height: 40px;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leacreLeader {
+    display: flex;
+    width: 73%;
+
+    padding: 10px 0px;
+    align-items: center;
+    gap: 12%;
+}
+
+.leacreLeader p {
+    margin: 0;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.leacreLeaderName {
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.leacreCreated {
+    display: flex;
+    width: 21.55%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leacreCreated p {
+    margin: 0;
+    display: flex;
+    width: 60.8%;
+    height: 40px;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.leacreCreatedDate {
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.bodyDescription {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.bodyDescription p {
+    margin: 0;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.bodyDescriptionText {
+    width: 79.5%;
+    height: 120px;
+    padding-right: 2rem;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.bodyMembers {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.bodyMembers p {
+    margin: 0;
+    width: 13.9%;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.bodyMembersTable {
+    margin: 0;
+
+    display: flex;
+    width: 80%;
+    height: 210px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-right: 2rem;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.bodyMembersTable li {
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lirNamebox {
+    display: flex;
+    width: 44.285%;
+    height: 30px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lirNamebox img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.lirNameboxName {
+    margin-left: 1rem;
+    display: flex;
+    width: 90.322%;
+    align-items: center;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.lirEmail {
+    display: flex;
+    width: 47.143%;
+    align-items: center;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.lirRemove {
+    display: flex;
+    width: 2rem;
+    justify-content: center;
+    align-items: center;
+
+    border: 0;
+    background: none;
+}
+
+.lirRemove img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.bodyUpdate {
+    display: flex;
+    width: 100%;
+    height: 30px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 3%;
+}
+
+.bodyUpdate p {
+    margin: 0;
+    width: 15%;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.bodyUpdateDate {
+    display: flex;
+    width: 30%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.bodyButtons {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bodyButtons button {
+    display: flex;
+    padding: 10px 15px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 2px solid #000;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    background: none;
+}
+
+
+/* footer section */
+
+.wrapperFooterContainer {
+    display: flex;
+
+    width: 100%;
+    height: 115px;
+
+    max-width: 1920px;
+
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* left block in footer */
+
+.footerInfobox {
+    display: flex;
+
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 5.2%;
+
+    gap: 10px;
+}
+
+.footerInfoboxCopyright {
+    margin: 0;
+
+    color: #000;
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.footerInfoboxAttribution {
+    margin: 0;
+
+    color: #000;
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+/* logo on the right side in footer */
+
+.wrapperFooterContainer img {
+    width: 50px;
+    height: 50px;
+    margin-right: 5.2%;
+}
+
+
+@media screen and (max-width: 1750px) {
+    .headingActivity {
+        width: auto;
+        justify-content: none;
+        gap: 2rem
+    }
+
+    .leacreCreated {
+        width: auto;
+        gap: 2.6rem;
+    }
+}
+
