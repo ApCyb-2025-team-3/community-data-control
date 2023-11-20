@@ -200,15 +200,10 @@ public class UserController {
 
     @GetMapping("/getUsersByPartialName")
     public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
-        try {
-                return new ResponseEntity<>(
-                        userRepository.findByNameContaining(partialName).stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatus.OK);
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(
+                userRepository.findByNameContaining(partialName).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatus.OK);
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
