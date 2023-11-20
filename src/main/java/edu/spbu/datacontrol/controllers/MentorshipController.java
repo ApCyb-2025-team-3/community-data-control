@@ -100,7 +100,7 @@ public class MentorshipController {
     public ResponseEntity<List<UserDTO>> getFreeMentors(){
         try {
             return new ResponseEntity<>(
-                userRepository.getFreeUsersByMentorStatus(MentorshipStatus.MENTOR)
+                userRepository.getFreeMentors()
                     .stream()
                     .map(UserDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
@@ -113,7 +113,7 @@ public class MentorshipController {
     public ResponseEntity<List<UserDTO>> getFreeMentees(){
         try {
             return new ResponseEntity<>(
-                userRepository.getFreeUsersByMentorStatus(MentorshipStatus.MENTEE)
+                userRepository.getFreeMentees()
                     .stream()
                     .map(UserDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));

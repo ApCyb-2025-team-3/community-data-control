@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -50,7 +49,11 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> findByNameContaining(String partialName);
 
-    @Query("SELECT u FROM User u WHERE u.mentorStatus =:mentorStatus  " +
-            "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id OR m.mentee.id = u.id)")
-    List<User> getFreeUsersByMentorStatus(@Param("mentorStatus") MentorshipStatus mentorStatus);
+    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'mentor' " +
+            "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id)")
+    List<User> getFreeMentors();
+
+    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'mentee' " +
+            "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentee.id = u.id)")
+    List<User> getFreeMentees();
 }
