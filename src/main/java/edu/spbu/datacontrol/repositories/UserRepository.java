@@ -43,5 +43,5 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByProjectAndIsActiveTrue(String project);
 
-    List<User> getUsersByPartialName(String partialName);
+    List<User> findByNameContaining(String partialName);
 }
