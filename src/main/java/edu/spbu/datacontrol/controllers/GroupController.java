@@ -104,6 +104,20 @@ public class GroupController {
 
     }
 
+    @GetMapping("getUserGroups")
+    public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId) {
+        User user = userRepository.getUserById(userId);
+        return new ResponseEntity<>(groupRepository.getGroupsByMembersContains(user)
+                .stream().map(GroupDTO::new).toList(), HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("getActiveMembers")
+    public ResponseEntity<List<UserDTO>> getActiveMembers(@RequestParam UUID groupId) {
+        Group group = groupRepository.findById(groupId).orElse(null);
+        return new ResponseEntity<>(userRepository.getUsersByGroupsContainsAndIsActiveTrue(group)
+                .stream().map(UserDTO::new).toList(), HttpStatusCode.valueOf(200));
+    }
+
     @PatchMapping("/exclude")
     public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
         Group group = groupRepository.findById(groupId).orElse(null);

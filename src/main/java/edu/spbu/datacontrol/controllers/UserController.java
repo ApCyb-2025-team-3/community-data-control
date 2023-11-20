@@ -198,6 +198,14 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/getUsersByPartialName")
+    public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
+        return new ResponseEntity<>(
+                userRepository.findByNameContaining(partialName).stream()
+                        .map(UserDTO::new)
+                        .toList(), HttpStatus.OK);
+    }
+
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
 
         List<User> possibleSupervisors = userRepository.getUsersByNameAndRole(supervisorName,
