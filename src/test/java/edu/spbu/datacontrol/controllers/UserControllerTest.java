@@ -302,14 +302,14 @@ class UserControllerTest {
     void getUsersByPartialNameTest() throws Exception {
 
         UserAdditionDTO user1 = generateSimpleUser();
-        user1.setName("JohnDoe");
+        user1.setName("John Mason");
         addUser(user1);
 
         UserAdditionDTO user2 = generateSimpleUser();
-        user2.setName("JaneDoe");
+        user2.setName("John Wick");
         addUser(user2);
 
-        String partialName = "Doe";
+        String partialName = "John";
 
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByPartialName").param("partialName", partialName)
