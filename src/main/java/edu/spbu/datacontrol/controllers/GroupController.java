@@ -2,6 +2,7 @@ package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.GroupType;
+import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,7 @@ public class GroupController {
             User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
 
+            userRepository.save(teamLead);
             groupRepository.save(newGroup);
 
         } catch (Exception e) {
@@ -136,6 +138,7 @@ public class GroupController {
             currentMembers.add(teamLead);
         }
         group.setTeamLead(teamLead);
+        teamLead.setRole(Role.TEAM_LEAD);
     }
 
     private boolean isInWorkTeam (User user) {
