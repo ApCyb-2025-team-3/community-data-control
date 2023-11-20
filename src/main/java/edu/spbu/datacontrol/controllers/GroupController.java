@@ -35,13 +35,9 @@ public class GroupController {
                 return new ResponseEntity<>("A group with this name already exists!", HttpStatusCode.valueOf(409));
             }
             Group newGroup = new Group(groupInfoDTO);
-
-
             User teamLead = userRepository.getUserById(teamLeadDTO.getId());
             assignTeamLead(newGroup, teamLead);
-
             groupRepository.save(newGroup);
-
         } catch (Exception e) {
             return new ResponseEntity<>(
                 e.getMessage(),

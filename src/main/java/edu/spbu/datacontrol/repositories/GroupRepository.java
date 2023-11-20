@@ -15,6 +15,4 @@ public interface GroupRepository extends CrudRepository<Group, UUID> {
     Group getGroupByName(String name);
 
     List<Group> getGroupsByIsActiveTrue();
-
-
 }
