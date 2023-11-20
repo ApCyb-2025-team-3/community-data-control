@@ -151,6 +151,7 @@ public class GroupController {
         if (!currentMembers.contains(teamLead)) {
             currentMembers.add(teamLead);
         }
+        group.getTeamLead().setRole(Role.MEMBER);
         group.setTeamLead(teamLead);
         teamLead.setRole(Role.TEAM_LEAD);
     }
