@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.models;
 
 
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
+    @NotNull
     private UUID id;
 
     private String name;

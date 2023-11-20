@@ -49,9 +49,6 @@ public class User {
     @ManyToOne
     private User supervisor;
 
-    @ManyToOne
-    private User teamLead;
-
     @OneToMany
     private List<User> productOwners;
 
