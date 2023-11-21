@@ -100,9 +100,8 @@ public class MentorshipController {
     public ResponseEntity<List<UserDTO>> getFreeMentors(){
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                userRepository.getFreeMentors()
                     .stream()
-                    .filter(user -> isInMentorship(user.getId()))
                     .map(UserDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
         }catch (IllegalArgumentException e){
@@ -114,9 +113,8 @@ public class MentorshipController {
     public ResponseEntity<List<UserDTO>> getFreeMentees(){
         try {
             return new ResponseEntity<>(
-                userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
+                userRepository.getFreeMentees()
                     .stream()
-                    .filter(user -> isInMentorship(user.getId()))
                     .map(UserDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
         }catch (IllegalArgumentException e){
