@@ -70,8 +70,7 @@ class UserControllerTest {
 
         String description = "Testing dismiss";
         String response = this.mockMvc.perform(
-                        post("/api/user/dismissUserById")
-                                .param("userId", id.toString())
+                        post("/api/user/" + id.toString() + "/dismiss")
                                 .param("description", description))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -88,8 +87,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
 
-        this.mockMvc.perform(post("/api/user/dismissUserById")
-                .param("userId", userId.toString())
+        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
@@ -226,8 +224,7 @@ class UserControllerTest {
         addUser(user);
 
         UUID userId = getUserId(user);
-        this.mockMvc.perform(post("/api/user/dismissUserById")
-                .param("userId", userId.toString())
+        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
@@ -252,7 +249,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         String userJson = this.mockMvc.perform(
-                get("/api/user/getFullUserInfoById").param("userId", userId.toString())
+                get("/api/user/" + userId.toString() + "/fullInfo")
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         UserInfoDTO result = objectMapper.readValue(userJson, UserInfoDTO.class);
@@ -340,7 +337,7 @@ class UserControllerTest {
     private UserDTO getUserById(UUID userId) throws Exception {
 
         String userJson = this.mockMvc.perform(
-                get("/api/user/getUserById").param("userId", userId.toString())
+                get("/api/user/" + userId.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         return objectMapper.readValue(userJson, UserDTO.class);
