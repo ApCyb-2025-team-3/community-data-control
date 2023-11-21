@@ -85,7 +85,7 @@ class UserControllerTest {
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
-        UUID userId = getUserId(user.getName());
+        UUID userId = getUserId(user);
 
         this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
                 .param("description", "For testing purpose.")
@@ -122,7 +122,7 @@ class UserControllerTest {
 
         addUser(subordinate);
 
-        UUID supervisorId = getUserId(supervisor.getName());
+        UUID supervisorId = getUserId(supervisor);
 
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersBySupervisorId").param("supervisorId", supervisorId.toString())
@@ -179,7 +179,7 @@ class UserControllerTest {
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
-        UUID userId = getUserId(user.getName());
+        UUID userId = getUserId(user);
         UserDTO result = getUserById(userId);
 
         assertEquals(userId, result.getId());
@@ -197,7 +197,7 @@ class UserControllerTest {
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
-        UUID userId = getUserId(user.getName());
+        UUID userId = getUserId(user);
 
         UserDataChangeDTO newUserData = new UserDataChangeDTO();
         newUserData.setUserId(userId);
@@ -223,7 +223,7 @@ class UserControllerTest {
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
-        UUID userId = getUserId(user.getName());
+        UUID userId = getUserId(user);
         this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
@@ -247,7 +247,7 @@ class UserControllerTest {
         user.setSupervisorName(supervisor.getName());
         addUser(user);
 
-        UUID userId = getUserId(user.getName());
+        UUID userId = getUserId(user);
         String userJson = this.mockMvc.perform(
                 get("/api/user/" + userId.toString() + "/fullInfo")
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -269,7 +269,7 @@ class UserControllerTest {
         UserAdditionDTO user = generateSimpleUser();
         addUser(user);
 
-        UUID userId = getUserId(user.getName());
+        UUID userId = getUserId(user);
         this.mockMvc.perform(post("/api/user/changeUserGrade")
                 .param("userId", userId.toString())
                 .param("grade", "Senior")
@@ -319,7 +319,7 @@ class UserControllerTest {
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
     }
 
-    private UUID getUserId(String userName) throws Exception {
+    private UUID getUserIdByName(String userName) throws Exception {
 
         String usersListJson = this.mockMvc.perform(
                 get("/api/user/getUsersByPartialName").param("partialName", userName)
@@ -333,6 +333,8 @@ class UserControllerTest {
 
         return possibleUser.get().getId();
     }
+
+    private UUID getUserId(UserAdditionDTO user) throws Exception { return getUserIdByName(user.getName()); }
 
     private UserDTO getUserById(UUID userId) throws Exception {
 
