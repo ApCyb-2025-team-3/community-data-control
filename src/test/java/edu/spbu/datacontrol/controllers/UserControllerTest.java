@@ -322,7 +322,7 @@ class UserControllerTest {
     private UUID getUserId(String userName) throws Exception {
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByPartialName").param("role", userName)
+                get("/api/user/getUsersByPartialName").param("partialName", userName)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
