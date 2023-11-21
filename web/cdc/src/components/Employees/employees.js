@@ -1,11 +1,10 @@
 import { Helmet } from 'react-helmet';
 import classes from './employees.module.css';
-import search from '../../icons/search-icon.svg';
 import arrow from '../../icons/down-arrow-icon.svg';
-import info from '../../icons/info-icon.svg';
 import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
+import InputField from './components/InputField';
 
 function Employees() {
     return (
@@ -18,169 +17,7 @@ function Employees() {
             <p className={`${classes.bodyTitle}`}>Сотрудники</p>
             <div className={`${classes.bodyBlocksObtaining}`}>
                 <div className={`${classes.upperBlocks}`}>
-                <div className={`${classes.listBlock}`}>
-                    <div className={`${classes.listBlockControlPanel}`}>
-                    <button className={`${classes.controlPanelAddButton}`}>+ сотрудника</button>
-                    <form action="">
-                        <input placeholder="Name" />
-                        <button>
-                        <img src={search} alt="search" />
-                        </button>
-                    </form>
-                    </div>
-                    <ul className={`${classes.listBlockTable}`}>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.liName}`}>Korolyov Vassili Ilyich</div>
-                        <button>
-                        <img src={info} alt="info" />
-                        </button>
-                    </li>
-                    </ul>
-                </div>
+                <InputField />
                 <div className={`${classes.mainInfoBlock}`}>
                     <div className={`${classes.mainInfoHeading}`}>
                     <p>Сотрудник:</p>
