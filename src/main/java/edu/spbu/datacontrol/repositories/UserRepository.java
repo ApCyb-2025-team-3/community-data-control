@@ -49,11 +49,11 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> findByNameContaining(String partialName);
 
-    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'mentor' " +
+    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTOR' " +
             "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id)")
     List<User> getFreeMentors();
 
-    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'mentee' " +
+    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTEE' " +
             "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentee.id = u.id)")
     List<User> getFreeMentees();
 }
