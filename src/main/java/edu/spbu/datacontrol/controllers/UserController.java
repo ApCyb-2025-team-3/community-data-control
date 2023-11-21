@@ -43,8 +43,8 @@ public class UserController {
         return new ResponseEntity<>("User successfully added.", HttpStatus.CREATED);
     }
 
-    @GetMapping("/getUserById")
-    public ResponseEntity<UserDTO> getUserById(@RequestParam UUID userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable UUID userId) {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
@@ -54,8 +54,8 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/getFullUserInfoById")
-    public ResponseEntity<UserInfoDTO> getFullUserInfoById(@RequestParam UUID userId) {
+    @GetMapping("/{userId}/fullInfo")
+    public ResponseEntity<UserInfoDTO> getFullUserInfoById(@PathVariable UUID userId) {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
@@ -140,8 +140,8 @@ public class UserController {
                         .toList(), HttpStatus.OK);
     }
 
-    @PostMapping("/dismissUserById")
-    public ResponseEntity<String> dismissUserById(@RequestParam UUID userId,
+    @PostMapping("/{userId}/dismiss")
+    public ResponseEntity<String> dismissUserById(@PathVariable UUID userId,
                                                   @RequestParam String description) {
 
         User dismissedUser = userRepository.findById(userId).orElse(null);
