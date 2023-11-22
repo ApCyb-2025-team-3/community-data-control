@@ -196,16 +196,16 @@ const Employees = () => {
                                 className={`${classes.listLiInfoName}`}>{userDto.name}</div>
                             <div className={`${classes.listLiInfoRoleProj}`}>
                                 <div
-                                    className={`${classes.listLiInfoRoleProjTitles}`}>
-                                    <div>Роль:</div>
-                                    <div>Проект:</div>
+                                    className={`${classes.listLiInfoRoleProjRoleBox}`}>
+                                    <p>Роль:</p>
+                                    <div
+                                        className={`${classes.roleProjRoleBoxRole}`}>{userDto.role}</div>
                                 </div>
                                 <div
-                                    className={`${classes.listLiInfoRoleProjBox}`}>
+                                    className={`${classes.listLiInfoRoleProjProjBox}`}>
+                                    <p>Проект:</p>
                                     <div
-                                        className={`${classes.roleProjBoxRole}`}>{userDto.role}</div>
-                                    <div
-                                        className={`${classes.roleProjBoxProject}`}>{userDto.project
+                                        className={`${classes.roleProjRojBoxProj}`}>{userDto.project
                                     !== "" ? userDto.project : "Нет"}</div>
                                 </div>
                             </div>
@@ -235,31 +235,33 @@ const Employees = () => {
                         </div>
                         <div className={`${classes.lPartInfo}`}>
                             <div className={`${classes.lPartInfoCol1Title}`}>
-                                <p>Email</p>
-                                <p>Телефон</p>
-                                <p>Отдел</p>
-                                <p>Позиция</p>
-                                <p>Роль</p>
+                                <p>Email:</p>
+                                <p>Телефон:</p>
+                                <p>Дата рождения:</p>
+                                <p>Подразделение:</p>
+                                <p>Позиция:</p>
+                                <p>Роль:</p>
                             </div>
                             <div className={`${classes.lPartInfoCol1Data}`}>
                                 <div className={`${classes.lPartInfoCol1DataEmail}`}>ocariz@bola389.bid</div>
                                 <div className={`${classes.lPartInfoCol1Project}`}>
                                     +7 (800) 555 35-35
                                 </div>
+                                <div className={`${classes.lPartInfoCol2DataDoB}`}>01.01.1900</div>
                                 <div className={`${classes.lPartInfoCol1DataDep}`}>Data Science</div>
                                 <div className={`${classes.lPartInfoCol1DataGrade}`}>Senior</div>
                                 <div className={`${classes.lPartInfoCol1DataRole}`}>Scala-developer</div>
                             </div>
                             <div className={`${classes.lPartInfoCol2Title}`}>
-                                <p>Проект</p>
-                                <p>Дата рождения</p>
-                                <p>Руководитель</p>
-                                <div className={`${classes.lPartInfoCol2TitleDoB}`}>Product<br></br>Owners</div>
+                                <p>Проект:</p>
+                                <p>Назначен:</p>
+                                <p>Руководитель:</p>
+                                <div className={`${classes.lPartInfoCol2TitlePrOwn}`}>Product<br></br>Owners:</div>
                             </div>
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>Apache Kafka</div>
-                                <div className={`${classes.lPartInfoCol2DataDoB}`}>01.01.1900</div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>Donald Trump</div>
+                                <div className={`${classes.lPartInfoCol2DataConnected}`}>33.33.3333</div>
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                     <li>
                                         <img src={dot} alt="dot" />
@@ -288,22 +290,30 @@ const Employees = () => {
                                 <div className={`${classes.activityStatus}`} />
                             </div>
                             <div className={`${classes.rPartInfoConnected}`}>
-                                <p>Присоед.:</p>
-                                <div className={`${classes.connectedDate}`}>23.09</div>
+                                <p>Присоединился:</p>
+                                <div className={`${classes.connectedDate}`}>23.09.3333</div>
+                            </div>
+                            <div className={`${classes.rPartInfoFired}`}>
+                                <p>Уволен:</p>
+                                <div className={`${classes.firedDate}`} >23.09.3333</div>
+                            </div>
+                            <div className={`${classes.rPartInfoReason}`}>
+                                <p>Причина:</p>
+                                <div className={`${classes.reason}`} >Воровал кофе</div>
                             </div>
                         </div>
                         <div className={`${classes.rPartButtons}`}>
                             <button className={`${classes.buttonTeamsGroups}`}>
                                 <img src={arrow} alt="arrow" />
-                                <p>Команды / группы</p>
+                                <p>Команды / Группы</p>
                             </button>
                             <button className={`${classes.buttonMentorship}`}>
                                 <img src={arrow} alt="arrow" />
                                 <p>Менторство</p>
                             </button>
-                            <button className={`${classes.buttonEdit}`}>Внести изменения</button>
+                            <button className={`${classes.buttonEdit}`} style={{ display: "none" }}>Внести изменения</button>
                             <Popup trigger=
-                                       {<button className={`${classes.buttonEdit}`}>
+                                       {<button className={`${classes.buttonEdit}`} style={{ display: "none" }}>
                                            Уволить
                                        </button>}
                                    modal nested>
