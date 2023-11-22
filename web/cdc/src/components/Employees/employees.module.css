@@ -724,6 +724,12 @@
     background: none;
     border-radius: 10px;
     border: 2px solid #000;
+
+    transition: all 0.15s ease; 
+}
+
+.buttonTeamsGroups:hover, .buttonMentorship:hover {
+    box-shadow: 0 0 5px 1px #808080;
 }
 
 .buttonTeamsGroups img, .buttonMentorship img {
@@ -761,6 +767,12 @@
     background: none;
     border-radius: 10px;
     border: 2px solid #000;
+    
+    transition: all 0.15s ease; 
+}
+
+.buttonEdit:hover {
+    box-shadow: 0 0 5px 1px #808080;
 }
 
 
@@ -871,7 +883,7 @@
     align-items: flex-start;
 
     overflow: scroll;
-    overflow-x: hidden;
+    overflow-x: hidden; 
 }
 
 .teamGroupsBlockDataGroups li {
@@ -896,6 +908,13 @@
 
     background: none;
     border: 0;
+    border-radius: 2rem;
+
+    transition: all 0.15s ease;
+}
+
+.teamGroupsBlockDataGroups button:hover {
+    box-shadow: 0 0 5px 1px #808080;
 }
 
 .dataGroupsName {
