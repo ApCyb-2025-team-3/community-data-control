@@ -27,11 +27,33 @@ class Employees extends React.Component {
         {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"}
     ]
 
-    getUsersByGrade (role) {
-        console.log(role)
+    async getUsersByGrade (grade) {
+
+        const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getUsersByGrade"
+
+        try {
+            const response = await fetch(url + "?grade=" + grade, {
+                method: "GET",
+                headers: {
+                    "Origin": "http://localhost:3000",
+                },
+            });
+
+            if (response.ok) {
+                const userDtoList = await response.json()
+                this.setState({
+                    userList: userDtoList
+                })
+
+            } else {
+                console.error("HTTP error:" + response.status + "\n" + response.statusText)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
     }
 
-    // Don't remove
     handleUserSelection = (userId) => {
         this.setState({
             selectedUserId: userId
