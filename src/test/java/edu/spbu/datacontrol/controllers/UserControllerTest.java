@@ -19,11 +19,7 @@ import edu.spbu.datacontrol.models.UserInfoDTO;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -290,8 +286,10 @@ class UserControllerTest {
         String newProjectName = "new project";
         this.mockMvc.perform(post("/api/user/changeUserProject")
                 .param("userId", userId.toString())
-                .param("project", newProjectName)
-                .param("reason", "For testing purpose.")
+                .param("newProject", newProjectName)
+                .param("newSupervisor", "")
+                .param("newDepartment", "")
+                .param("dateOfChange", LocalDate.now().toString())
         ).andExpect(status().isOk());
 
         UserDTO modifiedUser = getUserById(userId);

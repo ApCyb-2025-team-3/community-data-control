@@ -200,14 +200,26 @@ public class UserController {
     }
 
     @PostMapping("/changeUserProject")
-    public ResponseEntity<String> changeUserProject(@RequestParam UUID userId, @RequestParam String project,
-                                                    @RequestParam String reason) {
+    public ResponseEntity<String> changeUserProject(@RequestParam UUID userId, @RequestParam String newProject,
+                                                    @RequestParam String newSupervisor,
+                                                    @RequestParam String newDepartment,
+                                                    @RequestParam String dateOfChange) {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            user.setProject(project);
+            user.setProject(newProject);
+            List<User> possibleSupervisors = userRepository.getUsersByName(newSupervisor);
+            User supervisor = null;
+            if (!possibleSupervisors.isEmpty()) {
+                supervisor = possibleSupervisors.get(0);
+            }
+            user.setSupervisor(supervisor);
+            user.setDepartment(newDepartment);
             userRepository.save(user);
-            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT, reason));
+            String eventDescription =
+                    String.format("new project: %s%n new supervisor: %s%n new department: %s%n date: %s",
+                            newProject, newSupervisor, newDepartment, dateOfChange);
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT, eventDescription));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }
