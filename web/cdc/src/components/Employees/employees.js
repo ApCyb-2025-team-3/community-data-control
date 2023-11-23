@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import {Helmet} from 'react-helmet';
 import classes from './employees.module.css';
 import add from '../../icons/add-icon.svg'
 import search from '../../icons/search-icon.svg';
@@ -6,19 +6,17 @@ import arrow from '../../icons/down-arrow-icon.svg';
 import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
-import React from "react";
+import React, {useState} from "react";
 
-class Employees extends React.Component {
+const Employees = () => {
 
-    constructor(props) {
-        super(props)
-        this.state = {
+    const [state, setState] = useState({
             selectedUserId: -1,
-            userList : []
+            userList: [],
         }
-    }
+    )
 
-    testUserList = [
+    const testUserList = [
         {userId: 0, name: "Somehow", role: "Team Lead", project: ""},
         {userId: 1, name: "I", role: "Developer", project: "Apache Kafka"},
         {userId: 2, name: "Know", role: "Team Lead", project: "Apache Kafka"},
@@ -32,72 +30,50 @@ class Employees extends React.Component {
         {userId: 10, name: "I", role: "Developer", project: "Apache Kafka"},
     ]
 
-    async getUsersByRole (role) {
+    async function getUsersByRole (role) {
 
         if (role === "") {
             return []
         }
 
-        const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getUsersByRole"
+        const url = process.env.REACT_APP_BACKEND_URL
+            + "/api/user/getUsersByRole?role=" + role
 
-        try {
-            const response = await fetch(url + "?role=" + role, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
-
-            if (response.ok) {
-                const userDtoList = await response.json()
-                this.setState({
-                    userList: userDtoList
-                })
-
-            } else {
-                console.error("HTTP error:" + response.status + "\n" + response.statusText)
-            }
-
-        } catch (error) {
-            console.error(error)
-        }
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList,
+        })
     }
 
-    async getUsersByGrade (grade) {
+    async function getUsersByGrade (grade) {
 
         if (grade === "") {
             return []
         }
 
-        const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getUsersByGrade"
+        const url = process.env.REACT_APP_BACKEND_URL
+            + "/api/user/getUsersByGrade?grade=" + grade
 
-        try {
-            const response = await fetch(url + "?grade=" + grade, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
-
-            if (response.ok) {
-                const userDtoList = await response.json()
-                this.setState({
-                    userList: userDtoList
-                })
-
-            } else {
-                console.error("HTTP error:" + response.status + "\n" + response.statusText)
-            }
-
-        } catch (error) {
-            console.error(error)
-        }
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList
+        })
     }
 
-    async getDismissedUsers() {
+    async function getDismissedUsers() {
 
         const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getDismissedUsers"
 
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList
+        })
+    }
+
+    async function performGetRequest(url) {
         try {
             const response = await fetch(url, {
                 method: "GET",
@@ -107,10 +83,7 @@ class Employees extends React.Component {
             });
 
             if (response.ok) {
-                const userDtoList = await response.json()
-                this.setState({
-                    userList: userDtoList
-                })
+                return await response.json()
 
             } else {
                 console.error("HTTP error:" + response.status + "\n" + response.statusText)
@@ -121,49 +94,59 @@ class Employees extends React.Component {
         }
     }
 
-    handleUserSelection = (userId) => {
-        this.setState({
-            selectedUserId: userId
+    function handleUserSelection(userId) {
+        setState({
+            selectedUserId: userId,
+            userList: state.userList
         })
     }
 
-    renderUserList(userDtoList) {
+    function renderUserList(userDtoList) {
 
         if (userDtoList === undefined || userDtoList.length === 0) {
             return (
                 <div className={`${classes.listLiInfoName}`}>Нет подходящих сотрудников</div>
             )
         }
+        console.log(userDtoList)
 
         let renderedUserList = []
-        let page = this
 
-        userDtoList.forEach(function (userDto) {
-            renderedUserList.push(
-                <li>
-                    <div className={`${classes.listLiInfo}`}
-                         onClick={() => {console.log(userDto.userId); page.handleUserSelection(userDto.userId)}}>
-                        <div className={`${classes.listLiInfoName}`}>{userDto.name}</div>
-                        <div className={`${classes.listLiInfoRoleProj}`}>
-                            <div className={`${classes.listLiInfoRoleProjTitles}`}>
-                                <div>Роль:</div>
-                                <div>Проект:</div>
-                            </div>
-                            <div className={`${classes.listLiInfoRoleProjBox}`}>
-                                <div className={`${classes.roleProjBoxRole}`}>{userDto.role}</div>
-                                <div className={`${classes.roleProjBoxProject}`}>{userDto.project !== "" ? userDto.project : "Нет"}</div>
+        userDtoList.sort((a, b) => a.name.localeCompare(b.name)).forEach(
+            function (userDto) {
+                renderedUserList.push(
+                    <li>
+                        <div className={`${classes.listLiInfo}`}
+                             onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}>
+                            <div
+                                className={`${classes.listLiInfoName}`}>{userDto.name}</div>
+                            <div className={`${classes.listLiInfoRoleProj}`}>
+                                <div
+                                    className={`${classes.listLiInfoRoleProjTitles}`}>
+                                    <div>Роль:</div>
+                                    <div>Проект:</div>
+                                </div>
+                                <div
+                                    className={`${classes.listLiInfoRoleProjBox}`}>
+                                    <div
+                                        className={`${classes.roleProjBoxRole}`}>{userDto.role}</div>
+                                    <div
+                                        className={`${classes.roleProjBoxProject}`}>{userDto.project
+                                    !== "" ? userDto.project : "Нет"}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            )
-        })
+                    </li>
+                )
+            })
         return renderedUserList
     }
 
-    renderFullInfoBlock() {
+    function renderFullInfoBlock() {
 
-        if (this.state.selectedUserId === -1) {
+        if (state.selectedUserId === -1) {
             return (
                 <div className={`${classes.infoBlocks}`}>
                 </div>
@@ -247,7 +230,9 @@ class Employees extends React.Component {
                                 <p>Менторство</p>
                             </button>
                             <button className={`${classes.buttonEdit}`}>Внести изменения</button>
-                            <button className={`${classes.buttonEdit}`}>Уволить</button>
+                            <button className={`${classes.buttonEdit}`}>
+                                Уволить
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -430,105 +415,138 @@ class Employees extends React.Component {
         )
     }
 
-    render() {
     return (
         <>
-        <Helmet>
-            <title>Сотрудники — Community</title>
-        </Helmet>
-        <div className={`${classes.wrapperBodyContainer}`}>
-        <div className={`${classes.bodyObtaining}`}>
-            <p className={`${classes.wrapperBodyContainerTitle}`}>Сотрудники</p>
-            <div className={`${classes.blocksObtaining}`}>
-            <div className={`${classes.menuListBlock}`}>
-                <div className={`${classes.menuListBlockMenu}`}>
-                <div className={`${classes.menuAddName}`}>
-                    <button>
-                    <img src={add} alt="add" />
-                    </button>
-                    <form action="">
-                    <input placeholder="Имя" />
-                    <button>
-                        <img src={search} alt="search" />
-                    </button>
-                    </form>
-                </div>
-                <div className={`${classes.menuColumns}`}>
-                    <div className={`${classes.columnsCol}`}>
-                    <select name="Grade"
-                            id=""
-                            onChange={(event) =>
-                                this.getUsersByGrade(event.target.value)}
-                    >
-                        <option value="">Уровень комп.</option>
-                        <option value="Junior">Junior</option>
-                        <option value="Middle">Middle</option>
-                        <option value="Senior">Senior</option>
-                        <option value="Team Lead">Team Lead</option>
-                        <option value="Not specified">Не указан</option>
-                    </select>
-                    <form action="">
-                        <input placeholder="Подразд." />
-                        <button>
-                        <img src={search} alt="search" />
-                        </button>
-                    </form>
+            <Helmet>
+                <title>Сотрудники — Community</title>
+            </Helmet>
+            <div className={`${classes.wrapperBodyContainer}`}>
+                <div className={`${classes.bodyObtaining}`}>
+                    <p className={`${classes.wrapperBodyContainerTitle}`}>Сотрудники</p>
+                    <div className={`${classes.blocksObtaining}`}>
+                        <div className={`${classes.menuListBlock}`}>
+                            <div className={`${classes.menuListBlockMenu}`}>
+                                <div className={`${classes.menuAddName}`}>
+                                    <button>
+                                        <img src={add} alt="add"/>
+                                    </button>
+                                    <form action="">
+                                        <input placeholder="Имя"/>
+                                        <button>
+                                            <img src={search} alt="search"/>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div className={`${classes.menuColumns}`}>
+                                    <div
+                                        className={`${classes.columnsCol}`}>
+                                        <select name="Grade"
+                                                id=""
+                                                onChange={(event) =>
+                                                    getUsersByGrade(
+                                                        event.target.value)}
+                                        >
+                                            <option value="">Уровень комп.
+                                            </option>
+                                            <option value="Junior">Junior
+                                            </option>
+                                            <option value="Middle">Middle
+                                            </option>
+                                            <option value="Senior">Senior
+                                            </option>
+                                            <option value="Team Lead">Team
+                                                Lead
+                                            </option>
+                                            <option value="Not specified">Не
+                                                указан
+                                            </option>
+                                        </select>
+                                        <form action="">
+                                            <input placeholder="Подразд."/>
+                                            <button>
+                                                <img src={search}
+                                                     alt="search"/>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div
+                                        className={`${classes.columnsCol}`}>
+                                        <select name="Role"
+                                                id=""
+                                                onChange={(event) =>
+                                                    getUsersByRole(
+                                                        event.target.value)}
+                                        >
+                                            <option value="">Роль</option>
+                                            <option
+                                                value="Member">Участник
+                                            </option>
+                                            <option
+                                                value="Data Engineer">Дата
+                                                Инженер
+                                            </option>
+                                            <option
+                                                value="Developer">Разработчик
+                                            </option>
+                                            <option value="Team Lead">Team
+                                                Lead
+                                            </option>
+                                            <option
+                                                value="Product Owner">Product
+                                                Owner
+                                            </option>
+                                            <option
+                                                value="Supervisor">Руководитель
+                                            </option>
+                                            <option
+                                                value="Non member">Гость
+                                            </option>
+                                        </select>
+                                        <form action="">
+                                            <input placeholder="Проект"/>
+                                            <button>
+                                                <img src={search}
+                                                     alt="search"/>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <form action=""
+                                      className={`${classes.menuSupervisor}`}>
+                                    <input placeholder="Руководитель"/>
+                                    <button>
+                                        <img src={search} alt="search"/>
+                                    </button>
+                                </form>
+                                <button
+                                    className={`${classes.menuFormerEmp}`}
+                                    onClick={() => {
+                                        getDismissedUsers()
+                                    }}>
+                                    Бывшие сотрудники
+                                </button>
+                            </div>
+                            <ul className={`${classes.menuListBlockList}`}>
+                                {renderUserList(state.userList)}
+                            </ul>
+                        </div>
+                        {renderFullInfoBlock()}
                     </div>
-                    <div className={`${classes.columnsCol}`}>
-                    <select name="Role"
-                            id=""
-                            onChange={(event) =>
-                                this.getUsersByRole(event.target.value)}
-                    >
-                        <option value="">Роль</option>
-                        <option value="Member">Участник</option>
-                        <option value="Data Engineer">Дата Инженер</option>
-                        <option value="Developer">Разработчик</option>
-                        <option value="Team Lead">Team Lead</option>
-                        <option value="Product Owner">Product Owner</option>
-                        <option value="Supervisor">Руководитель</option>
-                        <option value="Non member">Гость</option>
-                    </select>
-                    <form action="">
-                        <input placeholder="Проект" />
-                        <button>
-                        <img src={search} alt="search" />
-                        </button>
-                    </form>
-                    </div>
                 </div>
-                <form action="" className={`${classes.menuSupervisor}`}>
-                    <input placeholder="Руководитель" />
-                    <button>
-                    <img src={search} alt="search" />
-                    </button>
-                </form>
-                <button className={`${classes.menuFormerEmp}`}
-                        onClick={() => {this.getDismissedUsers()}}>
-                    Бывшие сотрудники
-                </button>
+            </div>
+            <div className={`${classes.wrapperFooterContainer}`}>
+                <div className={`${classes.footerInfobox}`}>
+                    <p className={`${classes.footerInfoboxCopyright}`}>©
+                        community</p>
+                    <p className={`${classes.footerInfoboxAttribution}`}>
+                        Icon made by Pixel perfect, Royyan Wijaya, th studio
+                        from www.flaticon.com
+                    </p>
                 </div>
-                <ul className={`${classes.menuListBlockList}`}>
-                    {this.renderUserList(this.testUserList)}
-                </ul>
+                <img src={logo} alt="logo"/>
             </div>
-                {this.renderFullInfoBlock()}
-            </div>
-        </div>
-        </div>
-        <div className={`${classes.wrapperFooterContainer}`}>
-            <div className={`${classes.footerInfobox}`}>
-            <p className={`${classes.footerInfoboxCopyright}`}>© community</p>
-            <p className={`${classes.footerInfoboxAttribution}`}>
-            Icon made by Pixel perfect, Royyan Wijaya, th studio
-            from www.flaticon.com
-            </p>
-            </div>
-            <img src={logo} alt="logo" />
-        </div>
         </>
     );
-    }
 }
 
 export default Employees;
