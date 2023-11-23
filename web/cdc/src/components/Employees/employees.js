@@ -109,8 +109,8 @@ class Employees extends React.Component {
         userDtoList.forEach(function (userDto) {
             renderedUserList.push(
                 <li>
-                    <button onClick={() => {page.handleUserSelection(userDto.userId)}}>
-                    <div className={`${classes.listLiInfo}`}>
+                    <div className={`${classes.listLiInfo}`}
+                         onClick={() => {console.log(userDto.userId); page.handleUserSelection(userDto.userId)}}>
                         <div className={`${classes.listLiInfoName}`}>{userDto.name}</div>
                         <div className={`${classes.listLiInfoRoleProj}`}>
                             <div className={`${classes.listLiInfoRoleProjTitles}`}>
@@ -123,7 +123,6 @@ class Employees extends React.Component {
                             </div>
                         </div>
                     </div>
-                    </button>
                 </li>
             )
         })
@@ -474,7 +473,7 @@ class Employees extends React.Component {
                 <button className={`${classes.menuFormerEmp}`}>Бывшие сотрудники</button>
                 </div>
                 <ul className={`${classes.menuListBlockList}`}>
-                    {this.renderUserList(this.state.userList)}
+                    {this.renderUserList(this.testUserList)}
                 </ul>
             </div>
                 {this.renderFullInfoBlock()}
