@@ -30,10 +30,17 @@ const Employees = () => {
         {userId: 10, name: "I", role: "Developer", project: "Apache Kafka"},
     ]
 
+    function setEmptyUserListToState() {
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: []
+        })
+    }
+
     async function getUsersByRole (role) {
 
         if (role === "") {
-            return []
+            setEmptyUserListToState()
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
@@ -49,7 +56,7 @@ const Employees = () => {
     async function getUsersByGrade (grade) {
 
         if (grade === "") {
-            return []
+            setEmptyUserListToState()
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
@@ -65,6 +72,70 @@ const Employees = () => {
     async function getDismissedUsers() {
 
         const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getDismissedUsers"
+
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList
+        })
+    }
+
+    async function getUsersByName(name) {
+
+        if (name === "") {
+            setEmptyUserListToState()
+        }
+
+        const url = process.env.REACT_APP_BACKEND_URL
+            + "/api/user/getUsersByPartialName?partialName=" + name
+
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList
+        })
+    }
+
+    async function getUsersByProject(project) {
+
+        if (project === "") {
+            setEmptyUserListToState()
+        }
+
+        const url = process.env.REACT_APP_BACKEND_URL
+            + "/api/user/getUsersByProject?project=" + project
+
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList
+        })
+    }
+
+    async function getUsersByDepartment(department) {
+
+        if (department === "") {
+            setEmptyUserListToState()
+        }
+
+        const url = process.env.REACT_APP_BACKEND_URL
+            + "/api/user/getUsersByDepartment?department=" + department
+
+        const userDtoList = await performGetRequest(url)
+        setState({
+            selectedUserId: state.selectedUserId,
+            userList: userDtoList
+        })
+    }
+
+    async function getUsersBySupervisor(name) {
+
+        if (name === "") {
+            setEmptyUserListToState()
+        }
+
+        const url = process.env.REACT_APP_BACKEND_URL
+            + "/api/user/getUsersBySupervisor?name=" + name
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -432,7 +503,11 @@ const Employees = () => {
                                     </button>
                                     <form action="">
                                         <input placeholder="Имя"/>
-                                        <button>
+                                        <button onClick={
+                                            (event) => {
+                                                getUsersByName(event.target.value)
+                                            }}
+                                        >
                                             <img src={search} alt="search"/>
                                         </button>
                                     </form>
@@ -446,7 +521,7 @@ const Employees = () => {
                                                     getUsersByGrade(
                                                         event.target.value)}
                                         >
-                                            <option value="">Уровень комп.
+                                            <option value="">Позиция
                                             </option>
                                             <option value="Junior">Junior
                                             </option>
@@ -458,12 +533,16 @@ const Employees = () => {
                                                 Lead
                                             </option>
                                             <option value="Not specified">Не
-                                                указан
+                                                указана
                                             </option>
                                         </select>
                                         <form action="">
-                                            <input placeholder="Подразд."/>
-                                            <button>
+                                            <input placeholder="Отдел"/>
+                                            <button
+                                                onClick={(event) => {
+                                                    getUsersByDepartment(event.target.value)
+                                                }}
+                                            >
                                                 <img src={search}
                                                      alt="search"/>
                                             </button>
@@ -504,7 +583,11 @@ const Employees = () => {
                                         </select>
                                         <form action="">
                                             <input placeholder="Проект"/>
-                                            <button>
+                                            <button
+                                                onClick={(event) => {
+                                                    getUsersByProject(event.target.value)
+                                                }}
+                                            >
                                                 <img src={search}
                                                      alt="search"/>
                                             </button>
@@ -514,7 +597,11 @@ const Employees = () => {
                                 <form action=""
                                       className={`${classes.menuSupervisor}`}>
                                     <input placeholder="Руководитель"/>
-                                    <button>
+                                    <button
+                                        onClick={(event) => {
+                                            getUsersBySupervisor(event.target.value)
+                                        }}
+                                    >
                                         <img src={search} alt="search"/>
                                     </button>
                                 </form>
