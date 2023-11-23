@@ -27,7 +27,42 @@ class Employees extends React.Component {
         {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"}
     ]
 
+    async getUsersByRole (role) {
+
+        if (role === "") {
+            return []
+        }
+
+        const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getUsersByRole"
+
+        try {
+            const response = await fetch(url + "?role=" + role, {
+                method: "GET",
+                headers: {
+                    "Origin": "http://localhost:3000",
+                },
+            });
+
+            if (response.ok) {
+                const userDtoList = await response.json()
+                this.setState({
+                    userList: userDtoList
+                })
+
+            } else {
+                console.error("HTTP error:" + response.status + "\n" + response.statusText)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     async getUsersByGrade (grade) {
+
+        if (grade === "") {
+            return []
+        }
 
         const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getUsersByGrade"
 
@@ -74,6 +109,7 @@ class Employees extends React.Component {
         userDtoList.forEach(function (userDto) {
             renderedUserList.push(
                 <li>
+                    <button onClick={() => {page.handleUserSelection(userDto.userId)}}>
                     <div className={`${classes.listLiInfo}`}>
                         <div className={`${classes.listLiInfoName}`}>{userDto.name}</div>
                         <div className={`${classes.listLiInfoRoleProj}`}>
@@ -87,8 +123,6 @@ class Employees extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <button onClick={() => {page.handleUserSelection(userDto.userId)}}>
-                        <img src={info} alt="info" />
                     </button>
                 </li>
             )
@@ -409,7 +443,11 @@ class Employees extends React.Component {
                     </form>
                     </div>
                     <div className={`${classes.columnsCol}`}>
-                    <select name="Role" id="">
+                    <select name="Role"
+                            id=""
+                            onChange={(event) =>
+                                this.getUsersByRole(event.target.value)}
+                    >
                         <option value="">Роль</option>
                         <option value="Member">Участник</option>
                         <option value="Data Engineer">Дата Инженер</option>
