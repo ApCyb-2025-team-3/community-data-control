@@ -199,6 +199,22 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @PostMapping("/changeUserProject")
+    public ResponseEntity<String> changeUserProject(@RequestParam UUID userId, @RequestParam String project,
+                                                    @RequestParam String reason) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setProject(project);
+            userRepository.save(user);
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT, reason));
+
+            return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping("/getUsersByPartialName")
     public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
         return new ResponseEntity<>(

@@ -281,6 +281,24 @@ class UserControllerTest {
     }
 
     @Test
+    void changeUserProjectTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        addUser(user);
+
+        UUID userId = getUserId(user);
+        String newProjectName = "new project";
+        this.mockMvc.perform(post("/api/user/changeUserProject")
+                .param("userId", userId.toString())
+                .param("project", newProjectName)
+                .param("reason", "For testing purpose.")
+        ).andExpect(status().isOk());
+
+        UserDTO modifiedUser = getUserById(userId);
+        assertEquals(newProjectName, modifiedUser.getProject());
+    }
+
+    @Test
     void getUsersByPartialNameTest() throws Exception {
 
         UserAdditionDTO user1 = generateSimpleUser();
