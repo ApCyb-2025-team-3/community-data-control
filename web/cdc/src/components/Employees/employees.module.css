@@ -76,6 +76,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 
     padding: 0;
 
@@ -150,6 +151,7 @@
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
+    cursor: pointer;
 
     border-radius: 10px;
     border: 2px solid #000;
@@ -198,6 +200,7 @@
     justify-content: center;
     border: none;
     background: none;
+    cursor: pointer;
 }
 
 .columnsCol form button img {
@@ -239,6 +242,7 @@
     justify-content: center;
     border: none;
     background: none;
+    cursor: pointer;
 }
 
 .menuSupervisor button img {
@@ -253,6 +257,7 @@
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+    cursor: pointer;
 
     border-radius: 10px;
     border: 2px solid #000;
@@ -300,6 +305,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
+    cursor:pointer;
 }
 
 .menuListBlockList li button {
