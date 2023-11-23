@@ -3,7 +3,6 @@ import classes from './employees.module.css';
 import add from '../../icons/add-icon.svg'
 import search from '../../icons/search-icon.svg';
 import arrow from '../../icons/down-arrow-icon.svg';
-import info from '../../icons/info-icon.svg';
 import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
@@ -24,7 +23,13 @@ class Employees extends React.Component {
         {userId: 1, name: "I", role: "Developer", project: "Apache Kafka"},
         {userId: 2, name: "Know", role: "Team Lead", project: "Apache Kafka"},
         {userId: 3, name: "Nothing", role: "Developer", project: "Apache Kafka"},
-        {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"}
+        {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"},
+        {userId: 5, name: "Somehow", role: "Team Lead", project: ""},
+        {userId: 6, name: "I", role: "Developer", project: "Apache Kafka"},
+        {userId: 7, name: "Know", role: "Team Lead", project: "Apache Kafka"},
+        {userId: 8, name: "Nothing", role: "Developer", project: "Apache Kafka"},
+        {userId: 9, name: "However", role: "Product Owner", project: "Apache Kafka"},
+        {userId: 10, name: "I", role: "Developer", project: "Apache Kafka"},
     ]
 
     async getUsersByRole (role) {
@@ -175,31 +180,31 @@ class Employees extends React.Component {
                         </div>
                         <div className={`${classes.lPartInfo}`}>
                             <div className={`${classes.lPartInfoCol1Title}`}>
-                                <p>Email:</p>
-                                <p>Проект:</p>
-                                <p>Подразд.:</p>
-                                <p>Ур. комп.:</p>
-                                <p>Роль:</p>
+                                <p>Email</p>
+                                <p>Телефон</p>
+                                <p>Отдел</p>
+                                <p>Позиция</p>
+                                <p>Роль</p>
                             </div>
                             <div className={`${classes.lPartInfoCol1Data}`}>
                                 <div className={`${classes.lPartInfoCol1DataEmail}`}>ocariz@bola389.bid</div>
-                                <div className={`${classes.lPartInfoCol1DataProj}`}>Apache Kafka</div>
+                                <div className={`${classes.lPartInfoCol1Project}`}>
+                                    +7 (800) 555 35-35
+                                </div>
                                 <div className={`${classes.lPartInfoCol1DataDep}`}>Data Science</div>
                                 <div className={`${classes.lPartInfoCol1DataGrade}`}>Senior</div>
                                 <div className={`${classes.lPartInfoCol1DataRole}`}>Scala-developer</div>
                             </div>
                             <div className={`${classes.lPartInfoCol2Title}`}>
-                                <p>Телефон:</p>
-                                <p>Руковод.:</p>
-                                <p>Дата рожд.:</p>
-                                <div className={`${classes.lPartInfoCol2TitleDoB}`}>Pr. owners:</div>
+                                <p>Проект</p>
+                                <p>Дата рождения</p>
+                                <p>Руководитель</p>
+                                <div className={`${classes.lPartInfoCol2TitleDoB}`}>Product<br></br>Owners</div>
                             </div>
                             <div className={`${classes.lPartInfoCol2Data}`}>
-                                <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    +7 (800) 555 35-35
-                                </div>
-                                <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>Donald Trump</div>
+                                <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>Apache Kafka</div>
                                 <div className={`${classes.lPartInfoCol2DataDoB}`}>01.01.1900</div>
+                                <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>Donald Trump</div>
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                     <li>
                                         <img src={dot} alt="dot" />
@@ -235,13 +240,14 @@ class Employees extends React.Component {
                         <div className={`${classes.rPartButtons}`}>
                             <button className={`${classes.buttonTeamsGroups}`}>
                                 <img src={arrow} alt="arrow" />
-                                <p>ком. / группы</p>
+                                <p>Команды / группы</p>
                             </button>
                             <button className={`${classes.buttonMentorship}`}>
                                 <img src={arrow} alt="arrow" />
-                                <p>менторство</p>
+                                <p>Менторство</p>
                             </button>
                             <button className={`${classes.buttonEdit}`}>Внести изменения</button>
+                            <button className={`${classes.buttonEdit}`}>Уволить</button>
                         </div>
                     </div>
                 </div>
