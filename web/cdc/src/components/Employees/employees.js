@@ -89,6 +89,33 @@ class Employees extends React.Component {
         }
     }
 
+    async getDismissedUsers() {
+
+        const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getDismissedUsers"
+
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Origin": "http://localhost:3000",
+                },
+            });
+
+            if (response.ok) {
+                const userDtoList = await response.json()
+                this.setState({
+                    userList: userDtoList
+                })
+
+            } else {
+                console.error("HTTP error:" + response.status + "\n" + response.statusText)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     handleUserSelection = (userId) => {
         this.setState({
             selectedUserId: userId
@@ -470,7 +497,10 @@ class Employees extends React.Component {
                     <img src={search} alt="search" />
                     </button>
                 </form>
-                <button className={`${classes.menuFormerEmp}`}>Бывшие сотрудники</button>
+                <button className={`${classes.menuFormerEmp}`}
+                        onClick={() => {this.getDismissedUsers()}}>
+                    Бывшие сотрудники
+                </button>
                 </div>
                 <ul className={`${classes.menuListBlockList}`}>
                     {this.renderUserList(this.testUserList)}
