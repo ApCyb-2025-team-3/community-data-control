@@ -177,18 +177,14 @@ const Employees = () => {
                 <div className={`${classes.listLiInfoName}`}>Нет подходящих сотрудников</div>
             )
         }
-        console.log(userDtoList)
 
         let renderedUserList = []
 
-        userDtoList.sort((a, b) => a.name.localeCompare(b.name)).forEach(
-            function (userDto) {
+        userDtoList.sort((a, b) => a.name.localeCompare(b.name)).forEach((userDto) => {
                 renderedUserList.push(
                     <li>
                         <div className={`${classes.listLiInfo}`}
-                             onClick={() => {
-                                 handleUserSelection(userDto.id)
-                             }}>
+                             onClick={(event) => handleUserSelection(userDto.id)}>
                             <div
                                 className={`${classes.listLiInfoName}`}>{userDto.name}</div>
                             <div className={`${classes.listLiInfoRoleProj}`}>
@@ -222,8 +218,10 @@ const Employees = () => {
             )
         }
 
+        console.log(state.selectedUserId)
+
         return (
-            <MainInfo userId={state.selectedUserId}>
+            <MainInfo key={state.selectedUserId} userId={state.selectedUserId}>
             </MainInfo>
         )
     }
@@ -356,8 +354,8 @@ const Employees = () => {
                                 </button>
                             </div>
                             <ul className={`${classes.menuListBlockList}`}>
-                                {/*{renderUserList(state.userList)}*/}
-                                {renderUserList(testUserList)}
+                                {renderUserList(state.userList)}
+                                {/*{renderUserList(testUserList)}*/}
                             </ul>
                         </div>
                         {renderFullInfoBlock()}

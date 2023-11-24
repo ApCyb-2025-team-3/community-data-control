@@ -1,12 +1,12 @@
 import classes from './employees.module.css';
 import arrow from '../../icons/down-arrow-icon.svg';
 import dot from '../../icons/dot-icon.svg';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Popup from "reactjs-popup";
 import Groups from "./groups";
 import Mentorships from "./mentorships";
 
-const MainInfo = (userId) => {
+const MainInfo = ({userId}) => {
 
     const [state, setState] = useState({
         userId: userId,
@@ -15,38 +15,43 @@ const MainInfo = (userId) => {
         isMentorshipVisible: false,
     })
 
-    async function getUserInfo() {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/fullInfo"
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
+    const [isLoading, setLoading] = useState(true)
 
-            if (response.ok) {
-                const userInfo = await response.json()
-                setState({
-                    userId: state.userId,
-                    userInfo: userInfo,
-                    isGroupsVisible: state.isGroupsVisible,
-                    isMentorshipVisible: state.isMentorshipVisible,
-                })
+    useEffect( () => {
+        async function getUserInfo() {
+            try {
+                const url = process.env.REACT_APP_BACKEND_URL
+                    + "/api/user/" + state.userId + "/fullInfo"
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Origin": "http://localhost:3000",
+                    },
+                });
 
-            } else {
-                console.error("HTTP error:" + response.status + "\n" + response.statusText)
+                if (response.ok) {
+                    const userInfo = await response.json()
+
+                    setState({
+                        userId: state.userId,
+                        userInfo: userInfo,
+                        isGroupsVisible: false,
+                        isMentorshipVisible: false,
+                    })
+
+                    setLoading(false)
+
+                } else {
+                    console.error("HTTP error:" + response.status + "\n" + response.statusText)
+                }
+
+            } catch (error) {
+                console.error(error)
             }
-
-        } catch (error) {
-            console.error(error)
         }
-    }
 
-    if (state.userInfo === undefined) {
         getUserInfo()
-    }
+    }, [state.userId])
 
     function handleGroupsVisibilityChange() {
         setState({
@@ -80,9 +85,12 @@ const MainInfo = (userId) => {
             });
 
             if (response.ok) {
+                const newUserInfo = state.userInfo
+                newUserInfo.isActive = false
+                newUserInfo.dismissReason = reason
                 setState({
                     userId: state.userId,
-                    userInfo: undefined,
+                    userInfo: newUserInfo,
                     isGroupsVisible: state.isGroupsVisible,
                     isMentorshipVisible: state.isMentorshipVisible,
                 })
@@ -99,6 +107,7 @@ const MainInfo = (userId) => {
     function renderUserActiveness() {
 
         const isActive = state.userInfo.isActive
+        const dismissDate = state.userInfo.dismissedAt !== null ? state.userInfo.dismissedAt : "10"
 
         return (
             <div className={`${classes.mainBlockRPart}`}>
@@ -110,11 +119,11 @@ const MainInfo = (userId) => {
                     </div>
                     <div className={`${classes.rPartInfoConnected}`}>
                         <p>Присоединился:</p>
-                        <div className={`${classes.connectedDate}`}>{state.userInfo.invitedAt}</div>
+                        <div className={`${classes.connectedDate}`}>{formatLocalDate(state.userInfo.invitedAt)}</div>
                     </div>
                     <div className={`${classes.rPartInfoFired}`} style={{display: isActive ? "none" : ""}}>
                         <p>Уволен:</p>
-                        <div className={`${classes.firedDate}`} >{state.userInfo.dismissedAt}</div>
+                        <div className={`${classes.firedDate}`} >{formatLocalDate(dismissDate)}</div>
                     </div>
                     <div className={`${classes.rPartInfoReason}`} style={{display: isActive ? "none" : ""}}>
                         <p>Причина:</p>
@@ -195,13 +204,59 @@ const MainInfo = (userId) => {
         return visibleBlocks
     }
 
+    function formatLocalDate(date) {
+        return date.split("-").reverse().join(".")
+    }
+
+    function renderProductOwners(productOwnersList) {
+
+        if (productOwnersList.length === 0) {
+            return (
+                <li>
+                    <div className={`${classes.liProdOwnersName}`}>Не указаны</div>
+                </li>
+            )
+        }
+
+        const productOwners = []
+
+        productOwnersList.sort((a, b) => a.name.localeCompare(b.name)).forEach(
+            (name) => {
+                productOwners.push(
+                    <li>
+                        <img src={dot} alt="dot"/>
+                        <div
+                            className={`${classes.liProdOwnersName}`}>{name}</div>
+                    </li>
+                )
+            }
+        )
+
+        return productOwners
+    }
+
+    console.log(state.userInfo)
+
+    if (isLoading) {
+
+        return (
+            <div className={`${classes.infoBlocks}`}>
+                <div className={`${classes.mainBlock}`}>
+                    <p style={{width: 400 + 'px', height: 400 + 'px'}}>Загрузка...</p>
+                </div>
+            </div>
+        )
+    }
+
+    const projectChangeDate = state.userInfo.projectChangedAt !== null ? state.userInfo.projectChangedAt : state.userInfo.invitedAt
+
     return (
         <div className={`${classes.infoBlocks}`}>
             <div className={`${classes.mainBlock}`}>
                 <div className={`${classes.mainBlockLPart}`}>
                     <div className={`${classes.lPartHeading}`}>
                         <p>Сотрудник:</p>
-                        <div className={`${classes.lPartHeadingName}`}>Frederic Gilbert</div>
+                        <div className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
                     </div>
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
@@ -213,14 +268,14 @@ const MainInfo = (userId) => {
                             <p>Роль:</p>
                         </div>
                         <div className={`${classes.lPartInfoCol1Data}`}>
-                            <div className={`${classes.lPartInfoCol1DataEmail}`}>ocariz@bola389.bid</div>
+                            <div className={`${classes.lPartInfoCol1DataEmail}`}>{state.userInfo.email}</div>
                             <div className={`${classes.lPartInfoCol1Project}`}>
-                                +7 (800) 555 35-35
+                                {state.userInfo.phoneNumber}
                             </div>
-                            <div className={`${classes.lPartInfoCol2DataDoB}`}>01.01.1900</div>
-                            <div className={`${classes.lPartInfoCol1DataDep}`}>Data Science</div>
-                            <div className={`${classes.lPartInfoCol1DataGrade}`}>Senior</div>
-                            <div className={`${classes.lPartInfoCol1DataRole}`}>Scala-developer</div>
+                            <div className={`${classes.lPartInfoCol2DataDoB}`}>{formatLocalDate(state.userInfo.dob)}</div>
+                            <div className={`${classes.lPartInfoCol1DataDep}`}>{state.userInfo.department}</div>
+                            <div className={`${classes.lPartInfoCol1DataGrade}`}>{state.userInfo.grade}</div>
+                            <div className={`${classes.lPartInfoCol1DataRole}`}>{state.userInfo.role}</div>
                         </div>
                         <div className={`${classes.lPartInfoCol2Title}`}>
                             <p>Проект:</p>
@@ -229,26 +284,13 @@ const MainInfo = (userId) => {
                             <div className={`${classes.lPartInfoCol2TitlePrOwn}`}>Product<br></br>Owners:</div>
                         </div>
                         <div className={`${classes.lPartInfoCol2Data}`}>
-                            <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>Apache Kafka</div>
-                            <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>Donald Trump</div>
-                            <div className={`${classes.lPartInfoCol2DataConnected}`}>33.33.3333</div>
+                            <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>{state.userInfo.project}</div>
+                            <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
+                            <div className={`${classes.lPartInfoCol2DataConnected}`}>
+                                {state.userInfo.supervisor !== null ? state.userInfo.supervisor : "Не назначен"}
+                            </div>
                             <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
-                                <li>
-                                    <img src={dot} alt="dot" />
-                                    <div className={`${classes.liProdOwnersName}`}>Liz Truss</div>
-                                </li>
-                                <li>
-                                    <img src={dot} alt="dot" />
-                                    <div className={`${classes.liProdOwnersName}`}>Liz Truss</div>
-                                </li>
-                                <li>
-                                    <img src={dot} alt="dot" />
-                                    <div className={`${classes.liProdOwnersName}`}>Liz Truss</div>
-                                </li>
-                                <li>
-                                    <img src={dot} alt="dot" />
-                                    <div className={`${classes.liProdOwnersName}`}>Liz Truss</div>
-                                </li>
+                                {renderProductOwners(state.userInfo.productOwners)}
                             </ul>
                         </div>
                     </div>
