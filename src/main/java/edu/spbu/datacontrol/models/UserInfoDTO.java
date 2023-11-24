@@ -3,19 +3,26 @@ package edu.spbu.datacontrol.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class UserInfoDTO {
 
     @NotNull
     private UUID id;
 
-    private Date invitedAt;
+    private LocalDate invitedAt;
+
+    private LocalDate dismissedAt;
+
+    private String dismissReason;
 
     private Boolean isActive;
 
@@ -33,6 +40,8 @@ public class UserInfoDTO {
 
     private String project;
 
+    private LocalDate projectChangedAt;
+
     private String department;
 
     private String grade;
@@ -47,7 +56,7 @@ public class UserInfoDTO {
 
     public UserInfoDTO(User user) {
         this.id = user.getId();
-        this.invitedAt = user.getInvitedAt();
+        this.invitedAt = user.getInvitedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         this.isActive = user.isActive();
         this.name = user.getName();
         this.dob = user.getDob();

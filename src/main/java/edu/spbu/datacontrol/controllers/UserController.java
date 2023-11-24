@@ -4,6 +4,8 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +64,25 @@ public class UserController {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
+            UserInfoDTO userInfo = new UserInfoDTO(user);
+
+            Event projectChange = eventLog.findFirstByUserIdAndTypeOOrderByCreatedAt(userId,
+                EventType.CHANGE_PROJECT);
+            if (projectChange != null) {
+                userInfo.setProjectChangedAt(
+                    projectChange.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate());
+            }
+
+            Event dismiss = eventLog.findFirstByUserIdAndTypeOOrderByCreatedAt(userId,
+                EventType.DISMISS_USER);
+            if (dismiss != null) {
+                userInfo.setDismissedAt(
+                    dismiss.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate());
+                userInfo.setDismissReason(dismiss.getDescription());
+            }
+
             return new ResponseEntity<>(new UserInfoDTO(user), HttpStatus.OK);
         }
 
