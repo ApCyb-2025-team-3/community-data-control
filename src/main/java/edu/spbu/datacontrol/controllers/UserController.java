@@ -162,19 +162,25 @@ public class UserController {
     @GetMapping("/getUsersByDepartment")
     public ResponseEntity<List<UserDTO>> getUsersByDepartment(@RequestParam String department) {
 
-        return new ResponseEntity<>(
+        if (!department.isBlank()) {
+            return new ResponseEntity<>(
                 userRepository.getUsersByDepartmentAndIsActiveTrue(department).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("/getUsersByProject")
     public ResponseEntity<List<UserDTO>> getUsersByProject(@RequestParam String project) {
 
-        return new ResponseEntity<>(
+        if (!project.isBlank()) {
+            return new ResponseEntity<>(
                 userRepository.getUsersByProjectAndIsActiveTrue(project).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}/dismiss")
@@ -260,7 +266,8 @@ public class UserController {
 
     @GetMapping("/getUsersByPartialName")
     public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
-        if (!partialName.isEmpty()) {
+
+        if (!partialName.isBlank()) {
             return new ResponseEntity<>(
                 userRepository.findByNameContaining(partialName).stream()
                     .map(UserDTO::new)
