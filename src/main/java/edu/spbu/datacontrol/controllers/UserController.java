@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -209,17 +210,8 @@ public class UserController {
 
             user.setProject(changeUserProjectDTO.getProject());
             user.setDepartment(changeUserProjectDTO.getDepartment());
-            User supervisorUser = userRepository.getUserByName(changeUserProjectDTO.getSupervisor());
-            user.setSupervisor(supervisorUser);
-
-            List<User> productOwnersList = new LinkedList<>();
-            for (String owner : changeUserProjectDTO.getProductOwners()) {
-                User ownerUser = userRepository.getUserByName(owner);
-                if (ownerUser != null) {
-                    productOwnersList.add(ownerUser);
-                }
-            }
-            user.setProductOwners(productOwnersList);
+            assignSupervisor(user,changeUserProjectDTO.getSupervisor());
+            assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
 
             userRepository.save(user);
             eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
