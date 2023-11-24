@@ -105,7 +105,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsersBySupervisorIdTest() throws Exception {
+    void getUsersBySupervisorNameTest() throws Exception {
 
         UserAdditionDTO supervisor = generateSimpleUser();
         supervisor.setRole("supervisor");
@@ -122,10 +122,8 @@ class UserControllerTest {
 
         addUser(subordinate);
 
-        UUID supervisorId = getUserId(supervisor);
-
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersBySupervisorId").param("supervisorId", supervisorId.toString())
+                get("/api/user/getUsersBySupervisorName").param("partialName", supervisor.getName())
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});

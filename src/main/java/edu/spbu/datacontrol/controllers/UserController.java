@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,24 +95,34 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUsersBySupervisorId")
-    public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
+    @GetMapping("/getUsersBySupervisorName")
+    public ResponseEntity<List<UserDTO>> getUsersBySupervisorName(@RequestParam String partialName) {
 
         try {
-            User user = userRepository.getUserById(supervisorId);
-            if (user.getRole() == Role.SUPERVISOR) {
-                return new ResponseEntity<>(
-                        userRepository.getUsersBySupervisor(user).stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatus.OK);
+            List<UserDTO> subordinateUsers = new ArrayList<>();
+
+            List<User> supervisors = userRepository.findByNameContaining(partialName)
+                    .stream()
+                    .filter(user -> user.getRole() == Role.SUPERVISOR)
+                    .toList();
+
+            if (supervisors.isEmpty()) {
+                return new ResponseEntity<>(subordinateUsers, HttpStatus.OK);
             }
 
-            throw new IllegalArgumentException("This user isn't supervisor");
+            for (User supervisor : supervisors) {
+                List<User> subordinates = userRepository.getUsersBySupervisor(supervisor);
+                subordinateUsers.addAll(subordinates.stream()
+                        .map(UserDTO::new)
+                        .toList());
+            }
 
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(subordinateUsers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/getDismissedUsers")
     public ResponseEntity<List<UserDTO>> getDismissedUsers() {
