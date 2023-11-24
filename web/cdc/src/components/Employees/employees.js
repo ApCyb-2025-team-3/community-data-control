@@ -7,6 +7,7 @@ import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
 import React, {useState} from "react";
+import Popup from "reactjs-popup";
 
 const Employees = () => {
 
@@ -301,9 +302,36 @@ const Employees = () => {
                                 <p>Менторство</p>
                             </button>
                             <button className={`${classes.buttonEdit}`}>Внести изменения</button>
-                            <button className={`${classes.buttonEdit}`}>
-                                Уволить
-                            </button>
+                            <Popup trigger=
+                                       {<button className={`${classes.buttonEdit}`}>
+                                           Уволить
+                                       </button>}
+                                   modal nested>
+                                {
+                                    close => (
+                                        <div className={`${classes.popUp}`}>
+                                            <div className={`${classes.popUpContent}`}>
+                                                Введите причину увольнения
+                                                <form action="">
+                                                    <input placeholder="Причина"/>
+                                                </form>
+                                                <div className={`${classes.popUpButtons}`}>
+                                                <button onClick=
+                                                            {() => close()}>
+                                                    Подтвердить
+                                                </button>
+                                                <button onClick=
+                                                            {() => close()}>
+                                                    Отменить
+                                                </button>
+                                                 </div>
+                                            </div>
+                                            <div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            </Popup>
                         </div>
                     </div>
                 </div>
@@ -614,7 +642,8 @@ const Employees = () => {
                                 </button>
                             </div>
                             <ul className={`${classes.menuListBlockList}`}>
-                                {renderUserList(state.userList)}
+                                {/*{renderUserList(state.userList)}*/}
+                                {renderUserList(testUserList)}
                             </ul>
                         </div>
                         {renderFullInfoBlock()}
