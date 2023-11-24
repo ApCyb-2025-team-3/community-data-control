@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -200,26 +201,29 @@ public class UserController {
     }
 
     @PostMapping("/changeUserProject")
-    public ResponseEntity<String> changeUserProject(@RequestParam UUID userId, @RequestParam String newProject,
-                                                    @RequestParam String newSupervisor,
-                                                    @RequestParam String newDepartment) {
+    public ResponseEntity<String> changeUserProject(@RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
 
-        User user = userRepository.findById(userId).orElse(null);
+        User user = userRepository.findById(changeUserProjectDTO.getUserId()).orElse(null);
         if (user != null) {
-            String oldValues = String.format("project: %s%n supervisor: %s%n department: %s",
-                    user.getProject(), user.getSupervisor().getName(), user.getDepartment());
-            user.setProject(newProject);
-            List<User> possibleSupervisors = userRepository.getUsersByName(newSupervisor);
-            User supervisor = null;
-            if (!possibleSupervisors.isEmpty()) {
-                supervisor = possibleSupervisors.get(0);
+            String oldProject = user.getProject();
+
+            user.setProject(changeUserProjectDTO.getProject());
+            user.setDepartment(changeUserProjectDTO.getDepartment());
+            User supervisorUser = userRepository.getUserByName(changeUserProjectDTO.getSupervisor());
+            user.setSupervisor(supervisorUser);
+
+            List<User> productOwnersList = new LinkedList<>();
+            for (String owner : changeUserProjectDTO.getProductOwners()) {
+                User ownerUser = userRepository.getUserByName(owner);
+                if (ownerUser != null) {
+                    productOwnersList.add(ownerUser);
+                }
             }
-            user.setSupervisor(supervisor);
-            user.setDepartment(newDepartment);
-            String newValues = String.format("project: %s%n supervisor: %s%n department: %s",
-                    newProject, newSupervisor, newDepartment);
+            user.setProductOwners(productOwnersList);
+
             userRepository.save(user);
-            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT, oldValues, newValues));
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
+                    oldProject, changeUserProjectDTO.getProject()));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }
