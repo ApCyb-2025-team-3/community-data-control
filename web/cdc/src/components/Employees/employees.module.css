@@ -90,7 +90,7 @@
     height: 1.5rem;
 }
 
-.menuAddName form {
+.menuAddName div {
     display: flex;
     width: 100%;
     height: 36px;
@@ -102,7 +102,7 @@
     border: 2px solid #000;
 }
 
-.menuAddName form input {
+.menuAddName div input {
     width: 100%;
     height: 32px;
     border: none;
@@ -116,7 +116,7 @@
     line-height: normal;
 }
 
-.menuAddName form button {
+.menuAddName div button {
     display: flex;
     width: 36px;
     height: 36px;
@@ -125,7 +125,7 @@
     border: none;
 }
 
-.menuAddName form button img {
+.menuAddName div button img {
     width: 2rem;
     height: 2rem;
 }
@@ -166,7 +166,7 @@
     line-height: normal;
 }
 
-.columnsCol form {
+.columnsCol div {
     display: flex;
     /* width: 100%; */
     height: 36px;
@@ -178,7 +178,7 @@
     border: 2px solid #000;
 }
 
-.columnsCol form input {
+.columnsCol div input {
     width: 100%;
     height: 32px;
     border: none;
@@ -192,7 +192,7 @@
     line-height: normal;
 }
 
-.columnsCol form button {
+.columnsCol div button {
     display: flex;
     width: 36px;
     height: 36px;
@@ -203,7 +203,7 @@
     cursor: pointer;
 }
 
-.columnsCol form button img {
+.columnsCol div button img {
     width: 2rem;
     height: 2rem;
 }

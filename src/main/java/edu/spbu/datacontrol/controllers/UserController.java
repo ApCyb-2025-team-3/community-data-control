@@ -1,10 +1,14 @@
 package edu.spbu.datacontrol.controllers;
 
+import static java.util.Collections.emptyList;
+
 import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +86,7 @@ public class UserController {
                 userInfo.setDismissReason(dismiss.getDescription());
             }
 
-            return new ResponseEntity<>(new UserInfoDTO(user), HttpStatus.OK);
+            return new ResponseEntity<>(userInfo, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -256,10 +260,13 @@ public class UserController {
 
     @GetMapping("/getUsersByPartialName")
     public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
-        return new ResponseEntity<>(
+        if (!partialName.isEmpty()) {
+            return new ResponseEntity<>(
                 userRepository.findByNameContaining(partialName).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {

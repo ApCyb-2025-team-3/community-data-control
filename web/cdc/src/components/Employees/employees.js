@@ -42,7 +42,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByRole?role=" + role
+            + "/api/user/getUsersByRole?role=" + encodeURIComponent(role)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -58,7 +58,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByGrade?grade=" + grade
+            + "/api/user/getUsersByGrade?grade=" + encodeURIComponent(grade)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -85,7 +85,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByPartialName?partialName=" + name
+            + "/api/user/getUsersByPartialName?partialName=" + encodeURIComponent(name)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -101,7 +101,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByProject?project=" + project
+            + "/api/user/getUsersByProject?project=" + encodeURIComponent(project)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -117,7 +117,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByDepartment?department=" + department
+            + "/api/user/getUsersByDepartment?department=" + encodeURIComponent(department)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -133,7 +133,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersBySupervisor?name=" + name
+            + "/api/user/getUsersBySupervisor?name=" + encodeURIComponent(name)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -241,16 +241,16 @@ const Employees = () => {
                                     <button>
                                         <img src={add} alt="add"/>
                                     </button>
-                                    <form action="">
-                                        <input placeholder="Имя"/>
+                                    <div>
+                                        <input placeholder="Имя" id={"nameSearch"}/>
                                         <button onClick={
                                             (event) => {
-                                                getUsersByName(event.target.value)
+                                                getUsersByName(document.getElementById("nameSearch").value)
                                             }}
                                         >
                                             <img src={search} alt="search"/>
                                         </button>
-                                    </form>
+                                    </div>
                                 </div>
                                 <div className={`${classes.menuColumns}`}>
                                     <div
@@ -276,17 +276,17 @@ const Employees = () => {
                                                 указана
                                             </option>
                                         </select>
-                                        <form action="">
-                                            <input placeholder="Отдел"/>
+                                        <div action="">
+                                            <input placeholder="Отдел" id={"departmentSearch"}/>
                                             <button
                                                 onClick={(event) => {
-                                                    getUsersByDepartment(event.target.value)
+                                                    getUsersByDepartment(document.getElementById("departmentSearch").value)
                                                 }}
                                             >
                                                 <img src={search}
                                                      alt="search"/>
                                             </button>
-                                        </form>
+                                        </div>
                                     </div>
                                     <div
                                         className={`${classes.columnsCol}`}>
@@ -321,30 +321,30 @@ const Employees = () => {
                                                 value="Non member">Гость
                                             </option>
                                         </select>
-                                        <form action="">
-                                            <input placeholder="Проект"/>
+                                        <div action="">
+                                            <input placeholder="Проект" id={"projectSearch"}/>
                                             <button
                                                 onClick={(event) => {
-                                                    getUsersByProject(event.target.value)
+                                                    getUsersByProject(document.getElementById("projectSearch").value)
                                                 }}
                                             >
                                                 <img src={search}
                                                      alt="search"/>
                                             </button>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
-                                <form action=""
+                                <div action=""
                                       className={`${classes.menuSupervisor}`}>
-                                    <input placeholder="Руководитель"/>
+                                    <input placeholder="Руководитель" id={"supervisorSearch"}/>
                                     <button
                                         onClick={(event) => {
-                                            getUsersBySupervisor(event.target.value)
+                                            getUsersBySupervisor(document.getElementById("supervisorSearch").value)
                                         }}
                                     >
                                         <img src={search} alt="search"/>
                                     </button>
-                                </form>
+                                </div>
                                 <button
                                     className={`${classes.menuFormerEmp}`}
                                     onClick={() => {
