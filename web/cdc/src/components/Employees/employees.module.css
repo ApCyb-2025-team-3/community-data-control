@@ -1281,3 +1281,47 @@
     height: 50px;
     margin-right: 5.2%;
 }
+
+.lPartInfoCol1Data input, .lPartInfoCol2Data input {
+    width: 100%;
+    height: 28px;
+    border: 0px;
+    outline: none;
+    padding: 0;
+    padding-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    color : #000;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.addUserBlock input, .addUserBlock button, .addUserBlock select {
+    width: 50%;
+    height: 28px;
+    border: 2px #000 solid;
+    border-radius: 10px;
+    outline: none;
+    padding: 0;
+    padding-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.addUserBlock {
+    display: flex;
+    width: 50%;
+    height: 820px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border: 3px #000 solid;
+    border-radius: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+}

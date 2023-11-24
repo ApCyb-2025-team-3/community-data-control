@@ -96,6 +96,7 @@ const MainInfo = ({userId}) => {
                     isGroupsVisible: state.isGroupsVisible,
                     isMentorshipVisible: state.isMentorshipVisible,
                 })
+                console.log(userInfo)
 
             } else {
                 console.error("HTTP error:" + response.status + "\n" + response.statusText)
@@ -170,7 +171,7 @@ const MainInfo = ({userId}) => {
                                                     Подтвердить
                                                 </button>
                                                 <button onClick=
-                                                            {() => close()}>
+                                                    {() => close()}>
                                                     Отменить
                                                 </button>
                                             </div>
