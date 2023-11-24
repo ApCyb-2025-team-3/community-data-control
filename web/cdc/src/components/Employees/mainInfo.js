@@ -10,7 +10,7 @@ const MainInfo = (userId) => {
 
     const [state, setState] = useState({
         userId: userId,
-        userInfo: {},
+        userInfo: undefined,
         isGroupsVisible: false,
         isMentorshipVisible: false,
     })
@@ -44,7 +44,137 @@ const MainInfo = (userId) => {
         }
     }
 
-    getUserInfo()
+    if (state.userInfo === undefined) {
+        getUserInfo()
+    }
+
+    function handleGroupsVisibilityChange() {
+        setState({
+            userId: state.userId,
+            userInfo: state.userInfo,
+            isGroupsVisible: !state.isGroupsVisible,
+            isMentorshipVisible: state.isMentorshipVisible,
+        })
+    }
+
+    function handleMentorshipsVisibilityChange() {
+        setState({
+            userId: state.userId,
+            userInfo: state.userInfo,
+            isGroupsVisible: state.isGroupsVisible,
+            isMentorshipVisible: !state.isMentorshipVisible,
+        })
+    }
+
+    async function handleUserDismissal(reason) {
+
+        try {
+
+            const url = process.env.REACT_APP_BACKEND_URL
+                + "/api/user/" + state.userId + "/dismiss/?description=" + reason
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Origin": "http://localhost:3000",
+                },
+            });
+
+            if (response.ok) {
+                setState({
+                    userId: state.userId,
+                    userInfo: undefined,
+                    isGroupsVisible: state.isGroupsVisible,
+                    isMentorshipVisible: state.isMentorshipVisible,
+                })
+
+            } else {
+                console.error("HTTP error:" + response.status + "\n" + response.statusText)
+            }
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    function renderUserActiveness() {
+
+        const isActive = state.userInfo.isActive
+
+        return (
+            <div className={`${classes.mainBlockRPart}`}>
+                <div className={`${classes.rPartInfo}`}>
+                    <div className={`${classes.rPartInfoActivity}`}>
+                        <p>Активность:</p>
+                        <div className={`${classes.activityStatus}`}
+                             style={{color: isActive ? "#00CA4E" : "#FF605C"}}/>
+                    </div>
+                    <div className={`${classes.rPartInfoConnected}`}>
+                        <p>Присоединился:</p>
+                        <div className={`${classes.connectedDate}`}>{state.userInfo.invitedAt}</div>
+                    </div>
+                    <div className={`${classes.rPartInfoFired}`} style={{display: isActive ? "none" : ""}}>
+                        <p>Уволен:</p>
+                        <div className={`${classes.firedDate}`} >{state.userInfo.dismissedAt}</div>
+                    </div>
+                    <div className={`${classes.rPartInfoReason}`} style={{display: isActive ? "none" : ""}}>
+                        <p>Причина:</p>
+                        <div className={`${classes.reason}`} >{state.userInfo.dismissReason}</div>
+                    </div>
+                </div>
+                <div className={`${classes.rPartButtons}`}>
+                    <button className={`${classes.buttonTeamsGroups}`}
+                            onClick={handleGroupsVisibilityChange}>
+                        <img src={arrow} alt="arrow" />
+                        <p>Команды / Группы</p>
+                    </button>
+                    <button className={`${classes.buttonMentorship}`}
+                            onClick={handleMentorshipsVisibilityChange}>
+                        <img src={arrow} alt="arrow" />
+                        <p>Менторство</p>
+                    </button>
+                    <button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }}>
+                        Внести изменения
+                    </button>
+                    <Popup trigger=
+                               {<button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }}>
+                                   Уволить
+                               </button>}
+                           modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            Введите причину увольнения
+                                            <form action="" id={"dismissalReason"}>
+                                                <input placeholder="Причина"/>
+                                            </form>
+                                            <div className={`${classes.popUpButtons}`}>
+                                                <button onClick={(event) => {
+                                                    handleUserDismissal(
+                                                        document.getElementById("dismissalReason").value
+                                                    )
+                                                    close()
+                                                }}>
+                                                    Подтвердить
+                                                </button>
+                                                <button onClick=
+                                                            {() => close()}>
+                                                    Отменить
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </Popup>
+                </div>
+            </div>
+        )
+    }
 
     function renderGroupsAndMentorships() {
 
@@ -123,67 +253,7 @@ const MainInfo = (userId) => {
                         </div>
                     </div>
                 </div>
-                <div className={`${classes.mainBlockRPart}`}>
-                    <div className={`${classes.rPartInfo}`}>
-                        <div className={`${classes.rPartInfoActivity}`}>
-                            <p>Активность:</p>
-                            <div className={`${classes.activityStatus}`} />
-                        </div>
-                        <div className={`${classes.rPartInfoConnected}`}>
-                            <p>Присоединился:</p>
-                            <div className={`${classes.connectedDate}`}>23.09.3333</div>
-                        </div>
-                        <div className={`${classes.rPartInfoFired}`}>
-                            <p>Уволен:</p>
-                            <div className={`${classes.firedDate}`} >23.09.3333</div>
-                        </div>
-                        <div className={`${classes.rPartInfoReason}`}>
-                            <p>Причина:</p>
-                            <div className={`${classes.reason}`} >Воровал кофе</div>
-                        </div>
-                    </div>
-                    <div className={`${classes.rPartButtons}`}>
-                        <button className={`${classes.buttonTeamsGroups}`}>
-                            <img src={arrow} alt="arrow" />
-                            <p>Команды / Группы</p>
-                        </button>
-                        <button className={`${classes.buttonMentorship}`}>
-                            <img src={arrow} alt="arrow" />
-                            <p>Менторство</p>
-                        </button>
-                        <button className={`${classes.buttonEdit}`} style={{ display: "none" }}>Внести изменения</button>
-                        <Popup trigger=
-                                   {<button className={`${classes.buttonEdit}`} style={{ display: "none" }}>
-                                       Уволить
-                                   </button>}
-                               modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUp}`}>
-                                        <div className={`${classes.popUpContent}`}>
-                                            Введите причину увольнения
-                                            <form action="">
-                                                <input placeholder="Причина"/>
-                                            </form>
-                                            <div className={`${classes.popUpButtons}`}>
-                                                <button onClick=
-                                                            {() => close()}>
-                                                    Подтвердить
-                                                </button>
-                                                <button onClick=
-                                                            {() => close()}>
-                                                    Отменить
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        </Popup>
-                    </div>
-                </div>
+                {renderUserActiveness()}
             </div>
             <div className={`${classes.lowerBlocks}`}>
                 {renderGroupsAndMentorships()}

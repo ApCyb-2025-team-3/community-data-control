@@ -1121,8 +1121,8 @@
 }
 
 .popUp {
-    width: 300px;
-    height: 140px;
+    width: 500px;
+    height: 180px;
     padding: 35px 4.5rem;
     flex-direction: row;
     align-items: flex-start;
@@ -1132,6 +1132,18 @@
     border-radius: 30px;
     border: 3px solid #000;
     background-color: #FFFFFF;
+}
+
+.popUpMask {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    position: fixed;
 }
 
 .popUpContent {
@@ -1145,7 +1157,7 @@
     color: #000;
 
     font-family: 'Inter', sans-serif;
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     font-style: normal;
     font-weight: 300;
     line-height: normal;
