@@ -5,6 +5,7 @@ import search from '../../icons/search-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
 import React, {useState} from "react";
 import MainInfo from "./mainInfo";
+import AddUser from "./AddUser.js"
 
 const Employees = () => {
 
@@ -13,6 +14,8 @@ const Employees = () => {
             userList: [],
         }
     )
+
+    const [isAdding, setIsAdding] = useState(false)
 
     const testUserList = [
         {userId: 0, name: "Somehow", role: "Team Lead", project: ""},
@@ -215,6 +218,9 @@ const Employees = () => {
 
     function renderFullInfoBlock() {
 
+        if (isAdding) {
+            return <AddUser/>
+        }
         if (state.selectedUserId === -1) {
             return (
                 <div className={`${classes.infoBlocks}`}>
@@ -223,8 +229,8 @@ const Employees = () => {
         }
 
         return (
-            <MainInfo userId={state.selectedUserId}>
-            </MainInfo>
+            <MainInfo userId={state.selectedUserId}></MainInfo>
+                    
         )
     }
 
@@ -240,7 +246,7 @@ const Employees = () => {
                         <div className={`${classes.menuListBlock}`}>
                             <div className={`${classes.menuListBlockMenu}`}>
                                 <div className={`${classes.menuAddName}`}>
-                                    <button>
+                                    <button onClick={() => setIsAdding(!isAdding)}>
                                         <img src={add} alt="add"/>
                                     </button>
                                     <form action="">
@@ -356,8 +362,8 @@ const Employees = () => {
                                 </button>
                             </div>
                             <ul className={`${classes.menuListBlockList}`}>
-                                {/*{renderUserList(state.userList)}*/}
-                                {renderUserList(testUserList)}
+                                {renderUserList(state.userList)}
+                                {/*renderUserList(testUserList)*/}
                             </ul>
                         </div>
                         {renderFullInfoBlock()}

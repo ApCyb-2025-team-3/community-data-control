@@ -1,7 +1,7 @@
 import classes from './employees.module.css';
 import arrow from '../../icons/down-arrow-icon.svg';
 import dot from '../../icons/dot-icon.svg';
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Popup from "reactjs-popup";
 import Groups from "./groups";
 import Mentorships from "./mentorships";
@@ -9,11 +9,13 @@ import Mentorships from "./mentorships";
 const MainInfo = (userId) => {
 
     const [state, setState] = useState({
-        userId: userId,
+        userId: userId.userId,
         userInfo: {},
         isGroupsVisible: false,
         isMentorshipVisible: false,
     })
+
+    console.log(state.userId)
 
     async function getUserInfo() {
         try {
@@ -21,19 +23,20 @@ const MainInfo = (userId) => {
                 + "/api/user/" + state.userId + "/fullInfo"
             const response = await fetch(url, {
                 method: "GET",
+                mode: 'cors',
                 headers: {
                     "Origin": "http://localhost:3000",
+                    'Content-Type': 'application/json'
                 },
             });
 
             if (response.ok) {
                 const userInfo = await response.json()
                 setState({
-                    userId: state.userId,
+                    ...state,
                     userInfo: userInfo,
-                    isGroupsVisible: state.isGroupsVisible,
-                    isMentorshipVisible: state.isMentorshipVisible,
                 })
+                console.log(userInfo)
 
             } else {
                 console.error("HTTP error:" + response.status + "\n" + response.statusText)
@@ -44,7 +47,7 @@ const MainInfo = (userId) => {
         }
     }
 
-    getUserInfo()
+    if (state.userId !== state.userInfo.id) getUserInfo()
 
     function renderGroupsAndMentorships() {
 
@@ -71,37 +74,33 @@ const MainInfo = (userId) => {
                 <div className={`${classes.mainBlockLPart}`}>
                     <div className={`${classes.lPartHeading}`}>
                         <p>Сотрудник:</p>
-                        <div className={`${classes.lPartHeadingName}`}>Frederic Gilbert</div>
+                        <div className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
                     </div>
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
                             <p>Email:</p>
-                            <p>Телефон:</p>
-                            <p>Дата рождения:</p>
-                            <p>Отдел:</p>
-                            <p>Позиция:</p>
+                            <p>Проект:</p>
+                            <p>Подразд.:</p>
+                            <p>Ур. комп.:</p>
                             <p>Роль:</p>
                         </div>
                         <div className={`${classes.lPartInfoCol1Data}`}>
-                            <div className={`${classes.lPartInfoCol1DataEmail}`}>ocariz@bola389.bid</div>
-                            <div className={`${classes.lPartInfoCol1Project}`}>
-                                +7 (800) 555 35-35
-                            </div>
-                            <div className={`${classes.lPartInfoCol2DataDoB}`}>01.01.1900</div>
-                            <div className={`${classes.lPartInfoCol1DataDep}`}>Data Science</div>
-                            <div className={`${classes.lPartInfoCol1DataGrade}`}>Senior</div>
-                            <div className={`${classes.lPartInfoCol1DataRole}`}>Scala-developer</div>
+                            <input readOnly={!state.isChangingUser} id='infoEmail' value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, emial : event.target.value} })} />
+                            <input readOnly={!state.isChangingUser} id='infoProject' value={state.userInfo.project} className={`${classes.lPartInfoCol1DataProj}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, project : event.target.value} })} />
+                            <input readOnly={!state.isChangingUser} id='infoDepartment' value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, department : event.target.value} })} />
+                            <input readOnly={!state.isChangingUser} id='infoGrade' value={state.userInfo.grade} className={`${classes.lPartInfoCol1DataGrade}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, grade : event.target.value} })} />
+                            <input readOnly={!state.isChangingUser} id='infoRole' value={state.userInfo.role} className={`${classes.lPartInfoCol1DataRole}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, role : event.target.value} })} />
                         </div>
                         <div className={`${classes.lPartInfoCol2Title}`}>
-                            <p>Проект:</p>
-                            <p>Назначен:</p>
-                            <p>Руководитель:</p>
-                            <div className={`${classes.lPartInfoCol2TitlePrOwn}`}>Product<br></br>Owners:</div>
+                            <p>Телефон:</p>
+                            <p>Руковод.:</p>
+                            <p>Дата рожд.:</p>
+                            <div className={`${classes.lPartInfoCol2TitleDoB}`}>Pr. owners:</div>
                         </div>
                         <div className={`${classes.lPartInfoCol2Data}`}>
-                            <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>Apache Kafka</div>
-                            <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>Donald Trump</div>
-                            <div className={`${classes.lPartInfoCol2DataConnected}`}>33.33.3333</div>
+                            <input readOnly={!state.isChangingUser} id='infoPhone' value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol2DataPhoneNum}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, phoneNumber : event.target.value} })} />
+                            <input readOnly={!state.isChangingUser} id='infoSupervisor' value={state.userInfo.supervisor} className={`${classes.lPartInfoCol2DataSeprvisor}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, supervisor : event.target.value} })} />
+                            <input readOnly={!state.isChangingUser} id='infoDob' value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`} onChange={(event) => setState({ ...state, userInfo: {...state.userInfo, dob : event.target.value} })} />
                             <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                 <li>
                                     <img src={dot} alt="dot" />
@@ -122,26 +121,6 @@ const MainInfo = (userId) => {
                             </ul>
                         </div>
                     </div>
-                </div>
-                <div className={`${classes.mainBlockRPart}`}>
-                    <div className={`${classes.rPartInfo}`}>
-                        <div className={`${classes.rPartInfoActivity}`}>
-                            <p>Активность:</p>
-                            <div className={`${classes.activityStatus}`} />
-                        </div>
-                        <div className={`${classes.rPartInfoConnected}`}>
-                            <p>Присоединился:</p>
-                            <div className={`${classes.connectedDate}`}>23.09.3333</div>
-                        </div>
-                        <div className={`${classes.rPartInfoFired}`}>
-                            <p>Уволен:</p>
-                            <div className={`${classes.firedDate}`} >23.09.3333</div>
-                        </div>
-                        <div className={`${classes.rPartInfoReason}`}>
-                            <p>Причина:</p>
-                            <div className={`${classes.reason}`} >Воровал кофе</div>
-                        </div>
-                    </div>
                     <div className={`${classes.rPartButtons}`}>
                         <button className={`${classes.buttonTeamsGroups}`}>
                             <img src={arrow} alt="arrow" />
@@ -153,25 +132,25 @@ const MainInfo = (userId) => {
                         </button>
                         <button className={`${classes.buttonEdit}`} style={{ display: "none" }}>Внести изменения</button>
                         <Popup trigger=
-                                   {<button className={`${classes.buttonEdit}`} style={{ display: "none" }}>
-                                       Уволить
-                                   </button>}
-                               modal nested>
+                            {<button className={`${classes.buttonEdit}`} style={{ display: "none" }}>
+                                Уволить
+                            </button>}
+                            modal nested>
                             {
                                 close => (
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
                                             Введите причину увольнения
                                             <form action="">
-                                                <input placeholder="Причина"/>
+                                                <input placeholder="Причина" />
                                             </form>
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick=
-                                                            {() => close()}>
+                                                    {() => close()}>
                                                     Подтвердить
                                                 </button>
                                                 <button onClick=
-                                                            {() => close()}>
+                                                    {() => close()}>
                                                     Отменить
                                                 </button>
                                             </div>
