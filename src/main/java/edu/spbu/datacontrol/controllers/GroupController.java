@@ -1,15 +1,17 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.GroupType;
+import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import edu.spbu.datacontrol.repositories.EventRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,9 +23,12 @@ public class GroupController {
 
     private final UserRepository userRepository;
 
-    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
+    private final EventRepository eventLog;
+
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository, EventRepository eventLog) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
+        this.eventLog = eventLog;
     }
 
     @PostMapping("/create")
@@ -166,6 +171,17 @@ public class GroupController {
         if (!currentMembers.contains(teamLead)) {
             currentMembers.add(teamLead);
         }
+        User previousTeamLead = group.getTeamLead();
+        previousTeamLead.setRole(Role.DEVELOPER);
+        userRepository.save(previousTeamLead);
+        Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
+        eventLog.save(revokeTeamLeadRole);
+
+        teamLead.setRole(Role.TEAM_LEAD);
+        userRepository.save(teamLead);
+        Event assignTeamLeadRole = new Event(teamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "This user is new team leader");
+        eventLog.save(assignTeamLeadRole);
+
         group.setTeamLead(teamLead);
     }
 

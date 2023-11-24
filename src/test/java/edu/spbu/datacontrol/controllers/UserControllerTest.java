@@ -319,20 +319,22 @@ class UserControllerTest {
         assertTrue(usersList.stream().anyMatch(u -> u.getName().equals(expected.getName())));
     }
 
-    private UUID getUserId(UserAdditionDTO user) throws Exception {
+    private UUID getUserIdByName(String userName) throws Exception {
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByRole").param("role", user.getRole())
+                get("/api/user/getUsersByPartialName").param("partialName", userName)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
         Optional<UserDTO> possibleUser = usersList.stream()
-                .filter(t -> t.getName().equals(user.getName())).findFirst();
+                .filter(t -> t.getName().equals(userName)).findFirst();
 
         if (possibleUser.isEmpty()) fail();
 
         return possibleUser.get().getId();
     }
+
+    private UUID getUserId(UserAdditionDTO user) throws Exception { return getUserIdByName(user.getName()); }
 
     private UserDTO getUserById(UUID userId) throws Exception {
 

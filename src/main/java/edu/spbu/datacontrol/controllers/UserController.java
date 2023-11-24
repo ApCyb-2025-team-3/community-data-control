@@ -150,6 +150,7 @@ public class UserController {
             dismissedUser.setProject(null);
             dismissedUser.setProductOwners(null);
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
+            dismissedUser.setSupervisor(null);
             userRepository.save(dismissedUser);
             Event event = new Event(userId, EventType.DISMISS_USER, description);
             eventLog.save(event);
