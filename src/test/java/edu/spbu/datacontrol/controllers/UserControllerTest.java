@@ -1,30 +1,12 @@
 package edu.spbu.datacontrol.controllers;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.spbu.datacontrol.models.UserAdditionDTO;
-import edu.spbu.datacontrol.models.UserDTO;
-import edu.spbu.datacontrol.models.UserDataChangeDTO;
-import edu.spbu.datacontrol.models.UserInfoDTO;
+import edu.spbu.datacontrol.models.*;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.time.LocalDate;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -276,6 +266,23 @@ class UserControllerTest {
 
         UserDTO modifiedUser = getUserById(userId);
         assertEquals("Senior", modifiedUser.getGrade());
+    }
+
+    @Test
+    void changeUserProjectTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        addUser(user);
+        UUID userId = getUserId(user);
+        String newProjectName = "new project";
+        ChangeUserProjectDTO changeUserProjectDTO =
+                new ChangeUserProjectDTO(userId, newProjectName, "", "", new String[]{""});
+        this.mockMvc.perform(post("/api/user/changeUserProject")
+                .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(changeUserProjectDTO))
+        ).andExpect(status().isOk());
+
+        UserDTO modifiedUser = getUserById(userId);
+        assertEquals(newProjectName, modifiedUser.getProject());
     }
 
     @Test

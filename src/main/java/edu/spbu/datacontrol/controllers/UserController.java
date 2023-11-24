@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -205,6 +207,28 @@ public class UserController {
             }
             return new ResponseEntity<>("User's grade was successfully changed",
                     HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/changeUserProject")
+    public ResponseEntity<String> changeUserProject(@RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
+
+        User user = userRepository.findById(changeUserProjectDTO.getUserId()).orElse(null);
+        if (user != null) {
+            String oldProject = user.getProject();
+
+            user.setProject(changeUserProjectDTO.getProject());
+            user.setDepartment(changeUserProjectDTO.getDepartment());
+            assignSupervisor(user,changeUserProjectDTO.getSupervisor());
+            assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
+
+            userRepository.save(user);
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
+                    oldProject, changeUserProjectDTO.getProject()));
+
+            return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }
 
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);

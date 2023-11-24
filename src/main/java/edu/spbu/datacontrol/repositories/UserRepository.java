@@ -25,6 +25,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByName(String name);
 
+    User getUserByName(String name);
+
     List<User> getUsersByNameAndRole(String name, Role role);
 
     List<User> getUsersByNameInAndRole(List<String> names, Role role);
