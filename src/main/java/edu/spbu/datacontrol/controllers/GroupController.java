@@ -71,6 +71,9 @@ public class GroupController {
         currentMembers.add(newMember);
         groupRepository.save(group);
 
+        Event addUser = new Event(userId, EventType.ADD_USER, "Accepted the user to " + group.getName() + " group");
+        eventLog.save(addUser);
+
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
 
     }
@@ -159,6 +162,9 @@ public class GroupController {
         groupMembers.remove(user);
         userRepository.save(user);
         groupRepository.save(group);
+
+        Event excludeUser = new Event(userId, EventType.DISMISS_USER, "Excluded the user from the " + group.getName() + " group");
+        eventLog.save(excludeUser);
 
         return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
     }
