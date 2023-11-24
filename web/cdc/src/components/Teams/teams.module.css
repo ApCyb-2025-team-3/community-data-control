@@ -105,6 +105,12 @@
     border: 2px solid #000;
 
     background: none;
+
+    transition: all 0.15s ease; 
+}
+
+.panelAddTeamButton:hover {
+    box-shadow: 0 0 5px 1px #808080;
 }
 
 .panelAddTeamButton img {
@@ -156,6 +162,12 @@
 
     border: 0;
     background: none;
+
+    transition: all 0.1s ease;
+}
+
+.switchActive:hover {
+    font-size: 2.4rem;
 }
 
 .teamsTable {
@@ -241,13 +253,22 @@
 
 .lilInfo {
     display: flex;
-    width: 4.65%;
+    width: 2rem;
+    height: 2rem;
     justify-content: center;
     align-items: center;
 
     border: 0;
+    border-radius: 2rem;
     background: none;
+
+    transition: all 0.15s ease; 
 }
+
+.lilInfo:hover {
+    box-shadow: 0 0 5px 1px #808080;
+}
+
 
 .lilInfo img {
     width: 2rem;
@@ -540,11 +561,19 @@
 .lirRemove {
     display: flex;
     width: 2rem;
+    height: 2rem;
     justify-content: center;
     align-items: center;
 
     border: 0;
+    border-radius: 2rem;
     background: none;
+
+    transition: all 0.15s ease;
+}
+
+.lirRemove:hover {
+    box-shadow: 0 0 5px 1px #808080;
 }
 
 .lirRemove img {
@@ -612,6 +641,12 @@
     line-height: normal;
 
     background: none;
+
+    transition: all 0.15s ease; 
+}
+
+.bodyButtons button:hover {
+    box-shadow: 0 0 5px 2px #808080;
 }
 
 
