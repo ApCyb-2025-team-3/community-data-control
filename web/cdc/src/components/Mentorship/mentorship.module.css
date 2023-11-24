@@ -90,6 +90,12 @@
     border: 2px solid #000;
 
     background: none;
+    
+    transition: all 0.15s ease; 
+}
+
+.programsControlPanel button:hover {
+    box-shadow: 0 0 5px 1px #808080;
 }
 
 .programsControlPanel button img {
@@ -201,8 +207,14 @@
 .programsTableBodyComplete img {
     width: 2rem;
     height: 2rem;
+    border-radius: 2rem;
+    
+    transition: all 0.15s ease; 
 }
 
+.programsTableBodyComplete :hover {
+    box-shadow: 0 0 5px 1px #808080;
+}
 
 .blocksFreMen {
     display: flex;
@@ -354,6 +366,8 @@
     width: 30px;
     justify-content: center;
     align-items: center;
+
+    cursor: pointer;
 
     border: 0;
     background: none;
