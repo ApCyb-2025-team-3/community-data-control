@@ -236,8 +236,6 @@ const MainInfo = ({userId}) => {
         return productOwners
     }
 
-    console.log(state.userInfo)
-
     if (isLoading) {
 
         return (

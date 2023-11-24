@@ -218,8 +218,6 @@ const Employees = () => {
             )
         }
 
-        console.log(state.selectedUserId)
-
         return (
             <MainInfo key={state.selectedUserId} userId={state.selectedUserId}>
             </MainInfo>
