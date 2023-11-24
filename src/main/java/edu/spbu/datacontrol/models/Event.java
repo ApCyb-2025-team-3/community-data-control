@@ -48,4 +48,11 @@ public class Event {
         this.type = type;
         this.description = description;
     }
+
+    public Event(UUID userId, EventType type, String oldValues, String newValues) {
+        this.userId = userId;
+        this.type = type;
+        this.previousValue = oldValues;
+        this.newValue = newValues;
+    }
 }
