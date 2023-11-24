@@ -76,7 +76,8 @@ const MainInfo = ({userId}) => {
         try {
 
             const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/dismiss/?description=" + reason
+                + "/api/user/" + state.userId + "/dismiss?description=" + encodeURIComponent(reason)
+            console.log(url)
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -115,7 +116,7 @@ const MainInfo = ({userId}) => {
                     <div className={`${classes.rPartInfoActivity}`}>
                         <p>Активность:</p>
                         <div className={`${classes.activityStatus}`}
-                             style={{color: isActive ? "#00CA4E" : "#FF605C"}}/>
+                             style={{background: isActive ? `#00CA4E` : `#FF605C`}}/>
                     </div>
                     <div className={`${classes.rPartInfoConnected}`}>
                         <p>Присоединился:</p>
@@ -155,8 +156,8 @@ const MainInfo = ({userId}) => {
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
                                             Введите причину увольнения
-                                            <form action="" id={"dismissalReason"}>
-                                                <input placeholder="Причина"/>
+                                            <form action="">
+                                                <input id={"dismissalReason"} placeholder="Причина"/>
                                             </form>
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
@@ -284,7 +285,9 @@ const MainInfo = ({userId}) => {
                             <div className={`${classes.lPartInfoCol2TitlePrOwn}`}>Product<br></br>Owners:</div>
                         </div>
                         <div className={`${classes.lPartInfoCol2Data}`}>
-                            <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>{state.userInfo.project}</div>
+                            <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
+                                {state.userInfo.project !== null ? state.userInfo.project : "Нет"}
+                            </div>
                             <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                             <div className={`${classes.lPartInfoCol2DataConnected}`}>
                                 {state.userInfo.supervisor !== null ? state.userInfo.supervisor : "Не назначен"}

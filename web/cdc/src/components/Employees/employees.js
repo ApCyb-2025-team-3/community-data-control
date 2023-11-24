@@ -199,7 +199,7 @@ const Employees = () => {
                                     <p>Проект:</p>
                                     <div
                                         className={`${classes.roleProjRojBoxProj}`}>{userDto.project
-                                    !== "" ? userDto.project : "Нет"}</div>
+                                    !== null ? userDto.project : "Нет"}</div>
                                 </div>
                             </div>
                         </div>
