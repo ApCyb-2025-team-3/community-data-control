@@ -13,5 +13,5 @@ public interface EventRepository extends CrudRepository<Event, UUID> {
 
     List<Event> getEventsByUserId(UUID userId);
 
-    Event findFirstByUserIdAndTypeOrderByCreatedAt(UUID userID, EventType type);
+    Event findFirstByUserIdAndTypeOrderByCreatedAtDesc(UUID userID, EventType type);
 }

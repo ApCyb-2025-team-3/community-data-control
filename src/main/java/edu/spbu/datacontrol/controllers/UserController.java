@@ -1,21 +1,16 @@
 package edu.spbu.datacontrol.controllers;
 
-import static java.util.Collections.emptyList;
-
 import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,7 +64,7 @@ public class UserController {
         if (user != null) {
             UserInfoDTO userInfo = new UserInfoDTO(user);
 
-            Event projectChange = eventLog.findFirstByUserIdAndTypeOrderByCreatedAt(userId,
+            Event projectChange = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
                 EventType.CHANGE_PROJECT);
             if (projectChange != null) {
                 userInfo.setProjectChangedAt(
@@ -77,7 +72,7 @@ public class UserController {
                         .toLocalDate());
             }
 
-            Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAt(userId,
+            Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
                 EventType.DISMISS_USER);
             if (dismiss != null) {
                 userInfo.setDismissedAt(
