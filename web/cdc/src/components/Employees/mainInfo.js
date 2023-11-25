@@ -5,6 +5,7 @@ import React, {useEffect, useState} from "react";
 import Popup from "reactjs-popup";
 import Groups from "./groups";
 import Mentorships from "./mentorships";
+import {localiseGrade, localiseRole} from "./localise";
 
 const MainInfo = ({userId}) => {
 
@@ -247,7 +248,8 @@ const MainInfo = ({userId}) => {
         )
     }
 
-    const projectChangeDate = state.userInfo.projectChangedAt !== null ? state.userInfo.projectChangedAt : state.userInfo.invitedAt
+    const projectChangeDate = state.userInfo.projectChangedAt !== null
+        ? state.userInfo.projectChangedAt : state.userInfo.invitedAt
 
     return (
         <div className={`${classes.infoBlocks}`}>
@@ -273,8 +275,8 @@ const MainInfo = ({userId}) => {
                             </div>
                             <div className={`${classes.lPartInfoCol2DataDoB}`}>{formatLocalDate(state.userInfo.dob)}</div>
                             <div className={`${classes.lPartInfoCol1DataDep}`}>{state.userInfo.department}</div>
-                            <div className={`${classes.lPartInfoCol1DataGrade}`}>{state.userInfo.grade}</div>
-                            <div className={`${classes.lPartInfoCol1DataRole}`}>{state.userInfo.role}</div>
+                            <div className={`${classes.lPartInfoCol1DataGrade}`}>{localiseGrade(state.userInfo.grade)}</div>
+                            <div className={`${classes.lPartInfoCol1DataRole}`}>{localiseRole(state.userInfo.role)}</div>
                         </div>
                         <div className={`${classes.lPartInfoCol2Title}`}>
                             <p>Проект:</p>

@@ -5,6 +5,7 @@ import search from '../../icons/search-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
 import React, {useState} from "react";
 import MainInfo from "./mainInfo";
+import {localiseRole} from "./localise";
 
 const Employees = () => {
 
@@ -13,20 +14,6 @@ const Employees = () => {
             userList: [],
         }
     )
-
-    const testUserList = [
-        {userId: 0, name: "Somehow", role: "Team Lead", project: ""},
-        {userId: 1, name: "I", role: "Developer", project: "Apache Kafka"},
-        {userId: 2, name: "Know", role: "Team Lead", project: "Apache Kafka"},
-        {userId: 3, name: "Nothing", role: "Developer", project: "Apache Kafka"},
-        {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"},
-        {userId: 5, name: "Somehow", role: "Team Lead", project: ""},
-        {userId: 6, name: "I", role: "Developer", project: "Apache Kafka"},
-        {userId: 7, name: "Know", role: "Team Lead", project: "Apache Kafka"},
-        {userId: 8, name: "Nothing", role: "Developer", project: "Apache Kafka"},
-        {userId: 9, name: "However", role: "Product Owner", project: "Apache Kafka"},
-        {userId: 10, name: "I", role: "Developer", project: "Apache Kafka"},
-    ]
 
     function setEmptyUserListToState() {
         setState({
@@ -191,15 +178,16 @@ const Employees = () => {
                                 <div
                                     className={`${classes.listLiInfoRoleProjRoleBox}`}>
                                     <p>Роль:</p>
-                                    <div
-                                        className={`${classes.roleProjRoleBoxRole}`}>{userDto.role}</div>
+                                    <div className={`${classes.roleProjRoleBoxRole}`}>
+                                        {localiseRole(userDto.role)}
+                                    </div>
                                 </div>
                                 <div
                                     className={`${classes.listLiInfoRoleProjProjBox}`}>
                                     <p>Проект:</p>
-                                    <div
-                                        className={`${classes.roleProjRojBoxProj}`}>{userDto.project
-                                    !== null ? userDto.project : "Нет"}</div>
+                                    <div className={`${classes.roleProjRojBoxProj}`}>
+                                        {userDto.project !== null ? userDto.project : "Нет"}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -240,9 +228,17 @@ const Employees = () => {
                                         <img src={add} alt="add"/>
                                     </button>
                                     <div>
-                                        <input placeholder="Имя" id={"nameSearch"}/>
-                                        <button onClick={
-                                            (event) => {
+                                        <input
+                                            placeholder="Имя"
+                                            id={"nameSearch"}
+                                            onKeyUp={(event) => {
+                                                if (event.key === 'Enter') {
+                                                    getUsersByName(event.currentTarget.value)
+                                                }
+                                            }}
+                                        />
+                                        <button
+                                            onClick={(event) => {
                                                 getUsersByName(document.getElementById("nameSearch").value)
                                             }}
                                         >
@@ -275,7 +271,15 @@ const Employees = () => {
                                             </option>
                                         </select>
                                         <div action="">
-                                            <input placeholder="Отдел" id={"departmentSearch"}/>
+                                            <input
+                                                placeholder="Отдел"
+                                                id={"departmentSearch"}
+                                                onKeyUp={(event) => {
+                                                    if (event.key === 'Enter') {
+                                                        getUsersByDepartment(event.currentTarget.value)
+                                                    }
+                                                }}
+                                            />
                                             <button
                                                 onClick={(event) => {
                                                     getUsersByDepartment(document.getElementById("departmentSearch").value)
@@ -320,7 +324,15 @@ const Employees = () => {
                                             </option>
                                         </select>
                                         <div action="">
-                                            <input placeholder="Проект" id={"projectSearch"}/>
+                                            <input
+                                                placeholder="Проект"
+                                                id={"projectSearch"}
+                                                onKeyUp={(event) => {
+                                                    if (event.key === 'Enter') {
+                                                        getUsersByProject(event.currentTarget.value)
+                                                    }
+                                                }}
+                                            />
                                             <button
                                                 onClick={(event) => {
                                                     getUsersByProject(document.getElementById("projectSearch").value)
@@ -334,7 +346,15 @@ const Employees = () => {
                                 </div>
                                 <div action=""
                                       className={`${classes.menuSupervisor}`}>
-                                    <input placeholder="Руководитель" id={"supervisorSearch"}/>
+                                    <input
+                                        placeholder="Руководитель"
+                                        id={"supervisorSearch"}
+                                        onKeyUp={(event) => {
+                                            if (event.key === 'Enter') {
+                                                getUsersBySupervisor(event.currentTarget.value)
+                                            }
+                                        }}
+                                    />
                                     <button
                                         onClick={(event) => {
                                             getUsersBySupervisor(document.getElementById("supervisorSearch").value)
