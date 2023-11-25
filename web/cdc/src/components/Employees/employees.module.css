@@ -604,7 +604,18 @@
     justify-content: space-between;
 }
 
-.lPartInfoCol2DataPhoneNum, .lPartInfoCol2DataConnected, .lPartInfoCol2DataSeprvisor, .lPartInfoCol2DataDoB {
+.lPartInfoCol2DataDoB {
+    width: 100%;
+    height: 30px;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.lPartInfoCol2DataPhoneNum, .lPartInfoCol2DataConnected, .lPartInfoCol2DataSeprvisor {
     display: flex;
     width: 100%;
     height: 30px;
@@ -1282,7 +1293,7 @@
     margin-right: 5.2%;
 }
 
-.lPartInfoCol1Data input, .lPartInfoCol2Data input {
+.lPartInfoCol1Data input, .lPartInfoCol2Data input, .lPartInfoCol1Data select {
     width: 100%;
     height: 28px;
     border: 0px;
@@ -1297,10 +1308,39 @@
     line-height: normal;
 }
 
-.addUserBlock input, .addUserBlock button, .addUserBlock select {
+.InputField, .addUserBlock button {
     width: 50%;
     height: 28px;
     border: 2px #000 solid;
+    border-radius: 10px;
+    outline: none;
+    padding: 0;
+    padding-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.addUserBlock select {
+    width: 52%;
+    height: 32px;
+    border: 2px #000 solid;
+    border-radius: 10px;
+    outline: none;
+    padding-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.UnfilledInput {
+    width: 50%;
+    height: 28px;
+    border: 2px #f00 solid;
     border-radius: 10px;
     outline: none;
     padding: 0;

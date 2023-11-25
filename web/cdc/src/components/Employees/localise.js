@@ -11,6 +11,8 @@ export function localiseRole(role) {
             return "Product Owner"
         case "Supervisor":
             return "Руководитель"
+        case "Developer":
+            return "Разработчик"
         default:
             return "Гость"
     }

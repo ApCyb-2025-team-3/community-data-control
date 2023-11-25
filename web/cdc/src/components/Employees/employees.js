@@ -172,6 +172,7 @@ const Employees = () => {
             selectedUserId: userId,
             userList: state.userList
         })
+        setIsAdding(false)
     }
 
     function renderUserList(userDtoList) {
