@@ -75,7 +75,7 @@ const AddUser = () => {
                 <option value="Mentee" >Менти</option>
                 <option value="Not participating">Не участвует</option>
             </select>
-        <button type='button' onClick={() => { 
+        <button type='button' onClick={() => {
             setAllFilled(user.name && user.email && user.dob && user.department && user.project
                 && user.phoneNumber)
             {allFilled ? addUser(user) : alert("Заполните обязательные поля")}}}>Добавить</button>

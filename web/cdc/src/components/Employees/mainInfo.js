@@ -164,7 +164,7 @@ const MainInfo = ({ userId }) => {
     }
 
     function changeUserInfo(reason) {
-        
+
             let userDTO = {
                 userId: state.userId,
                 name: state.userInfo.name,
@@ -194,21 +194,21 @@ const MainInfo = ({ userId }) => {
                 productOwners: state.oldUserInfo.productOwners
             }
 
-            
+
             if (userDTO !== oldPD) changePersonalDataRequest(userDTO, reason)
-            
-            
+
+
             if (state.userInfo.grade !== state.oldUserInfo.grade) changeUserGradeRequest(state.userInfo.grade, reason)
-            
-            
+
+
             if (state.userInfo.role !== state.oldUserInfo.role) changeUserRoleRequest(state.userInfo.role, reason)
-            
+
             if (newProjData !== oldProjData)changeProjectData(newProjData, reason)
-            
+
             setState({...state, oldUserInfo: {...state.userInfo}})
 
 
-        
+
     }
 
     async function handleUserDismissal(reason) {
