@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -148,6 +149,18 @@ public class GroupController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
+    }
+
+    @GetMapping("/getGroupsByPartialName")
+    public ResponseEntity<List<GroupDTO>> getGroupsByPartialName(@RequestParam String partialName) {
+
+        if (!partialName.isBlank()) {
+            return new ResponseEntity<>(
+                    groupRepository.findByNameContainingIgnoreCase(partialName).stream()
+                            .map(GroupDTO::new)
+                            .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("getActiveMembers")
