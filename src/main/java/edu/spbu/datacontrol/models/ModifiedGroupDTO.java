@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GroupDataChangedDTO {
+public class ModifiedGroupDTO {
 
     @NotNull
     private UUID id;
