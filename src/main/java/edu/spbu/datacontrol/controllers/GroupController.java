@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.GroupType;
 import edu.spbu.datacontrol.models.enums.Role;
@@ -71,6 +72,9 @@ public class GroupController {
         currentMembers.add(newMember);
         groupRepository.save(group);
 
+        Event addUser = new Event(userId, EventType.ADD_USER, "Accepted the user to " + group.getName() + " group");
+        eventLog.save(addUser);
+
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
 
     }
@@ -131,6 +135,21 @@ public class GroupController {
                 .stream().map(GroupDTO::new).toList(), HttpStatusCode.valueOf(200));
     }
 
+    @GetMapping("getUserGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId, @RequestParam String groupType) {
+        try {
+            User user = userRepository.getUserById(userId);
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByMembersContainsAndType(user, type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
     @GetMapping("getActiveMembers")
     public ResponseEntity<List<UserDTO>> getActiveMembers(@RequestParam UUID groupId) {
         Group group = groupRepository.findById(groupId).orElse(null);
@@ -159,6 +178,9 @@ public class GroupController {
         groupMembers.remove(user);
         userRepository.save(user);
         groupRepository.save(group);
+
+        Event excludeUser = new Event(userId, EventType.DISMISS_USER, "Excluded the user from the " + group.getName() + " group");
+        eventLog.save(excludeUser);
 
         return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
     }

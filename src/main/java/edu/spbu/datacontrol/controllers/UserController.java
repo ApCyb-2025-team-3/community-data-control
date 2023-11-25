@@ -4,10 +4,13 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,7 +62,26 @@ public class UserController {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            return new ResponseEntity<>(new UserInfoDTO(user), HttpStatus.OK);
+            UserInfoDTO userInfo = new UserInfoDTO(user);
+
+            Event projectChange = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
+                EventType.CHANGE_PROJECT);
+            if (projectChange != null) {
+                userInfo.setProjectChangedAt(
+                    projectChange.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate());
+            }
+
+            Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
+                EventType.DISMISS_USER);
+            if (dismiss != null) {
+                userInfo.setDismissedAt(
+                    dismiss.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate());
+                userInfo.setDismissReason(dismiss.getDescription());
+            }
+
+            return new ResponseEntity<>(userInfo, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -94,24 +116,34 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUsersBySupervisorId")
-    public ResponseEntity<List<UserDTO>> getUsersBySupervisorId(@RequestParam UUID supervisorId) {
+    @GetMapping("/getUsersBySupervisorName")
+    public ResponseEntity<List<UserDTO>> getUsersBySupervisorName(@RequestParam String partialName) {
 
         try {
-            User user = userRepository.getUserById(supervisorId);
-            if (user.getRole() == Role.SUPERVISOR) {
-                return new ResponseEntity<>(
-                        userRepository.getUsersBySupervisor(user).stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatus.OK);
+            List<UserDTO> subordinateUsers = new ArrayList<>();
+
+            List<User> supervisors = userRepository.findByNameContainingIgnoreCase(partialName)
+                    .stream()
+                    .filter(user -> user.getRole() == Role.SUPERVISOR)
+                    .toList();
+
+            if (supervisors.isEmpty()) {
+                return new ResponseEntity<>(subordinateUsers, HttpStatus.OK);
             }
 
-            throw new IllegalArgumentException("This user isn't supervisor");
+            for (User supervisor : supervisors) {
+                List<User> subordinates = userRepository.getUsersBySupervisor(supervisor);
+                subordinateUsers.addAll(subordinates.stream()
+                        .map(UserDTO::new)
+                        .toList());
+            }
 
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(subordinateUsers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @GetMapping("/getDismissedUsers")
     public ResponseEntity<List<UserDTO>> getDismissedUsers() {
@@ -125,19 +157,25 @@ public class UserController {
     @GetMapping("/getUsersByDepartment")
     public ResponseEntity<List<UserDTO>> getUsersByDepartment(@RequestParam String department) {
 
-        return new ResponseEntity<>(
-                userRepository.getUsersByDepartmentAndIsActiveTrue(department).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+        if (!department.isBlank()) {
+            return new ResponseEntity<>(
+                userRepository.getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(department).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("/getUsersByProject")
     public ResponseEntity<List<UserDTO>> getUsersByProject(@RequestParam String project) {
 
-        return new ResponseEntity<>(
-                userRepository.getUsersByProjectAndIsActiveTrue(project).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+        if (!project.isBlank()) {
+            return new ResponseEntity<>(
+                userRepository.getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(project).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}/dismiss")
@@ -199,12 +237,38 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @PostMapping("/changeUserProject")
+    public ResponseEntity<String> changeUserProject(@RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
+
+        User user = userRepository.findById(changeUserProjectDTO.getUserId()).orElse(null);
+        if (user != null) {
+            String oldProject = user.getProject();
+
+            user.setProject(changeUserProjectDTO.getProject());
+            user.setDepartment(changeUserProjectDTO.getDepartment());
+            assignSupervisor(user,changeUserProjectDTO.getSupervisor());
+            assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
+
+            userRepository.save(user);
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
+                    oldProject, changeUserProjectDTO.getProject()));
+
+            return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping("/getUsersByPartialName")
     public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
-        return new ResponseEntity<>(
-                userRepository.findByNameContaining(partialName).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+
+        if (!partialName.isBlank()) {
+            return new ResponseEntity<>(
+                userRepository.findByNameContainingIgnoreCase(partialName).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {

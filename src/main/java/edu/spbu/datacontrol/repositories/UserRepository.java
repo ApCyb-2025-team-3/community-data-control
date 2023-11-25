@@ -25,6 +25,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByName(String name);
 
+    User getUserByName(String name);
+
     List<User> getUsersByNameAndRole(String name, Role role);
 
     List<User> getUsersByNameInAndRole(List<String> names, Role role);
@@ -43,11 +45,11 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByIsActiveFalse();
 
-    List<User> getUsersByDepartmentAndIsActiveTrue(String department);
+    List<User> getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(String department);
 
-    List<User> getUsersByProjectAndIsActiveTrue(String project);
+    List<User> getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(String project);
 
-    List<User> findByNameContaining(String partialName);
+    List<User> findByNameContainingIgnoreCase(String partialName);
 
     @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTOR' " +
             "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id)")
