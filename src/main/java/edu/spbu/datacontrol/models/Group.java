@@ -54,7 +54,7 @@ public class Group {
         this.members = new ArrayList<>();
     }
 
-    public void changeGroupData(GroupDTO modifiedData) {
+    public void changeGroupData(GroupDataChangedDTO modifiedData) {
 
         this.name = modifiedData.getName() != null ? modifiedData.getName() : this.name;
         this.description = modifiedData.getDescription() != null ? modifiedData.getDescription()
