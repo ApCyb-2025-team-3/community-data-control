@@ -122,7 +122,7 @@ public class UserController {
         try {
             List<UserDTO> subordinateUsers = new ArrayList<>();
 
-            List<User> supervisors = userRepository.findByNameContaining(partialName)
+            List<User> supervisors = userRepository.findByNameContainingIgnoreCase(partialName)
                     .stream()
                     .filter(user -> user.getRole() == Role.SUPERVISOR)
                     .toList();
@@ -159,7 +159,7 @@ public class UserController {
 
         if (!department.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.getUsersByDepartmentAndIsActiveTrue(department).stream()
+                userRepository.getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(department).stream()
                     .map(UserDTO::new)
                     .toList(), HttpStatus.OK);
         }
@@ -171,7 +171,7 @@ public class UserController {
 
         if (!project.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.getUsersByProjectAndIsActiveTrue(project).stream()
+                userRepository.getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(project).stream()
                     .map(UserDTO::new)
                     .toList(), HttpStatus.OK);
         }
@@ -264,7 +264,7 @@ public class UserController {
 
         if (!partialName.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.findByNameContaining(partialName).stream()
+                userRepository.findByNameContainingIgnoreCase(partialName).stream()
                     .map(UserDTO::new)
                     .toList(), HttpStatus.OK);
         }
