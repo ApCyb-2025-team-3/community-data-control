@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.GroupType;
 import edu.spbu.datacontrol.models.enums.Role;
@@ -132,6 +133,21 @@ public class GroupController {
         User user = userRepository.getUserById(userId);
         return new ResponseEntity<>(groupRepository.getGroupsByMembersContains(user)
                 .stream().map(GroupDTO::new).toList(), HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("getUserGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId, @RequestParam String groupType) {
+        try {
+            User user = userRepository.getUserById(userId);
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByMembersContainsAndType(user, type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
     }
 
     @GetMapping("getActiveMembers")
