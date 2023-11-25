@@ -129,6 +129,17 @@ public class GroupController {
 
     }
 
+    @GetMapping("/getAllGroups")
+    public ResponseEntity<List<GroupDTO>> getAllGroups() {
+
+        return new ResponseEntity<>(
+            groupRepository.getAllGroups()
+                .stream()
+                .map(GroupDTO::new)
+                .toList(), HttpStatusCode.valueOf(200));
+
+    }
+
     @GetMapping("getUserGroups")
     public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId) {
         User user = userRepository.getUserById(userId);
