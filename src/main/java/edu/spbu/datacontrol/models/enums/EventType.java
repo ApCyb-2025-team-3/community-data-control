@@ -8,6 +8,7 @@ public enum EventType {
     DISMISS_USER("Dismiss user"),
     CHANGE_PROJECT("Change project"),
     CHANGE_GRADE("Update grade"),
+    CHANGE_ROLE("Update role"),
     CHANGE_PERSONAL_DATA("Change personal data"),
     CREATE_GROUP("Create group"),
     DISBAND_GROUP("Disband group");

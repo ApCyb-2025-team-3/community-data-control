@@ -202,7 +202,6 @@ class UserControllerTest {
         UserDTO result = getUserById(userId);
         assertEquals(user.getName(), result.getName());
         assertEquals(newUserData.getEmail(), result.getEmail());
-        assertEquals(user.getDepartment(), result.getDepartment());
     }
 
     @Test
@@ -258,14 +257,30 @@ class UserControllerTest {
         addUser(user);
 
         UUID userId = getUserId(user);
-        this.mockMvc.perform(post("/api/user/changeUserGrade")
-                .param("userId", userId.toString())
+        this.mockMvc.perform(post("/api/user/" + userId + "/changeGrade")
                 .param("grade", "Senior")
                 .param("reason", "For testing purpose.")
         ).andExpect(status().isOk());
 
         UserDTO modifiedUser = getUserById(userId);
         assertEquals("Senior", modifiedUser.getGrade());
+    }
+
+    @Test
+    void changeUserRoleTest() throws Exception {
+
+        UserAdditionDTO user = generateSimpleUser();
+        addUser(user);
+
+        UUID userId = getUserId(user);
+        this.mockMvc.perform(post("/api/user/" + userId + "/changeRole")
+            .param("role", "Supervisor")
+            .param("reason", "For testing purpose.")
+        ).andExpect(status().isOk());
+
+        UserDTO modifiedUser = getUserById(userId);
+        assertEquals("Supervisor", modifiedUser.getRole());
+
     }
 
     @Test

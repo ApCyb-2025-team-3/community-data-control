@@ -216,8 +216,8 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/changeUserGrade")
-    public ResponseEntity<String> changeUserGrade(@RequestParam UUID userId,
+    @PostMapping("/{userId}/changeGrade")
+    public ResponseEntity<String> changeUserGrade(@PathVariable UUID userId,
                                                   @RequestParam String grade,
                                                   @RequestParam String reason) {
 
@@ -232,6 +232,27 @@ public class UserController {
             }
             return new ResponseEntity<>("User's grade was successfully changed",
                     HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/{userId}/changeRole")
+    public ResponseEntity<String> changeUserRole(@PathVariable UUID userId,
+                                                 @RequestParam String role,
+                                                 @RequestParam String reason) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            try {
+                user.setRole(EnumUtils.fromString(Role.class, role));
+                userRepository.save(user);
+                eventLog.save(new Event(user.getId(), EventType.CHANGE_ROLE, reason));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>("Unknown role is sent", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>("User's role was successfully changed",
+                HttpStatus.OK);
         }
 
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
