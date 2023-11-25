@@ -222,13 +222,13 @@ const MainInfo = ({userId}) => {
 
         const productOwners = []
 
-        productOwnersList.sort((a, b) => a.name.localeCompare(b.name)).forEach(
-            (name) => {
+        productOwnersList.sort((a, b) => a.value.localeCompare(b.value)).forEach(
+            (user) => {
                 productOwners.push(
                     <li>
                         <img src={dot} alt="dot"/>
                         <div
-                            className={`${classes.liProdOwnersName}`}>{name}</div>
+                            className={`${classes.liProdOwnersName}`}>{user.value}</div>
                     </li>
                 )
             }
@@ -290,7 +290,7 @@ const MainInfo = ({userId}) => {
                             </div>
                             <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                             <div className={`${classes.lPartInfoCol2DataConnected}`}>
-                                {state.userInfo.supervisor !== null ? state.userInfo.supervisor : "Не назначен"}
+                                {state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : "Не назначен"}
                             </div>
                             <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                 {renderProductOwners(state.userInfo.productOwners)}
