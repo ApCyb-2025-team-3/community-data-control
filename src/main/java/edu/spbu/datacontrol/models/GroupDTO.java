@@ -1,15 +1,14 @@
 package edu.spbu.datacontrol.models;
 
+import java.util.Date;
 import java.util.UUID;
 
-import edu.spbu.datacontrol.models.enums.GroupType;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 
-@Getter
-@Setter
+
+@Data
 public class GroupDTO {
 
     @NotNull
@@ -17,7 +16,11 @@ public class GroupDTO {
 
     private String name;
 
+    private boolean isActive;
+
     private String description;
+
+    private Date creationDate;
 
     private UUID teamLead;
 
@@ -26,7 +29,9 @@ public class GroupDTO {
     public GroupDTO(Group group) {
         this.id = group.getId();
         this.name = group.getName();
+        this.isActive = group.isActive();
         this.description = group.getDescription();
+        this.creationDate = group.getCreationDate();
         this.teamLead = group.getTeamLead().getId();
         this.teamLeadName = group.getTeamLead().getName();
     }
