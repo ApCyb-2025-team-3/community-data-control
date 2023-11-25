@@ -1,5 +1,6 @@
 package edu.spbu.datacontrol.controllers;
 
+import edu.spbu.datacontrol.models.MentorshipDTO;
 import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.UserDTO;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
@@ -67,71 +68,84 @@ public class MentorshipController {
         }
         mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
         return new ResponseEntity<>("Mentorship is created.", HttpStatusCode.valueOf(201));
-
     }
 
-    @GetMapping("/getAllMentors")
-    public ResponseEntity<List<UserDTO>> getAllMentors(){
+    @GetMapping("/getAllMentorships")
+    public ResponseEntity<List<MentorshipDTO>> getAllMentorships() {
         try {
             return new ResponseEntity<>(
-                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                    mentorshipRepository.getAllMentorships()
                             .stream()
-                            .map(UserDTO::new)
+                            .map(MentorshipDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
-    @GetMapping("/getAllMentees")
-    public ResponseEntity<List<UserDTO>> getAllMentees(){
-        try {
-            return new ResponseEntity<>(
-                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
-                            .stream()
-                            .map(UserDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        @GetMapping("/getAllMentors")
+        public ResponseEntity<List<UserDTO>> getAllMentors () {
+            try {
+                return new ResponseEntity<>(
+                        userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                                .stream()
+                                .map(UserDTO::new)
+                                .toList(), HttpStatusCode.valueOf(200));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            }
         }
-    }
 
-    @GetMapping("/getFreeMentors")
-    public ResponseEntity<List<UserDTO>> getFreeMentors(){
-        try {
-            return new ResponseEntity<>(
-                userRepository.getFreeMentors()
-                    .stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        @GetMapping("/getAllMentees")
+        public ResponseEntity<List<UserDTO>> getAllMentees () {
+            try {
+                return new ResponseEntity<>(
+                        userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
+                                .stream()
+                                .map(UserDTO::new)
+                                .toList(), HttpStatusCode.valueOf(200));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            }
         }
-    }
 
-    @GetMapping("/getFreeMentees")
-    public ResponseEntity<List<UserDTO>> getFreeMentees(){
-        try {
-            return new ResponseEntity<>(
-                userRepository.getFreeMentees()
-                    .stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        @GetMapping("/getFreeMentors")
+        public ResponseEntity<List<UserDTO>> getFreeMentors () {
+            try {
+                return new ResponseEntity<>(
+                        userRepository.getFreeMentors()
+                                .stream()
+                                .map(UserDTO::new)
+                                .toList(), HttpStatusCode.valueOf(200));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            }
         }
-    }
 
-    private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
-        if (isInMentorship(userId)) {
-            throw new IllegalArgumentException("This user is in mentorship pair already!");
+        @GetMapping("/getFreeMentees")
+        public ResponseEntity<List<UserDTO>> getFreeMentees () {
+            try {
+                return new ResponseEntity<>(
+                        userRepository.getFreeMentees()
+                                .stream()
+                                .map(UserDTO::new)
+                                .toList(), HttpStatusCode.valueOf(200));
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            }
         }
-        User user = userRepository.getUserById(userId);
-        user.setMentorStatus(mentorStatus);
-    }
 
-    private boolean isInMentorship(UUID userId) {
-        return mentorshipRepository.countMentorshipByMenteeOrMentor(userId) > 0;
-    }
+        private void changeMentorshipStatus (UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException
+        {
+            if (isInMentorship(userId)) {
+                throw new IllegalArgumentException("This user is in mentorship pair already!");
+            }
+            User user = userRepository.getUserById(userId);
+            user.setMentorStatus(mentorStatus);
+        }
 
-}
+        private boolean isInMentorship (UUID userId){
+            return mentorshipRepository.countMentorshipByMenteeOrMentor(userId) > 0;
+        }
+
+    }
