@@ -35,14 +35,14 @@ public class GroupController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
-                                              @RequestBody UserDTO teamLeadDTO) {
+                                              @RequestParam UUID teamLeadId) {
         try {
             Group currentGroups = groupRepository.getGroupByName(groupInfoDTO.getName());
             if(currentGroups != null){
                 return new ResponseEntity<>("A group with this name already exists!", HttpStatusCode.valueOf(409));
             }
             Group newGroup = new Group(groupInfoDTO);
-            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
+            User teamLead = userRepository.getUserById(teamLeadId);
             assignTeamLead(newGroup, teamLead);
             groupRepository.save(newGroup);
         } catch (Exception e) {
@@ -207,10 +207,12 @@ public class GroupController {
             currentMembers.add(teamLead);
         }
         User previousTeamLead = group.getTeamLead();
-        previousTeamLead.setRole(Role.DEVELOPER);
-        userRepository.save(previousTeamLead);
-        Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
-        eventLog.save(revokeTeamLeadRole);
+        if (previousTeamLead != null) {
+            previousTeamLead.setRole(Role.DEVELOPER);
+            userRepository.save(previousTeamLead);
+            Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
+            eventLog.save(revokeTeamLeadRole);
+        }
 
         teamLead.setRole(Role.TEAM_LEAD);
         userRepository.save(teamLead);

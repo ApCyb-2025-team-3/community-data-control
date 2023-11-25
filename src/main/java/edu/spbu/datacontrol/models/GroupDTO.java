@@ -21,11 +21,14 @@ public class GroupDTO {
 
     private UUID teamLead;
 
+    private String teamLeadName;
+
     public GroupDTO(Group group) {
         this.id = group.getId();
         this.name = group.getName();
         this.description = group.getDescription();
         this.teamLead = group.getTeamLead().getId();
+        this.teamLeadName = group.getTeamLead().getName();
     }
 
 }
