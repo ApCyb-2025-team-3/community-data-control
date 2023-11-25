@@ -1,9 +1,14 @@
 import classes from "./employees.module.css";
 import dot from "../../icons/dot-icon.svg";
 import remove from "../../icons/remove-icon.svg";
-import React from "react";
+import React, {useState} from "react";
 
-const Groups = (userId) => {
+const Groups = ({userId}) => {
+
+    const [state, setState] = useState({
+        userId: userId,
+        userGroupList: []
+    })
 
     return (
         <div className={`${classes.teamGroupsBlock}`}>

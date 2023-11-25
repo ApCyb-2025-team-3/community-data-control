@@ -1,8 +1,49 @@
 import classes from "./employees.module.css";
 import dot from "../../icons/dot-icon.svg";
-import React from "react";
+import React, {useEffect, useState} from "react";
 
-const Mentorships = (userId) => {
+const Mentorships = ({userId, mentorshipStatus}) => {
+
+    const [state, setState] = useState({
+        userId: userId,
+        userMentorshipList: []
+    })
+
+    const [isLoading, setLoading] = useState(true)
+
+    useEffect( () => {
+        async function getUserInfo() {
+            try {
+                const url = process.env.REACT_APP_BACKEND_URL
+                    + "/api/user/" + state.userId + "/fullInfo"
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Origin": "http://localhost:3000",
+                    },
+                });
+
+                if (response.ok) {
+                    const userInfo = await response.json()
+
+                    setState({
+                        userId: state.userId,
+                        userInfo: userInfo,
+                    })
+
+                    setLoading(false)
+
+                } else {
+                    console.error("HTTP error:" + response.status + "\n" + response.statusText)
+                }
+
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        getUserInfo()
+    }, [state.userId])
 
     return (
         <div className={`${classes.mentorshipBlock}`}>
@@ -10,6 +51,9 @@ const Mentorships = (userId) => {
             <div className={`${classes.teamGroupsBlockInfo}`}>
                 <div className={`${classes.teamGroupsBlockInfoTitles}`}>
                     <p>Роль:</p>
+                    <p className={`${classes.classMentor}`} style={{ display: "none" }}>
+                        Не участвует:
+                    </p>
                     <p className={`${classes.classMentor}`} style={{ display: "none" }}>
                         Ментор:
                     </p>
