@@ -173,7 +173,8 @@ const Employees = () => {
                         <div className={`${classes.listLiInfo}`}
                              onClick={(event) => handleUserSelection(userDto.id)}>
                             <div
-                                className={`${classes.listLiInfoName}`}>{userDto.name}</div>
+                                className={`${classes.listLiInfoName}`}>{userDto.name}
+                            </div>
                             <div className={`${classes.listLiInfoRoleProj}`}>
                                 <div
                                     className={`${classes.listLiInfoRoleProjRoleBox}`}>
