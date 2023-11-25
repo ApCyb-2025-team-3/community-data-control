@@ -4,13 +4,13 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,7 +62,26 @@ public class UserController {
 
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
-            return new ResponseEntity<>(new UserInfoDTO(user), HttpStatus.OK);
+            UserInfoDTO userInfo = new UserInfoDTO(user);
+
+            Event projectChange = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
+                EventType.CHANGE_PROJECT);
+            if (projectChange != null) {
+                userInfo.setProjectChangedAt(
+                    projectChange.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate());
+            }
+
+            Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
+                EventType.DISMISS_USER);
+            if (dismiss != null) {
+                userInfo.setDismissedAt(
+                    dismiss.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
+                        .toLocalDate());
+                userInfo.setDismissReason(dismiss.getDescription());
+            }
+
+            return new ResponseEntity<>(userInfo, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -103,7 +122,7 @@ public class UserController {
         try {
             List<UserDTO> subordinateUsers = new ArrayList<>();
 
-            List<User> supervisors = userRepository.findByNameContaining(partialName)
+            List<User> supervisors = userRepository.findByNameContainingIgnoreCase(partialName)
                     .stream()
                     .filter(user -> user.getRole() == Role.SUPERVISOR)
                     .toList();
@@ -138,19 +157,25 @@ public class UserController {
     @GetMapping("/getUsersByDepartment")
     public ResponseEntity<List<UserDTO>> getUsersByDepartment(@RequestParam String department) {
 
-        return new ResponseEntity<>(
-                userRepository.getUsersByDepartmentAndIsActiveTrue(department).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+        if (!department.isBlank()) {
+            return new ResponseEntity<>(
+                userRepository.getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(department).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("/getUsersByProject")
     public ResponseEntity<List<UserDTO>> getUsersByProject(@RequestParam String project) {
 
-        return new ResponseEntity<>(
-                userRepository.getUsersByProjectAndIsActiveTrue(project).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+        if (!project.isBlank()) {
+            return new ResponseEntity<>(
+                userRepository.getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(project).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}/dismiss")
@@ -236,10 +261,14 @@ public class UserController {
 
     @GetMapping("/getUsersByPartialName")
     public ResponseEntity<List<UserDTO>> getUsersByPartialName(@RequestParam String partialName) {
-        return new ResponseEntity<>(
-                userRepository.findByNameContaining(partialName).stream()
-                        .map(UserDTO::new)
-                        .toList(), HttpStatus.OK);
+
+        if (!partialName.isBlank()) {
+            return new ResponseEntity<>(
+                userRepository.findByNameContainingIgnoreCase(partialName).stream()
+                    .map(UserDTO::new)
+                    .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     private void assignSupervisor(User user, String supervisorName) throws IllegalArgumentException {
