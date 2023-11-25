@@ -274,12 +274,12 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         this.mockMvc.perform(post("/api/user/" + userId + "/changeRole")
-            .param("grade", "Supervisor")
+            .param("role", "Supervisor")
             .param("reason", "For testing purpose.")
         ).andExpect(status().isOk());
 
         UserDTO modifiedUser = getUserById(userId);
-        assertEquals("Supervisor", modifiedUser.getGrade());
+        assertEquals("Supervisor", modifiedUser.getRole());
 
     }
 
