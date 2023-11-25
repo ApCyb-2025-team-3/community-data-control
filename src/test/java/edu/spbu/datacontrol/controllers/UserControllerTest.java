@@ -202,7 +202,6 @@ class UserControllerTest {
         UserDTO result = getUserById(userId);
         assertEquals(user.getName(), result.getName());
         assertEquals(newUserData.getEmail(), result.getEmail());
-        assertEquals(user.getDepartment(), result.getDepartment());
     }
 
     @Test

@@ -106,8 +106,6 @@ public class User {
         this.email = modifiedData.getEmail() != null ? modifiedData.getEmail() : this.email;
         this.phoneNumber = modifiedData.getPhoneNumber() != null ? modifiedData.getPhoneNumber()
             : this.phoneNumber;
-        this.department =
-            modifiedData.getDepartment() != null ? modifiedData.getDepartment() : this.department;
     }
 
     public boolean hasMentorshipStatus(MentorshipStatus status){
