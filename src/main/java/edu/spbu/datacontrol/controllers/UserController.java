@@ -245,7 +245,7 @@ public class UserController {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             try {
-                user.setGrade(EnumUtils.fromString(Grade.class, role));
+                user.setRole(EnumUtils.fromString(Role.class, role));
                 userRepository.save(user);
                 eventLog.save(new Event(user.getId(), EventType.CHANGE_ROLE, reason));
             } catch (IllegalArgumentException e) {
