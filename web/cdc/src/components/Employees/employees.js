@@ -137,7 +137,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersBySupervisor?name=" + encodeURIComponent(name)
+            + "/api/user/getUsersBySupervisor?partialName=" + encodeURIComponent(name)
 
         const userDtoList = await performGetRequest(url)
         setState({
@@ -275,7 +275,7 @@ const Employees = () => {
                                                 id=""
                                                 onChange={(event) =>
                                                     getUsersByGrade(
-                                                        event.target.value)}
+                                                        event.currentTarget.value)}
                                         >
                                             <option value="">Позиция
                                             </option>
@@ -318,7 +318,7 @@ const Employees = () => {
                                                 id=""
                                                 onChange={(event) =>
                                                     getUsersByRole(
-                                                        event.target.value)}
+                                                        event.currentTarget.value)}
                                         >
                                             <option value="">Роль</option>
                                             <option

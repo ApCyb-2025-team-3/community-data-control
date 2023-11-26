@@ -257,10 +257,14 @@ const MainInfo = ({ userId }) => {
                 },
             });
 
+            const date = new Date()
+
             if (response.ok) {
                 const newUserInfo = state.userInfo
                 newUserInfo.isActive = false
                 newUserInfo.dismissReason = reason
+                newUserInfo.dismissedAt = `${date.getDate()}.${date.getMonth()
+                + 1}.${date.getFullYear()}`
                 setState({
                     ...state,
                     userInfo: newUserInfo,

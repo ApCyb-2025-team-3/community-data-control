@@ -49,7 +49,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(String project);
 
-    List<User> findByNameContainingIgnoreCase(String partialName);
+    List<User> findByNameContainingIgnoreCaseAndIsActiveTrue(String partialName);
 
     @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTOR' " +
             "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id)")
@@ -58,4 +58,5 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTEE' " +
             "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentee.id = u.id)")
     List<User> getFreeMentees();
+
 }

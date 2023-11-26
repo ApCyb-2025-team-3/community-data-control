@@ -1,11 +1,9 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import edu.spbu.datacontrol.models.Mentorship;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/mentorship")
@@ -67,59 +66,109 @@ public class MentorshipController {
         }
         mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
         return new ResponseEntity<>("Mentorship is created.", HttpStatusCode.valueOf(201));
+    }
 
+    @DeleteMapping("/disbandMentorship")
+    public ResponseEntity<String> disbandMentorship(@RequestParam UUID mentorshipId) {
+        Mentorship mentorship = mentorshipRepository.getMentorshipById(mentorshipId);
+        if (mentorship != null) {
+            mentorshipRepository.delete(mentorship);
+            return new ResponseEntity<>("Mentorship was successfully disbanded",
+                    HttpStatusCode.valueOf(200));
+        }
+        return new ResponseEntity<>("This mentorship doesn't exist",
+                HttpStatusCode.valueOf(404));
+    }
+
+    @GetMapping("/getAllMentorships")
+    public ResponseEntity<List<MentorshipDTO>> getAllMentorships() {
+        try {
+            List<Mentorship> mentorships = StreamSupport.stream(mentorshipRepository
+                    .findAll().
+                    spliterator(), false)
+                    .toList();
+            return new ResponseEntity<>(mentorships
+                    .stream()
+                    .map(MentorshipDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
     }
 
     @GetMapping("/getAllMentors")
-    public ResponseEntity<List<UserDTO>> getAllMentors(){
+    public ResponseEntity<List<UserDTO>> getAllMentors() {
         try {
             return new ResponseEntity<>(
                     userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
                             .stream()
                             .map(UserDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
     @GetMapping("/getAllMentees")
-    public ResponseEntity<List<UserDTO>> getAllMentees(){
+    public ResponseEntity<List<UserDTO>> getAllMentees() {
         try {
             return new ResponseEntity<>(
                     userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
                             .stream()
                             .map(UserDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
     @GetMapping("/getFreeMentors")
-    public ResponseEntity<List<UserDTO>> getFreeMentors(){
+    public ResponseEntity<List<UserDTO>> getFreeMentors() {
         try {
             return new ResponseEntity<>(
-                userRepository.getFreeMentors()
-                    .stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
+                    userRepository.getFreeMentors()
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
     }
 
     @GetMapping("/getFreeMentees")
-    public ResponseEntity<List<UserDTO>> getFreeMentees(){
+    public ResponseEntity<List<UserDTO>> getFreeMentees() {
         try {
             return new ResponseEntity<>(
-                userRepository.getFreeMentees()
-                    .stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatusCode.valueOf(200));
-        }catch (IllegalArgumentException e){
+                    userRepository.getFreeMentees()
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
+    }
+
+    @GetMapping("/getMenteesByMentor")
+    public ResponseEntity<List<UserDTO>> getMenteesByMentor(@RequestParam UUID mentorId) {
+        try {
+            return new ResponseEntity<>(
+                    mentorshipRepository.getMenteesByMentorId(mentorId)
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getMentorByMentee")
+    public ResponseEntity<UserDTO> getMentorByMentee(@RequestParam UUID menteeId) {
+        User mentor = mentorshipRepository.getMentorByMenteeId(menteeId);
+        if(mentor != null){
+            return new ResponseEntity<>(new UserDTO(mentor), HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
     }
 
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
