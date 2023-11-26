@@ -6,6 +6,7 @@ import Popup from "reactjs-popup";
 import Groups from "./groups";
 import Mentorships from "./mentorships";
 import { localiseGrade, localiseRole } from "./localise";
+import add from '../../icons/add-icon.svg'
 
 const MainInfo = ({ userId }) => {
 
@@ -70,20 +71,16 @@ const MainInfo = ({ userId }) => {
     }
 
 
-    //TODO 400 (BadRequest)
     async function changePersonalDataRequest(userDto, reason) {
         try {
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/user/changeUsersPersonalData"
+            const url = process.env.REACT_APP_BACKEND_URL + "/api/user/changeUsersPersonalData?reason=" + reason
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Origin': 'http://localhost:3000'
                 },
-                body: JSON.stringify({
-                    reason: reason,
-                    modifiedData: userDto
-                })
+                body: JSON.stringify(userDto)
             });
 
             if (!response.ok) {
@@ -117,10 +114,10 @@ const MainInfo = ({ userId }) => {
             console.error('Ошибка при отправке запроса:', error);
         }
     }
-    //TODO 500 (Internal Server Error)
+    
     async function changeUserRoleRequest(newRole, reason) {
         try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${state.userId}/changeRole?role=${newRole}&reason=${reason}`
+            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(state.userId)}/changeRole?role=${encodeURIComponent(newRole)}&reason=${encodeURIComponent(reason)}`
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -163,49 +160,48 @@ const MainInfo = ({ userId }) => {
         }
     }
 
-    function changeUserInfo(reason) {
+    async function changeUserInfo(reason) {
 
-            let userDTO = {
-                userId: state.userId,
-                name: state.userInfo.name,
-                dob: state.userInfo.dob,
-                email: state.userInfo.email,
-                phoneNumber: state.userInfo.phoneNumber
-            }
-            let oldPD = {
-                id: state.userId,
-                name: state.oldUserInfo.name,
-                dob: state.oldUserInfo.dob,
-                email: state.oldUserInfo.email,
-                phoneNumber: state.oldUserInfo.phoneNumber
-            }
-            let newProjData = {
-                userId: state.userId,
-                project: state.userInfo.project,
-                supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.name,
-                department: state.userInfo.department,
-                productOwners: state.userInfo.productOwners
-            }
-            let oldProjData = {
-                userId: state.userId,
-                project: state.oldUserInfo.project,
-                supervisor: state.oldUserInfo.supervisor === null ? null : state.oldUserInfo.supervisor.name,
-                department: state.oldUserInfo.department,
-                productOwners: state.oldUserInfo.productOwners
-            }
-
-
-            if (userDTO !== oldPD) changePersonalDataRequest(userDTO, reason)
+        let userDTO = {
+            userId: state.userId,
+            name: state.userInfo.name,
+            dob: state.userInfo.dob,
+            email: state.userInfo.email,
+            phoneNumber: state.userInfo.phoneNumber
+        }
+        let oldPD = {
+            id: state.userId,
+            name: state.oldUserInfo.name,
+            dob: state.oldUserInfo.dob,
+            email: state.oldUserInfo.email,
+            phoneNumber: state.oldUserInfo.phoneNumber
+        }
+        let newProjData = {
+            userId: state.userId,
+            project: state.userInfo.project,
+            supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
+            department: state.userInfo.department,
+            productOwners: state.userInfo.productOwners
+        }
+        let oldProjData = {
+            userId: state.userId,
+            project: state.oldUserInfo.project,
+            supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
+            department: state.oldUserInfo.department,
+            productOwners: state.oldUserInfo.productOwners
+        }
 
 
-            if (state.userInfo.grade !== state.oldUserInfo.grade) changeUserGradeRequest(state.userInfo.grade, reason)
+        if (userDTO !== oldPD) await changePersonalDataRequest(userDTO, reason)
+
+        if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
+
+        if (newProjData !== oldProjData) await changeProjectData(newProjData, reason)
+
+        if (state.userInfo.role !== state.oldUserInfo.role) await changeUserRoleRequest(state.userInfo.role, reason)
 
 
-            if (state.userInfo.role !== state.oldUserInfo.role) changeUserRoleRequest(state.userInfo.role, reason)
-
-            if (newProjData !== oldProjData)changeProjectData(newProjData, reason)
-
-            setState({...state, oldUserInfo: {...state.userInfo}})
+        setState({ ...state, oldUserInfo: { ...state.userInfo } })
 
 
 
@@ -282,10 +278,10 @@ const MainInfo = ({ userId }) => {
                         <p>Менторство</p>
                     </button>
                     <button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }} onClick={() => {
-                            setState({...state, isChanging: !state.isChanging})
-                        }}>
-                            Внести изменения
-                        </button>
+                        setState({ ...state, isChanging: !state.isChanging })
+                    }}>
+                        Внести изменения
+                    </button>
                     <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
                         modal nested>
                         {
@@ -410,6 +406,39 @@ const MainInfo = ({ userId }) => {
         return productOwners
     }
 
+    function renderProductOwnersEditing() {
+        let productOwnersList = state.userInfo.productOwners
+        if (state.userInfo.productOwners.length === 0) {
+            return (
+                <li>
+                    <button onClick={productOwnersList.push(
+                        <li>
+                            <img src={dot} alt="dot" />
+                            <input placeholder='Имя'
+                                className={`${classes.liProdOwnersName}`} onChange={(event) => productOwnersList[0].value = event.target.value}></input>
+                        </li>
+                    )}><img src={add} alt="add" /></button>
+                </li>
+            )
+        }
+
+        const productOwners = []
+
+        productOwnersList.sort((a, b) => a.value.localeCompare(b.value)).forEach(
+            (user) => {
+                productOwners.push(
+                    <li>
+                        <img src={dot} alt="dot" />
+                        <input value={user.value}
+                            className={`${classes.liProdOwnersName}`} onChange={(event) => user.value = event.target.value}></input>
+                    </li>
+                )
+            }
+        )
+        setState({ ...state, userInfo: { ...state.userInfo, productOwners: productOwners } })
+        return productOwners
+    }
+
     if (isLoading) {
 
         return (
@@ -480,10 +509,10 @@ const MainInfo = ({ userId }) => {
                         </div>
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
-                                <input onChange={(event) => setState({...state, userInfo : {...state.userInfo, project : event.target.value}})} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`}/>
-                                <input onChange={(event) => setState({...state, userInfo : {...state.userInfo, projectChangeAt : event.target.value}})} type="date" value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input onChange={(event) => setState({...state, userInfo : {...state.userInfo, supervisor : event.target.value}})} className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.name : ""}
+                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
+                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} type="date" value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: event.target.value } })} className={`${classes.lPartInfoCol2DataConnected}`}
+                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : ""}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                     {renderProductOwners(state.userInfo.productOwners)}
@@ -496,7 +525,7 @@ const MainInfo = ({ userId }) => {
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.name : "Не назначен"}
+                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : "Не назначен"}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                     {renderProductOwners(state.userInfo.productOwners)}
