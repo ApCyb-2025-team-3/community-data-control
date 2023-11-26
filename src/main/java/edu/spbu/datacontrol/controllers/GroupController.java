@@ -1,17 +1,21 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.EnumUtils;
 import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.GroupType;
 import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import edu.spbu.datacontrol.repositories.EventRepository;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -33,14 +37,14 @@ public class GroupController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
-                                              @RequestBody UserDTO teamLeadDTO) {
+                                              @RequestParam UUID teamLeadId) {
         try {
             Group currentGroups = groupRepository.getGroupByName(groupInfoDTO.getName());
             if(currentGroups != null){
                 return new ResponseEntity<>("A group with this name already exists!", HttpStatusCode.valueOf(409));
             }
             Group newGroup = new Group(groupInfoDTO);
-            User teamLead = userRepository.getUserById(teamLeadDTO.getId());
+            User teamLead = userRepository.getUserById(teamLeadId);
             assignTeamLead(newGroup, teamLead);
             groupRepository.save(newGroup);
         } catch (Exception e) {
@@ -102,7 +106,7 @@ public class GroupController {
     }
 
     @PatchMapping ("/update")
-    public  ResponseEntity<String> updateGroup(@RequestBody GroupDTO changedGroup) {
+    public  ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup) {
         Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
         if (group != null) {
             group.changeGroupData(changedGroup);
@@ -127,11 +131,62 @@ public class GroupController {
 
     }
 
+    @GetMapping("/getAllGroups")
+    public ResponseEntity<List<GroupDTO>> getAllGroups() {
+
+        List<Group> groups = StreamSupport.stream(groupRepository.findAllByOrderByIsActiveDesc().spliterator(), false).toList();
+        return new ResponseEntity<>(
+            groups.stream().map(GroupDTO::new).toList(), HttpStatusCode.valueOf(200));
+
+    }
+
+    @GetMapping("/getGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getGroupsByType(@RequestParam String groupType) {
+        try {
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByTypeOrderByIsActiveDesc(type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
+
+    }
+
     @GetMapping("getUserGroups")
     public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId) {
         User user = userRepository.getUserById(userId);
         return new ResponseEntity<>(groupRepository.getGroupsByMembersContains(user)
                 .stream().map(GroupDTO::new).toList(), HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping("getUserGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId, @RequestParam String groupType) {
+        try {
+            User user = userRepository.getUserById(userId);
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByMembersContainsAndType(user, type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getGroupsByPartialName")
+    public ResponseEntity<List<GroupDTO>> getGroupsByPartialName(@RequestParam String partialName) {
+
+        if (!partialName.isBlank()) {
+            return new ResponseEntity<>(
+                    groupRepository.findByNameContainingIgnoreCase(partialName).stream()
+                            .map(GroupDTO::new)
+                            .toList(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("getActiveMembers")
@@ -178,10 +233,12 @@ public class GroupController {
             currentMembers.add(teamLead);
         }
         User previousTeamLead = group.getTeamLead();
-        previousTeamLead.setRole(Role.DEVELOPER);
-        userRepository.save(previousTeamLead);
-        Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
-        eventLog.save(revokeTeamLeadRole);
+        if (previousTeamLead != null) {
+            previousTeamLead.setRole(Role.DEVELOPER);
+            userRepository.save(previousTeamLead);
+            Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
+            eventLog.save(revokeTeamLeadRole);
+        }
 
         teamLead.setRole(Role.TEAM_LEAD);
         userRepository.save(teamLead);
