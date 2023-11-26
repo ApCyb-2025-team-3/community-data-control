@@ -398,7 +398,6 @@ class UserControllerTest {
                 generatedMail,
                 generatedPhone,
                 "",
-                "",
                 new ArrayList<>(),
                 "Sample project",
                 "Data Science",
