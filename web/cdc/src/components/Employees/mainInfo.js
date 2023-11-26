@@ -409,7 +409,7 @@ const MainInfo = ({ userId }) => {
             visibleBlocks.push(
                 <Mentorships key={state.userId}
                              userId={state.userId}
-                             mentorshipStatus={state.userInfo.mentorshipStatus}
+                             mentorStatus={state.userInfo.mentorStatus}
                 >
 
                 </Mentorships>
