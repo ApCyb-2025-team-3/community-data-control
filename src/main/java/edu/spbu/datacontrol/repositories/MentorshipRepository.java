@@ -21,5 +21,7 @@ public interface MentorshipRepository extends CrudRepository<Mentorship, UUID> {
     @Query("SELECT u from User u RIGHT JOIN Mentorship m ON u.id = m.mentee.id WHERE m.mentor.id = :mentorId")
     List<User> getMenteesByMentorId(@Param("mentorId") UUID mentorId);
 
+    @Query("SELECT u from User u RIGHT JOIN Mentorship m ON u.id = m.mentor.id WHERE m.mentee.id = :menteeId")
+    User getMentorByMenteeId(@Param("menteeId") UUID menteeId);
 
 }

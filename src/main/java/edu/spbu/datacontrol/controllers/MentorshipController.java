@@ -161,6 +161,16 @@ public class MentorshipController {
         }
     }
 
+    @GetMapping("/getMentorByMentee")
+    public ResponseEntity<UserDTO> getMentorByMentee(@RequestParam UUID menteeId) {
+        User mentor = mentorshipRepository.getMentorByMenteeId(menteeId);
+        if(mentor != null){
+            return new ResponseEntity<>(new UserDTO(mentor), HttpStatusCode.valueOf(200));
+        }
+
+        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+    }
+
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
         if (isInMentorship(userId)) {
             throw new IllegalArgumentException("This user is in mentorship pair already!");
