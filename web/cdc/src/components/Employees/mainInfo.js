@@ -184,7 +184,7 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
             department: state.userInfo.department,
-            productOwners: state.userInfo.productOwners.map(item => item.value)
+            productOwners: state.userInfo.productOwners.map(item => item.label)
         }
         let oldProjData = {
             userId: state.userId,
@@ -432,20 +432,20 @@ const MainInfo = ({ userId }) => {
     const promiseOptionsPO = inputValue =>
         new Promise(resolve => resolve(getPO(inputValue)));
 
-        const getPO = async (inputValue) => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
-                
-                return response.data.map(user => ({
-                    id: user.id,
-                    value: user.name,
-                    label : user.name
-                }));
-            } catch (error) {
-                console.error('Ошибка при загрузке пользователей:', error);
-                return [];
-            }
-        };
+    const getPO = async (inputValue) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
+
+            return response.data.map(user => ({
+                id: user.id,
+                value: user.name,
+                label: user.name
+            }));
+        } catch (error) {
+            console.error('Ошибка при загрузке пользователей:', error);
+            return [];
+        }
+    };
 
     if (isLoading) {
 
@@ -463,10 +463,16 @@ const MainInfo = ({ userId }) => {
         <div className={`${classes.infoBlocks}`}>
             <div className={`${classes.mainBlock}`}>
                 <div className={`${classes.mainBlockLPart}`}>
-                    <div className={`${classes.lPartHeading}`}>
-                        <p>Сотрудник:</p>
-                        <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}/>
-                    </div>
+                    {state.isChanging ?
+                        <div className={`${classes.lPartHeading}`}>
+                            <p>Сотрудник:</p>
+                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
+                        </div>
+                        :
+                        <div className={`${classes.lPartHeading}`}>
+                            <p>Сотрудник:</p>
+                            <div onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
+                        </div>}
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
                             <p>Email:</p>
@@ -524,7 +530,8 @@ const MainInfo = ({ userId }) => {
                                     defaultOptions
                                     loadOptions={promiseOptions}
                                     onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, supervisor: selectedOption } }); console.log(state.userInfo.supervisor) }}
-
+                                    classNamePrefix="custom"
+                                    className="custom-container" 
                                 />
                                 {/*<input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: event.target.value } })} className={`${classes.lPartInfoCol2DataConnected}`}
                                     value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : ""}
@@ -535,8 +542,9 @@ const MainInfo = ({ userId }) => {
                                         cacheOptions
                                         defaultOptions
                                         loadOptions={promiseOptionsPO}
-                                        onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, productOwners : selectedOption } }); console.log(state.userInfo.productOwners) }}
-
+                                        onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, productOwners: selectedOption } }); console.log(state.userInfo.productOwners) }}
+                                        classNamePrefix="custom" 
+                                        className="custom-container"
                                     />
                                 </ul>
                             </div>

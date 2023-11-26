@@ -10,10 +10,9 @@ const AddUser = () => {
         email: null,
         phoneNumber: null,
         supervisorName: "",
-        teamLeadName: "",
-        productOwnersNames: "",
-        project: null,
-        department: null,
+        productOwnersNames: [""],
+        project: "",
+        department: "",
         grade: "Unspecified",
         role: "Non Member",
         mentorStatus: "Not participating"
@@ -76,10 +75,10 @@ const AddUser = () => {
                 <option value="Middle">Middle</option>
                 <option value="Senior">Senior</option>
                 <option value="Team Lead">Team Lead</option>
-                <option value="Unspecified">Unspecified</option>
+                <option value="Unspecified">Не указана</option>
             </select>
             <input value={user.supervisorName} className={`${classes.InputField}`} id="supervisorName" placeholder="Руководитель" onChange={(event) => setUser({ ...user, supervisorName: event.target.value })} />
-            <input value={user.productOwnersNames} className={`${classes.InputField}`} id="productOwnersNames" placeholder="Product Owenrs" type="text" onChange={(event) => setUser({ ...user, productOwnersNames: event.target.value.split(',').map(item => item.trim()) })} />
+            <input value={user.productOwnersNames} className={`${classes.InputField}`} id="productOwnersNames" placeholder="Product Owners" type="text" onChange={(event) => setUser({ ...user, productOwnersNames: event.target.value.split(',').map(item => item.trim()) })} />
             <input value={user.project} className={`${classes.InputField}`} id="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
             <input value={user.department} className={`${classes.InputField}`} id="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
             <select id="mentorStasus" value={user.mentorStatus} placeholder="Менторство" onChange={(event) => setUser({ ...user, mentorStatus: event.target.value })} >
@@ -88,8 +87,7 @@ const AddUser = () => {
                 <option value="Not participating">Не участвует</option>
             </select>
             <button type='button' onClick={() => {
-                setAllFilled(user.name && user.email && user.dob 
-                    && user.phoneNumber)
+                setAllFilled(user.name && user.email && user.dob && user.phoneNumber)
                 { allFilled ? addUser(user) : alert("Заполните обязательные поля") }
             }}>Добавить</button>
 
