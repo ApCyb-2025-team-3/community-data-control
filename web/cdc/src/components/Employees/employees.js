@@ -288,7 +288,7 @@ const Employees = () => {
                                             <option value="Team Lead">Team
                                                 Lead
                                             </option>
-                                            <option value="Not specified">Не
+                                            <option value="Unspecified">Не
                                                 указана
                                             </option>
                                         </select>

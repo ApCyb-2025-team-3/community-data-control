@@ -6,7 +6,8 @@ import Popup from "reactjs-popup";
 import Groups from "./groups";
 import Mentorships from "./mentorships";
 import { localiseGrade, localiseRole } from "./localise";
-import add from '../../icons/add-icon.svg'
+import AsyncSelect from 'react-select/async';
+import axios from 'axios';
 
 const MainInfo = ({ userId }) => {
 
@@ -19,6 +20,7 @@ const MainInfo = ({ userId }) => {
         isChanging: false
     })
     const [isLoading, setLoading] = useState(true)
+
     useEffect(() => {
         async function getUserInfo() {
             try {
@@ -51,6 +53,7 @@ const MainInfo = ({ userId }) => {
             } catch (error) {
                 console.error(error)
             }
+
         }
 
         getUserInfo()
@@ -114,7 +117,7 @@ const MainInfo = ({ userId }) => {
             console.error('Ошибка при отправке запроса:', error);
         }
     }
-    
+
     async function changeUserRoleRequest(newRole, reason) {
         try {
             const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(state.userId)}/changeRole?role=${encodeURIComponent(newRole)}&reason=${encodeURIComponent(reason)}`
@@ -181,14 +184,14 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
             department: state.userInfo.department,
-            productOwners: state.userInfo.productOwners
+            productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
             userId: state.userId,
             project: state.oldUserInfo.project,
             supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
             department: state.oldUserInfo.department,
-            productOwners: state.oldUserInfo.productOwners
+            productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
 
@@ -355,7 +358,7 @@ const MainInfo = ({ userId }) => {
             </div>
         )
     }
-
+    console.log(state.userInfo)
     function renderGroupsAndMentorships() {
 
         let visibleBlocks = []
@@ -406,38 +409,43 @@ const MainInfo = ({ userId }) => {
         return productOwners
     }
 
-    function renderProductOwnersEditing() {
-        let productOwnersList = state.userInfo.productOwners
-        if (state.userInfo.productOwners.length === 0) {
-            return (
-                <li>
-                    <button onClick={productOwnersList.push(
-                        <li>
-                            <img src={dot} alt="dot" />
-                            <input placeholder='Имя'
-                                className={`${classes.liProdOwnersName}`} onChange={(event) => productOwnersList[0].value = event.target.value}></input>
-                        </li>
-                    )}><img src={add} alt="add" /></button>
-                </li>
-            )
+
+    const getUsers = async (inputValue) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
+
+            return response.data.map(user => ({
+                id: user.id,
+                value: user.name,
+                label: user.name
+            }));
+        } catch (error) {
+            console.error('Ошибка при загрузке пользователей:', error);
+            return [];
         }
+    };
 
-        const productOwners = []
 
-        productOwnersList.sort((a, b) => a.value.localeCompare(b.value)).forEach(
-            (user) => {
-                productOwners.push(
-                    <li>
-                        <img src={dot} alt="dot" />
-                        <input value={user.value}
-                            className={`${classes.liProdOwnersName}`} onChange={(event) => user.value = event.target.value}></input>
-                    </li>
-                )
+    const promiseOptions = inputValue =>
+        new Promise(resolve => resolve(getUsers(inputValue)));
+
+    const promiseOptionsPO = inputValue =>
+        new Promise(resolve => resolve(getPO(inputValue)));
+
+        const getPO = async (inputValue) => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
+                
+                return response.data.map(user => ({
+                    id: user.id,
+                    value: user.name,
+                    label : user.name
+                }));
+            } catch (error) {
+                console.error('Ошибка при загрузке пользователей:', error);
+                return [];
             }
-        )
-        setState({ ...state, userInfo: { ...state.userInfo, productOwners: productOwners } })
-        return productOwners
-    }
+        };
 
     if (isLoading) {
 
@@ -457,7 +465,7 @@ const MainInfo = ({ userId }) => {
                 <div className={`${classes.mainBlockLPart}`}>
                     <div className={`${classes.lPartHeading}`}>
                         <p>Сотрудник:</p>
-                        <div className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
+                        <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}/>
                     </div>
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
@@ -511,11 +519,25 @@ const MainInfo = ({ userId }) => {
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} type="date" value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: event.target.value } })} className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : ""}
+                                <AsyncSelect
+                                    cacheOptions
+                                    defaultOptions
+                                    loadOptions={promiseOptions}
+                                    onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, supervisor: selectedOption } }); console.log(state.userInfo.supervisor) }}
+
                                 />
+                                {/*<input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: event.target.value } })} className={`${classes.lPartInfoCol2DataConnected}`}
+                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : ""}
+                        />*/}
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
-                                    {renderProductOwners(state.userInfo.productOwners)}
+                                    <AsyncSelect
+                                        isMulti
+                                        cacheOptions
+                                        defaultOptions
+                                        loadOptions={promiseOptionsPO}
+                                        onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, productOwners : selectedOption } }); console.log(state.userInfo.productOwners) }}
+
+                                    />
                                 </ul>
                             </div>
                             :

@@ -44,7 +44,6 @@ const AddUser = () => {
                 email: null,
                 phoneNumber: null,
                 supervisorName: "",
-                teamLeadName: "",
                 productOwnersNames: "",
                 project: null,
                 department: null,
@@ -80,17 +79,16 @@ const AddUser = () => {
                 <option value="Unspecified">Unspecified</option>
             </select>
             <input value={user.supervisorName} className={`${classes.InputField}`} id="supervisorName" placeholder="Руководитель" onChange={(event) => setUser({ ...user, supervisorName: event.target.value })} />
-            <input value={user.teamLeadName} className={`${classes.InputField}`} id="teamLeadName" placeholder="Лидер группы" onChange={(event) => setUser({ ...user, teamLeadName: event.target.value })} />
             <input value={user.productOwnersNames} className={`${classes.InputField}`} id="productOwnersNames" placeholder="Product Owenrs" type="text" onChange={(event) => setUser({ ...user, productOwnersNames: event.target.value.split(',').map(item => item.trim()) })} />
-            <input value={user.project} className={user.project === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
-            <input value={user.department} className={user.department === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
+            <input value={user.project} className={`${classes.InputField}`} id="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
+            <input value={user.department} className={`${classes.InputField}`} id="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
             <select id="mentorStasus" value={user.mentorStatus} placeholder="Менторство" onChange={(event) => setUser({ ...user, mentorStatus: event.target.value })} >
                 <option value="Mentor">Ментор</option>
                 <option value="Mentee" >Менти</option>
                 <option value="Not participating">Не участвует</option>
             </select>
             <button type='button' onClick={() => {
-                setAllFilled(user.name && user.email && user.dob && user.department && user.project
+                setAllFilled(user.name && user.email && user.dob 
                     && user.phoneNumber)
                 { allFilled ? addUser(user) : alert("Заполните обязательные поля") }
             }}>Добавить</button>
