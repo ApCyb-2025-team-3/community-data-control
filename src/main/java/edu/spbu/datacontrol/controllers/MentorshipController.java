@@ -1,12 +1,9 @@
 package edu.spbu.datacontrol.controllers;
 
-import edu.spbu.datacontrol.models.MentorshipDTO;
-import edu.spbu.datacontrol.models.User;
-import edu.spbu.datacontrol.models.UserDTO;
+import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import edu.spbu.datacontrol.models.Mentorship;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/mentorship")
@@ -71,9 +69,9 @@ public class MentorshipController {
     }
 
     @DeleteMapping("/disbandMentorship")
-    public ResponseEntity<String> disbandMentorship (@RequestParam UUID mentorshipId) {
+    public ResponseEntity<String> disbandMentorship(@RequestParam UUID mentorshipId) {
         Mentorship mentorship = mentorshipRepository.getMentorshipById(mentorshipId);
-        if (mentorship != null){
+        if (mentorship != null) {
             mentorshipRepository.delete(mentorship);
             return new ResponseEntity<>("Mentorship was successfully disbanded",
                     HttpStatusCode.valueOf(200));
@@ -85,7 +83,11 @@ public class MentorshipController {
     @GetMapping("/getAllMentorships")
     public ResponseEntity<List<MentorshipDTO>> getAllMentorships() {
         try {
-            return new ResponseEntity<>(mentorshipRepository.findAll()
+            List<Mentorship> mentorships = StreamSupport.stream(mentorshipRepository
+                    .findAll().
+                    spliterator(), false)
+                    .toList();
+            return new ResponseEntity<>(mentorships
                     .stream()
                     .map(MentorshipDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
@@ -149,14 +151,14 @@ public class MentorshipController {
     @GetMapping("/getMenteesByMentor")
     public ResponseEntity<List<UserDTO>> getMenteesByMentor(@RequestParam UUID mentorId) {
         User mentor = userRepository.getUserById(mentorId);
-       if (mentor != null) {
+        if (mentor != null) {
             return new ResponseEntity<>(
-                    userRepository.getMenteesByMentorId(mentorId)
+                    mentorshipRepository.getMenteesByMentorId(mentorId)
                             .stream()
                             .map(UserDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
-       }
-       return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
     }
 
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
