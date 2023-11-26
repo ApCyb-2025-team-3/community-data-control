@@ -59,6 +59,41 @@ const MainInfo = ({ userId }) => {
         getUserInfo()
     }, [state.userId])
 
+    const customStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            width: '100%',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            color: 'black',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '2rem',
+            fontStyle: 'normal',
+            fontWeight: 300,
+            lineHeight: 'normal',
+            boxShadow: state.isFocused ? '0 0 0 1px #2684ff' : null,
+            '&:hover': {
+                borderColor: '#2684ff',
+            },
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected ? '#2684ff' : null,
+            color: state.isSelected ? 'white' : 'black',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '2rem',
+            fontStyle: 'normal',
+            fontWeight: 300,
+            lineHeight: 'normal',
+            width: '100%',
+            '&:hover': {
+                backgroundColor: '#2684ff',
+                color: 'white',
+            },
+        }),
+        // Add more styles for other elements as needed
+    };
+
     function handleGroupsVisibilityChange() {
         setState({
             ...state,
@@ -142,7 +177,7 @@ const MainInfo = ({ userId }) => {
 
     async function changeProjectData(newData) {
         try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/changeUserProject`
+            const url = process.env.REACT_APP_BACKEND_URL + '/api/user/changeUserProject'
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -182,24 +217,23 @@ const MainInfo = ({ userId }) => {
         let newProjData = {
             userId: state.userId,
             project: state.userInfo.project,
-            supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
+            supervisor: state.userInfo.supervisor === null ? '' : state.userInfo.supervisor.value,
             department: state.userInfo.department,
-            productOwners: state.userInfo.productOwners.map(item => item.label)
+            productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
             userId: state.userId,
             project: state.oldUserInfo.project,
-            supervisor: state.userInfo.supervisor === null ? null : state.userInfo.supervisor.value,
+            supervisor: state.oldUserInfo.supervisor === null ? null : state.oldUserInfo.supervisor.value,
             department: state.oldUserInfo.department,
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
-
-        if (userDTO !== oldPD) await changePersonalDataRequest(userDTO, reason)
+        if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await changePersonalDataRequest(userDTO, reason)
 
         if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
 
-        if (newProjData !== oldProjData) await changeProjectData(newProjData, reason)
+        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await changeProjectData(newProjData, reason)
 
         if (state.userInfo.role !== state.oldUserInfo.role) await changeUserRoleRequest(state.userInfo.role, reason)
 
@@ -216,7 +250,6 @@ const MainInfo = ({ userId }) => {
 
             const url = process.env.REACT_APP_BACKEND_URL
                 + "/api/user/" + state.userId + "/dismiss?description=" + encodeURIComponent(reason)
-            console.log(url)
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -270,12 +303,12 @@ const MainInfo = ({ userId }) => {
                     </div>
                 </div>
                 <div className={`${classes.rPartButtons}`}>
-                    <button className={`${classes.buttonTeamsGroups}`}
-                        onClick={handleGroupsVisibilityChange}>
+                    <button className={`${classes.buttonTeamsGroups}`} style={{ display: !state.isChanging ? "" : "none" }}
+                        onClick={handleGroupsVisibilityChange} >
                         <img src={arrow} alt="arrow" />
                         <p>Команды / Группы</p>
                     </button>
-                    <button className={`${classes.buttonMentorship}`}
+                    <button className={`${classes.buttonMentorship}`} style={{ display: !state.isChanging ? "" : "none" }}
                         onClick={handleMentorshipsVisibilityChange}>
                         <img src={arrow} alt="arrow" />
                         <p>Менторство</p>
@@ -283,7 +316,7 @@ const MainInfo = ({ userId }) => {
                     <button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }} onClick={() => {
                         setState({ ...state, isChanging: !state.isChanging })
                     }}>
-                        Внести изменения
+                        {state.isChanging ? "Сохранить" : "Внести изменения"}
                     </button>
                     <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
                         modal nested>
@@ -319,7 +352,7 @@ const MainInfo = ({ userId }) => {
                         }
                     </Popup>
                     <Popup trigger=
-                        {<button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }}>
+                        {<button className={`${classes.buttonEdit}`} style={{ display: isActive && !state.isChanging ? "" : "none" }}>
                             Уволить
                         </button>}
                         modal nested>
@@ -358,7 +391,6 @@ const MainInfo = ({ userId }) => {
             </div>
         )
     }
-    console.log(state.userInfo)
     function renderGroupsAndMentorships() {
 
         let visibleBlocks = []
@@ -524,14 +556,15 @@ const MainInfo = ({ userId }) => {
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
-                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} type="date" value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input readOnly type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
                                     loadOptions={promiseOptions}
-                                    onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, supervisor: selectedOption } }); console.log(state.userInfo.supervisor) }}
+                                    onChange={(selectedOption) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: selectedOption } })}
                                     classNamePrefix="custom"
-                                    className="custom-container" 
+                                    styles={customStyles}
+                                    className="custom-container"
                                 />
                                 {/*<input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: event.target.value } })} className={`${classes.lPartInfoCol2DataConnected}`}
                                     value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : ""}
@@ -541,10 +574,12 @@ const MainInfo = ({ userId }) => {
                                         isMulti
                                         cacheOptions
                                         defaultOptions
-                                        loadOptions={promiseOptionsPO}
-                                        onChange={(selectedOption) => { setState({ ...state, userInfo: { ...state.userInfo, productOwners: selectedOption } }); console.log(state.userInfo.productOwners) }}
-                                        classNamePrefix="custom" 
+                                        classNamePrefix="custom"
                                         className="custom-container"
+                                        styles={customStyles}
+                                        loadOptions={promiseOptionsPO}
+                                        onChange={(selectedOption) => setState({ ...state, userInfo: { ...state.userInfo, productOwners: selectedOption } })}
+
                                     />
                                 </ul>
                             </div>
