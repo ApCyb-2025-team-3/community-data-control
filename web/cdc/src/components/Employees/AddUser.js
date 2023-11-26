@@ -50,10 +50,10 @@ const AddUser = () => {
                 dob: null,
                 email: null,
                 phoneNumber: null,
-                supervisorName: " ",
-                productOwnersNames: " ",
-                project: " ",
-                department: " ",
+                supervisorName: "",
+                productOwnersNames: "",
+                project: "",
+                department: "",
                 grade: "Unspecified",
                 role: "Non Member",
                 mentorStatus: "Not participating"
@@ -138,6 +138,21 @@ const AddUser = () => {
     return (
         <div className={`${classes.addUserBlock}`}>
             <div className={`${classes.addUserBlockTitle}`} >ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ</div>
+            <div className={`${classes.addUserBlockMain}`}>
+                <div className={`${classes.addUserBlockLabels}`}>
+                    <div>ФИО</div>
+                    <div>Дата рождения</div>
+                    <div>Email</div>
+                    <div>Номер телефона</div>
+                    <div>Роль</div>
+                    <div>Позиция</div>
+                    <div>Руководитель</div>
+                    <div>Product Owners</div>
+                    <div>Проект</div>
+                    <div>Отдел</div>
+                    <div>Статус менторства</div>
+                </div>
+            <div className={`${classes.addUserBlockFields}`}>
             <input value={user.name} className={user.name === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="name" placeholder="Имя" onChange={(event) => { setUser({ ...user, name: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
             <input value={user.dob} className={user.dob === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата рождения" onChange={(event) => { setUser({ ...user, dob: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
             <input value={user.email} className={user.email === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="email" type="email" placeholder="Email" onChange={(event) => { setUser({ ...user, email: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
@@ -190,6 +205,8 @@ const AddUser = () => {
                 <option value="Mentee" >Менти</option>
                 <option value="Not participating">Не участвует</option>
             </select>
+            </div>
+            </div>
             <button type='button' onClick={() => {
                 { allFilled ? addUser(user) : alert("Заполните обязательные поля") }
             }}>Добавить</button>
