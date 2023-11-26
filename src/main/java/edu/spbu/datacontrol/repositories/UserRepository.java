@@ -58,4 +58,5 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTEE' " +
             "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentee.id = u.id)")
     List<User> getFreeMentees();
+
 }
