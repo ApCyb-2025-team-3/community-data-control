@@ -34,8 +34,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @CreatedDate
-    private Date invitedAt;
+    private LocalDate invitedAt;
 
     private boolean isActive = true;
 

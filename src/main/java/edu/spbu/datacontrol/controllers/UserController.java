@@ -4,6 +4,7 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
@@ -180,6 +181,7 @@ public class UserController {
 
     @PostMapping("/{userId}/dismiss")
     public ResponseEntity<String> dismissUserById(@PathVariable UUID userId,
+                                                  @RequestParam LocalDate date,
                                                   @RequestParam String description) {
 
         User dismissedUser = userRepository.findById(userId).orElse(null);
@@ -190,7 +192,7 @@ public class UserController {
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             dismissedUser.setSupervisor(null);
             userRepository.save(dismissedUser);
-            Event event = new Event(userId, EventType.DISMISS_USER, description);
+            Event event = new Event(userId, EventType.DISMISS_USER, date, description);
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
                     HttpStatus.OK);
@@ -201,13 +203,14 @@ public class UserController {
 
     @PostMapping("/changeUsersPersonalData")
     public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
+                                                          @RequestParam LocalDate date,
                                                           @RequestBody UserDataChangeDTO modifiedData) {
 
         User user = userRepository.findById(modifiedData.getUserId()).orElse(null);
         if (user != null) {
             user.changePersonalData(modifiedData);
             userRepository.save(user);
-            eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, reason));
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, date, reason));
 
             return new ResponseEntity<>("User's personal data was successfully modified",
                     HttpStatus.OK);
@@ -259,7 +262,8 @@ public class UserController {
     }
 
     @PostMapping("/changeUserProject")
-    public ResponseEntity<String> changeUserProject(@RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
+    public ResponseEntity<String> changeUserProject(@RequestParam LocalDate date,
+                                                    @RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
 
         User user = userRepository.findById(changeUserProjectDTO.getUserId()).orElse(null);
         if (user != null) {
@@ -272,7 +276,7 @@ public class UserController {
 
             userRepository.save(user);
             eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
-                    oldProject, changeUserProjectDTO.getProject()));
+                    date, oldProject, changeUserProjectDTO.getProject()));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }

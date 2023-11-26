@@ -403,7 +403,8 @@ class UserControllerTest {
                 "Data Science",
                 grades[gradeId],
                 roles[roleId],
-                ""
+                "",
+                LocalDate.now()
         );
     }
 

@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -35,6 +36,8 @@ public class Event {
     @CreatedDate
     private Date createdAt;
 
+    private LocalDate eventDate;
+
     private String previousValue;
 
     private String newValue;
@@ -49,10 +52,18 @@ public class Event {
         this.description = description;
     }
 
-    public Event(UUID userId, EventType type, String oldValues, String newValues) {
+    public Event(UUID userId, EventType type, LocalDate date, String oldValues, String newValues) {
         this.userId = userId;
         this.type = type;
+        this.eventDate = date;
         this.previousValue = oldValues;
         this.newValue = newValues;
+    }
+
+    public Event(UUID userId, EventType type, LocalDate date, String description) {
+        this.userId = userId;
+        this.type = type;
+        this.eventDate = date;
+        this.description = description;
     }
 }
