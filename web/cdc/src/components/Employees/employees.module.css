@@ -1325,14 +1325,12 @@
     line-height: normal;
 }
 
-.InputField,
-.addUserBlock button {
-    width: 50%;
+.InputField {
     height: 28px;
     border: 2px #000 solid;
     border-radius: 10px;
     outline: none;
-    padding: 0;
+    padding: 0px;
     padding-left: 10px;
     font-family: 'Inter', sans-serif;
     font-size: 2rem;
@@ -1341,8 +1339,22 @@
     line-height: normal;
 }
 
+.addUserBlock button {
+    display: flex;
+    height: 28px;
+    border: 2px #000 solid;
+    border-radius: 10px;
+    outline: none;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
 .addUserBlock select {
-    width: 52%;
     height: 32px;
     border: 2px #000 solid;
     border-radius: 10px;
@@ -1356,7 +1368,6 @@
 }
 
 .UnfilledInput {
-    width: 50%;
     height: 28px;
     border: 2px #f00 solid;
     border-radius: 10px;
@@ -1400,6 +1411,40 @@
     line-height: normal;
 }
 
+.addUserBlockMain {
+    display: flex;
+    flex-direction: row;
+    margin-left: 30px;
+    margin-right: 30px;
+    gap: 20px;
+}
+
+.addUserBlockLabels {
+    display: flex;
+    width: 35%;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.addUserBlockLabels div {
+    height: 34px;
+    outline: none;
+    padding: 0;
+    padding-left: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.addUserBlockFields {
+    display: flex;
+    margin-left: 20px;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .lPartHeadingNameInput {
     display: flex;
     /* width: 250px; */
@@ -1415,4 +1460,3 @@
     font-weight: 300;
     line-height: normal
 }
-

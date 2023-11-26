@@ -191,7 +191,7 @@ const Employees = () => {
                                     className={`${classes.listLiInfoRoleProjProjBox}`}>
                                     <p>Проект:</p>
                                     <div className={`${classes.roleProjRojBoxProj}`}>
-                                        {userDto.project !== null ? userDto.project : "Нет"}
+                                        {(userDto.project !== "" && userDto.project !== null) ? userDto.project : "Нет"}
                                     </div>
                                 </div>
                             </div>
