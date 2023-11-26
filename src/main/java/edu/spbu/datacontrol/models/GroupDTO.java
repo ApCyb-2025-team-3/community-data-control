@@ -22,8 +22,6 @@ public class GroupDTO {
 
     private Date creationDate;
 
-    private UUID teamLead;
-
     private String teamLeadName;
 
     public GroupDTO(Group group) {
@@ -32,8 +30,7 @@ public class GroupDTO {
         this.isActive = group.isActive();
         this.description = group.getDescription();
         this.creationDate = group.getCreationDate();
-        this.teamLead = group.getTeamLead().getId();
-        this.teamLeadName = group.getTeamLead().getName();
+        this.teamLeadName = group.isActive() ? group.getTeamLead().getName() : "None";
     }
 
 }

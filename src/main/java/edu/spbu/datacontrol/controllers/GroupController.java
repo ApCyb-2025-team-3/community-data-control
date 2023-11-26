@@ -8,6 +8,8 @@ import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import edu.spbu.datacontrol.repositories.EventRepository;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -126,6 +128,15 @@ public class GroupController {
                 groupRepository.getGroupsByIsActiveTrue().stream()
                         .map(GroupDTO::new)
                         .toList(), HttpStatusCode.valueOf(200));
+
+    }
+
+    @GetMapping("/getAllGroups")
+    public ResponseEntity<List<GroupDTO>> getAllGroups() {
+
+        List<Group> groups = StreamSupport.stream(groupRepository.findAllByOrderByIsActiveDesc().spliterator(), false).toList();
+        return new ResponseEntity<>(
+            groups.stream().map(GroupDTO::new).toList(), HttpStatusCode.valueOf(200));
 
     }
 
