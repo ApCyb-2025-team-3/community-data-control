@@ -254,7 +254,7 @@ const Employees = () => {
                                                 id=""
                                                 onChange={(event) =>
                                                     getUsersByGrade(
-                                                        event.target.value)}
+                                                        event.currentTarget.value)}
                                         >
                                             <option value="">Позиция
                                             </option>
@@ -297,7 +297,7 @@ const Employees = () => {
                                                 id=""
                                                 onChange={(event) =>
                                                     getUsersByRole(
-                                                        event.target.value)}
+                                                        event.currentTarget.value)}
                                         >
                                             <option value="">Роль</option>
                                             <option
