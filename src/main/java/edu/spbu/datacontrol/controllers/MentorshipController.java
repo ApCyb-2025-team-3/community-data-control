@@ -70,6 +70,18 @@ public class MentorshipController {
         return new ResponseEntity<>("Mentorship is created.", HttpStatusCode.valueOf(201));
     }
 
+    @DeleteMapping("/disbandMentorship")
+    public ResponseEntity<String> disbandMentorship (@RequestParam UUID mentorshipId) {
+        Mentorship mentorship = mentorshipRepository.getMentorshipById(mentorshipId);
+        if (mentorship != null){
+            mentorshipRepository.delete(mentorship);
+            return new ResponseEntity<>("Mentorship was successfully disbanded",
+                    HttpStatusCode.valueOf(200));
+        }
+        return new ResponseEntity<>("This mentorship doesn't exist",
+                HttpStatusCode.valueOf(404));
+    }
+
     @GetMapping("/getAllMentorships")
     public ResponseEntity<List<MentorshipDTO>> getAllMentorships() {
         try {
@@ -83,69 +95,81 @@ public class MentorshipController {
         }
     }
 
-        @GetMapping("/getAllMentors")
-        public ResponseEntity<List<UserDTO>> getAllMentors () {
-            try {
-                return new ResponseEntity<>(
-                        userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
-                                .stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatusCode.valueOf(200));
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
-            }
+    @GetMapping("/getAllMentors")
+    public ResponseEntity<List<UserDTO>> getAllMentors() {
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTOR)
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
-
-        @GetMapping("/getAllMentees")
-        public ResponseEntity<List<UserDTO>> getAllMentees () {
-            try {
-                return new ResponseEntity<>(
-                        userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
-                                .stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatusCode.valueOf(200));
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
-            }
-        }
-
-        @GetMapping("/getFreeMentors")
-        public ResponseEntity<List<UserDTO>> getFreeMentors () {
-            try {
-                return new ResponseEntity<>(
-                        userRepository.getFreeMentors()
-                                .stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatusCode.valueOf(200));
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
-            }
-        }
-
-        @GetMapping("/getFreeMentees")
-        public ResponseEntity<List<UserDTO>> getFreeMentees () {
-            try {
-                return new ResponseEntity<>(
-                        userRepository.getFreeMentees()
-                                .stream()
-                                .map(UserDTO::new)
-                                .toList(), HttpStatusCode.valueOf(200));
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatusCode.valueOf(404));
-            }
-        }
-
-        private void changeMentorshipStatus (UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException
-        {
-            if (isInMentorship(userId)) {
-                throw new IllegalArgumentException("This user is in mentorship pair already!");
-            }
-            User user = userRepository.getUserById(userId);
-            user.setMentorStatus(mentorStatus);
-        }
-
-        private boolean isInMentorship (UUID userId){
-            return mentorshipRepository.countMentorshipByMenteeOrMentor(userId) > 0;
-        }
-
     }
+
+    @GetMapping("/getAllMentees")
+    public ResponseEntity<List<UserDTO>> getAllMentees() {
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus.MENTEE)
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getFreeMentors")
+    public ResponseEntity<List<UserDTO>> getFreeMentors() {
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getFreeMentors()
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getFreeMentees")
+    public ResponseEntity<List<UserDTO>> getFreeMentees() {
+        try {
+            return new ResponseEntity<>(
+                    userRepository.getFreeMentees()
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+        }
+    }
+
+    @GetMapping("/getMenteesByMentor")
+    public ResponseEntity<List<UserDTO>> getMenteesByMentor(@RequestParam UUID mentorId) {
+        User mentor = userRepository.getUserById(mentorId);
+       if (mentor != null) {
+            return new ResponseEntity<>(
+                    userRepository.getMenteesByMentorId(mentorId)
+                            .stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatusCode.valueOf(200));
+       }
+       return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+    }
+
+    private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
+        if (isInMentorship(userId)) {
+            throw new IllegalArgumentException("This user is in mentorship pair already!");
+        }
+        User user = userRepository.getUserById(userId);
+        user.setMentorStatus(mentorStatus);
+    }
+
+    private boolean isInMentorship(UUID userId) {
+        return mentorshipRepository.countMentorshipByMenteeOrMentor(userId) > 0;
+    }
+
+}

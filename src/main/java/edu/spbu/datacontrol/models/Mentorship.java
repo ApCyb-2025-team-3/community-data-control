@@ -1,12 +1,7 @@
 package edu.spbu.datacontrol.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.UUID;
 import lombok.Data;
@@ -23,7 +18,7 @@ public class Mentorship {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @OneToOne
+  @ManyToOne
   private User mentor;
 
   @OneToOne

@@ -18,4 +18,6 @@ public interface MentorshipRepository extends CrudRepository<Mentorship, UUID> {
     @Query("SELECT m FROM Mentorship m")
     List<Mentorship> getAllMentorships();
 
+    Mentorship getMentorshipById(UUID mentorshipId);
+
 }
