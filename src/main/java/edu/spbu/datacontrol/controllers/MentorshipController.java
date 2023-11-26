@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/mentorship")
@@ -85,11 +86,11 @@ public class MentorshipController {
     @GetMapping("/getAllMentorships")
     public ResponseEntity<List<MentorshipDTO>> getAllMentorships() {
         try {
-            return new ResponseEntity<>(
-                    mentorshipRepository.getAllMentorships()
-                            .stream()
-                            .map(MentorshipDTO::new)
-                            .toList(), HttpStatusCode.valueOf(200));
+            List<Mentorship> mentorships = StreamSupport.stream(mentorshipRepository.findAll().spliterator(), false).toList();
+            return new ResponseEntity<>(mentorships
+                    .stream()
+                    .map(MentorshipDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
