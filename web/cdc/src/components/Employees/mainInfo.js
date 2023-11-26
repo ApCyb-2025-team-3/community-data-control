@@ -401,13 +401,18 @@ const MainInfo = ({ userId }) => {
 
         if (state.isGroupsVisible) {
             visibleBlocks.push(
-                <Groups></Groups>
+                <Groups key={state.userId} userId={state.userId}></Groups>
             )
         }
 
         if (state.isMentorshipVisible) {
             visibleBlocks.push(
-                <Mentorships></Mentorships>
+                <Mentorships key={state.userId}
+                             userId={state.userId}
+                             mentorStatus={state.userInfo.mentorStatus}
+                >
+
+                </Mentorships>
             )
         }
 
