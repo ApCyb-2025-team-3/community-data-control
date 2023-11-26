@@ -20,6 +20,7 @@ const MainInfo = ({ userId }) => {
         isChanging: false
     })
     const [isLoading, setLoading] = useState(true)
+    const today = new Date()
 
     useEffect(() => {
         async function getUserInfo() {
@@ -219,6 +220,7 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? '' : state.userInfo.supervisor.value,
             department: state.userInfo.department,
+            changedAt: state.userInfo.changedAt,
             productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
@@ -226,6 +228,7 @@ const MainInfo = ({ userId }) => {
             project: state.oldUserInfo.project,
             supervisor: state.oldUserInfo.supervisor === null ? null : state.oldUserInfo.supervisor.value,
             department: state.oldUserInfo.department,
+            changedAt: state.oldUserInfo.changedAt,
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
@@ -244,12 +247,17 @@ const MainInfo = ({ userId }) => {
 
     }
 
-    async function handleUserDismissal(reason) {
+    function dateToIEEE(date) {
+        return date.split(".").reverse().join("-")
+    }
+
+    async function handleUserDismissal(reason, date) {
 
         try {
 
             const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/dismiss?description=" + encodeURIComponent(reason)
+                + "/api/user/" + state.userId + "/dismiss?date=" + dateToIEEE(date)
+                + "&description=" + encodeURIComponent(reason)
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -370,11 +378,13 @@ const MainInfo = ({ userId }) => {
                                             Введите причину увольнения
                                             <form action="">
                                                 <input id={"dismissalReason"} placeholder="Причина" />
+                                                <input type='date' id={"dismissalDate"} value={`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                             </form>
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     handleUserDismissal(
-                                                        document.getElementById("dismissalReason").value
+                                                        document.getElementById("dismissalReason").value,
+                                                        document.getElementById("dismissalDate").value.toString(),
                                                     )
                                                     close()
                                                 }}>
@@ -569,7 +579,7 @@ const MainInfo = ({ userId }) => {
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
-                                <input readOnly type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
