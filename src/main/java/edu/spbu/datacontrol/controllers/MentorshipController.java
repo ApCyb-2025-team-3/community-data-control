@@ -150,15 +150,15 @@ public class MentorshipController {
 
     @GetMapping("/getMenteesByMentor")
     public ResponseEntity<List<UserDTO>> getMenteesByMentor(@RequestParam UUID mentorId) {
-        User mentor = userRepository.getUserById(mentorId);
-        if (mentor != null) {
+        try {
             return new ResponseEntity<>(
                     mentorshipRepository.getMenteesByMentorId(mentorId)
                             .stream()
                             .map(UserDTO::new)
                             .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
         }
-        return new ResponseEntity<>(HttpStatusCode.valueOf(404));
     }
 
     private void changeMentorshipStatus(UUID userId, MentorshipStatus mentorStatus) throws IllegalArgumentException {
