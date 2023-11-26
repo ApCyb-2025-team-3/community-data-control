@@ -22,6 +22,6 @@ public interface GroupRepository extends CrudRepository<Group, UUID> {
 
     List<Group> findByNameContainingIgnoreCase(String partialName);
 
-    List<Group> getAllGroups();
+    List<Group> findAllByOrderByIsActiveDesc();
 
 }
