@@ -5,6 +5,7 @@ import search from '../../icons/search-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
 import React, {useState} from "react";
 import MainInfo from "./mainInfo";
+import AddUser from "./AddUser.js"
 import {localiseRole} from "./localise";
 
 const Employees = () => {
@@ -14,6 +15,22 @@ const Employees = () => {
             userList: [],
         }
     )
+
+    const [isAdding, setIsAdding] = useState(false)
+
+    const testUserList = [
+        {userId: 0, name: "Somehow", role: "Team Lead", project: ""},
+        {userId: 1, name: "I", role: "Developer", project: "Apache Kafka"},
+        {userId: 2, name: "Know", role: "Team Lead", project: "Apache Kafka"},
+        {userId: 3, name: "Nothing", role: "Developer", project: "Apache Kafka"},
+        {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"},
+        {userId: 5, name: "Somehow", role: "Team Lead", project: ""},
+        {userId: 6, name: "I", role: "Developer", project: "Apache Kafka"},
+        {userId: 7, name: "Know", role: "Team Lead", project: "Apache Kafka"},
+        {userId: 8, name: "Nothing", role: "Developer", project: "Apache Kafka"},
+        {userId: 9, name: "However", role: "Product Owner", project: "Apache Kafka"},
+        {userId: 10, name: "I", role: "Developer", project: "Apache Kafka"},
+    ]
 
     function setEmptyUserListToState() {
         setState({
@@ -155,6 +172,7 @@ const Employees = () => {
             selectedUserId: userId,
             userList: state.userList
         })
+        setIsAdding(false)
     }
 
     function renderUserList(userDtoList) {
@@ -200,6 +218,9 @@ const Employees = () => {
 
     function renderFullInfoBlock() {
 
+        if (isAdding) {
+            return <AddUser/>
+        }
         if (state.selectedUserId === -1) {
             return (
                 <div className={`${classes.infoBlocks}`}>
@@ -225,7 +246,7 @@ const Employees = () => {
                         <div className={`${classes.menuListBlock}`}>
                             <div className={`${classes.menuListBlockMenu}`}>
                                 <div className={`${classes.menuAddName}`}>
-                                    <button>
+                                    <button onClick={() => setIsAdding(!isAdding)}>
                                         <img src={add} alt="add"/>
                                     </button>
                                     <div>
