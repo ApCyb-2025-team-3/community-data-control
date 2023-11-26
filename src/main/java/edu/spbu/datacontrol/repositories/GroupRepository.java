@@ -24,4 +24,6 @@ public interface GroupRepository extends CrudRepository<Group, UUID> {
 
     List<Group> findAllByOrderByIsActiveDesc();
 
+    List<Group> getGroupsByTypeOrderByIsActiveDesc(GroupType type);
+
 }
