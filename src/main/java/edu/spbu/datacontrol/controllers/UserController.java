@@ -116,7 +116,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUsersBySupervisorName")
+    @GetMapping("/getUsersBySupervisor")
     public ResponseEntity<List<UserDTO>> getUsersBySupervisorName(@RequestParam String partialName) {
 
         try {
