@@ -54,10 +54,10 @@ const AddUser = () => {
                 dob: null,
                 email: null,
                 phoneNumber: null,
-                supervisorName: " ",
-                productOwnersNames: " ",
-                project: " ",
-                department: " ",
+                supervisorName: "",
+                productOwnersNames: "",
+                project: "",
+                department: "",
                 grade: "Unspecified",
                 role: "Non Member",
                 mentorStatus: "Not participating",
@@ -213,7 +213,7 @@ const AddUser = () => {
                 <option value="Mentee" >Менти</option>
                 <option value="Not participating">Не участвует</option>
             </select>
-            <input value={user.invitedAt} className={user.invitedAt === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата присоединения" onChange={(event) => { setUser({ ...user, dob: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
+            <input value={user.invitedAt} className={user.invitedAt === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата присоединения" onChange={(event) => { setUser({ ...user, invitedAt: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
             </div>
             </div>
             <button type='button' onClick={() => {

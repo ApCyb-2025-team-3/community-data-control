@@ -70,6 +70,7 @@ public class User {
     private MentorshipStatus mentorStatus;
 
     public User(UserAdditionDTO userData) {
+        this.invitedAt = userData.getInvitedAt();
         this.name = userData.getName();
         this.dob = userData.getDob();
         this.email = userData.getEmail();

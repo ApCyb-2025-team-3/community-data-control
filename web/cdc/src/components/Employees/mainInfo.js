@@ -21,6 +21,11 @@ const MainInfo = ({ userId }) => {
     })
     const [isLoading, setLoading] = useState(true)
     const today = new Date()
+    const [dismissState, setDismissState] = useState({
+            date: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`,
+            isDismissed: false
+        }
+    )
 
     useEffect(() => {
         async function getUserInfo() {
@@ -43,7 +48,7 @@ const MainInfo = ({ userId }) => {
                         oldUserInfo: { ...userInfo },
                         isGroupsVisible: false,
                         isMentorshipVisible: false,
-                        isChanging: false,
+                        isChanging: false
                     })
                     setLoading(false)
 
@@ -251,12 +256,14 @@ const MainInfo = ({ userId }) => {
         return date.split(".").reverse().join("-")
     }
 
-    async function handleUserDismissal(reason, date) {
+    async function handleUserDismissal(reason, dismissedAt) {
+
+        setDismissState(s => s.isDismissed = true)
 
         try {
 
             const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/dismiss?date=" + dateToIEEE(date)
+                + "/api/user/" + state.userId + "/dismiss?date=" + dateToIEEE(dismissedAt)
                 + "&description=" + encodeURIComponent(reason)
             const response = await fetch(url, {
                 method: "POST",
@@ -265,19 +272,14 @@ const MainInfo = ({ userId }) => {
                 },
             });
 
-            const date = new Date()
-
             if (response.ok) {
                 const newUserInfo = state.userInfo
                 newUserInfo.isActive = false
                 newUserInfo.dismissReason = reason
-                newUserInfo.dismissedAt = `${date.getDate()}.${date.getMonth()
-                + 1}.${date.getFullYear()}`
-
+                newUserInfo.dismissedAt = dismissedAt
                 setState({
                     ...state,
                     userInfo: newUserInfo,
-                    oldUserInfo: newUserInfo,
                 })
 
 
@@ -332,7 +334,7 @@ const MainInfo = ({ userId }) => {
                     }}>
                         {state.isChanging ? "Сохранить" : "Внести изменения"}
                     </button>
-                    <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
+                    <Popup open={!state.isChanging && !dismissState.isDismissed && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
                         modal nested>
                         {
                             close => (
@@ -340,9 +342,7 @@ const MainInfo = ({ userId }) => {
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
                                             Введите причину изменения данных
-                                            <form action="">
-                                                <input id={"changingReason"} placeholder="Причина" />
-                                            </form>
+                                            <input id={"changingReason"} placeholder="Причина" />
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     changeUserInfo(
@@ -375,12 +375,18 @@ const MainInfo = ({ userId }) => {
                                 <div className={`${classes.popUpMask}`}>
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
-                                            Введите причину увольнения
-                                            <form action="">
-                                                <input id={"dismissalReason"} placeholder="Причина" />
-                                                <input type='date' id={"dismissalDate"} value={`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                            </form>
-                                            <div className={`${classes.popUpButtons}`}>
+                                            Введите причину и дату увольнения
+                                            <input id={"dismissalReason"}
+                                                   placeholder="Причина"></input>
+                                            <input type='date'
+                                                   id={"dismissalDate"}
+                                                   value={dismissState.date}
+                                                   onChange={(event) => {
+                                                       setDismissState(s => s.date = event.currentTarget.value)
+                                                   }}
+                                                   className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                            <div
+                                                className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     handleUserDismissal(
                                                         document.getElementById("dismissalReason").value,
@@ -430,6 +436,8 @@ const MainInfo = ({ userId }) => {
 
         return visibleBlocks
     }
+
+    console.log(state.userInfo)
 
     function formatLocalDate(date) {
         return date === null ? "Не указано" : date.split("-").reverse().join(".")
@@ -500,8 +508,6 @@ const MainInfo = ({ userId }) => {
         }
     };
 
-    console.log(state.userInfo)
-
     if (isLoading) {
 
         return (
@@ -542,7 +548,7 @@ const MainInfo = ({ userId }) => {
                                 <input type='email' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input type='tel' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, phoneNumber: event.target.value } }) }} value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input type='date' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, dob: event.target.value } }) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department !== "" ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <select onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, grade: event.target.value } }) }} value={state.userInfo.grade} className={`${classes.lPartInfoCol1DataGrade}`}>
                                     <option value='Junior'>Junior</option>
                                     <option value='Middle'>Middle</option>
@@ -565,7 +571,7 @@ const MainInfo = ({ userId }) => {
                                 <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={(state.userInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
                                 <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
@@ -609,7 +615,7 @@ const MainInfo = ({ userId }) => {
                             :
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    {(state.userInfo.project !== null && state.userInfo.project !== "") ? state.userInfo.project : "Нет"}
+                                    {state.userInfo.project !== null ? state.userInfo.project : "Нет"}
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}

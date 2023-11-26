@@ -70,6 +70,8 @@ public class UserController {
             if (projectChange != null) {
                 userInfo.setProjectChangedAt(
                     projectChange.getEventDate());
+            } else {
+                userInfo.setProjectChangedAt(user.getInvitedAt());
             }
 
             Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
@@ -260,8 +262,7 @@ public class UserController {
     }
 
     @PostMapping("/changeUserProject")
-    public ResponseEntity<String> changeUserProject(@RequestParam LocalDate date,
-                                                    @RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
+    public ResponseEntity<String> changeUserProject(@RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
 
         User user = userRepository.findById(changeUserProjectDTO.getUserId()).orElse(null);
         if (user != null) {
@@ -274,7 +275,7 @@ public class UserController {
 
             userRepository.save(user);
             eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
-                    date, oldProject, changeUserProjectDTO.getProject()));
+                changeUserProjectDTO.getChangedAt(), oldProject, changeUserProjectDTO.getProject()));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }
