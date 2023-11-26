@@ -69,16 +69,14 @@ public class UserController {
                 EventType.CHANGE_PROJECT);
             if (projectChange != null) {
                 userInfo.setProjectChangedAt(
-                    projectChange.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
-                        .toLocalDate());
+                    projectChange.getEventDate());
             }
 
             Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
                 EventType.DISMISS_USER);
             if (dismiss != null) {
                 userInfo.setDismissedAt(
-                    dismiss.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
-                        .toLocalDate());
+                    dismiss.getEventDate());
                 userInfo.setDismissReason(dismiss.getDescription());
             }
 
