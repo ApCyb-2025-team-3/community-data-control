@@ -140,6 +140,21 @@ public class GroupController {
 
     }
 
+    @GetMapping("/getGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getGroupsByType(@RequestParam String groupType) {
+        try {
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByTypeOrderByIsActiveDesc(type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
+
+    }
+
     @GetMapping("getUserGroups")
     public ResponseEntity<List<GroupDTO>> getUserGroups(@RequestParam UUID userId) {
         User user = userRepository.getUserById(userId);
