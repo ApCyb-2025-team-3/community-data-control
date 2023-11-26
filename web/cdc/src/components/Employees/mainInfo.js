@@ -21,11 +21,7 @@ const MainInfo = ({ userId }) => {
     })
     const [isLoading, setLoading] = useState(true)
     const today = new Date()
-    const [dismissState, setDismissState] = useState({
-            date: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`,
-            isDismissed: false
-        }
-    )
+    const [dismissDateState, setDismissDateState] = useState(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
 
     useEffect(() => {
         async function getUserInfo() {
@@ -132,7 +128,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -153,7 +148,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -175,7 +169,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -198,7 +191,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -258,8 +250,6 @@ const MainInfo = ({ userId }) => {
 
     async function handleUserDismissal(reason, dismissedAt) {
 
-        setDismissState(s => s.isDismissed = true)
-
         try {
 
             const url = process.env.REACT_APP_BACKEND_URL
@@ -280,6 +270,7 @@ const MainInfo = ({ userId }) => {
                 setState({
                     ...state,
                     userInfo: newUserInfo,
+                    oldUserInfo: newUserInfo
                 })
 
 
@@ -334,7 +325,7 @@ const MainInfo = ({ userId }) => {
                     }}>
                         {state.isChanging ? "Сохранить" : "Внести изменения"}
                     </button>
-                    <Popup open={!state.isChanging && !dismissState.isDismissed && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
+                    <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
                         modal nested>
                         {
                             close => (
@@ -380,10 +371,8 @@ const MainInfo = ({ userId }) => {
                                                    placeholder="Причина"></input>
                                             <input type='date'
                                                    id={"dismissalDate"}
-                                                   value={dismissState.date}
-                                                   onChange={(event) => {
-                                                       setDismissState(s => s.date = event.currentTarget.value)
-                                                   }}
+                                                   value={dismissDateState.date}
+                                                   onChange={(event) => setDismissDateState(event.currentTarget.value)}
                                                    className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                             <div
                                                 className={`${classes.popUpButtons}`}>
@@ -571,7 +560,7 @@ const MainInfo = ({ userId }) => {
                                 <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={(state.userInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
                                 <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
@@ -615,7 +604,7 @@ const MainInfo = ({ userId }) => {
                             :
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    {state.userInfo.project !== null ? state.userInfo.project : "Нет"}
+                                    {(state.userInfo.project !== null && state.userInfo.project !== "") ? state.userInfo.project : "Нет"}
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
