@@ -113,7 +113,7 @@ class UserControllerTest {
         addUser(subordinate);
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersBySupervisorName").param("partialName", supervisor.getName())
+                get("/api/user/getUsersBySupervisor").param("partialName", supervisor.getName())
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
@@ -397,7 +397,6 @@ class UserControllerTest {
                 LocalDate.of(2000, 1, 1),
                 generatedMail,
                 generatedPhone,
-                "",
                 "",
                 new ArrayList<>(),
                 "Sample project",
