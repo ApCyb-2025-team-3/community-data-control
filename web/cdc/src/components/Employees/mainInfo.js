@@ -555,7 +555,7 @@ const MainInfo = ({ userId }) => {
                                 <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={state.userInfo.department !== "" ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={(state.userInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
                                 <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
@@ -568,7 +568,7 @@ const MainInfo = ({ userId }) => {
                         </div>
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
-                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project !== "" ? state.userInfo.project : "Нет"} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
+                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
                                 <input readOnly type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
@@ -599,7 +599,7 @@ const MainInfo = ({ userId }) => {
                             :
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    {state.userInfo.project !== null ? state.userInfo.project : "Нет"}
+                                    {(state.userInfo.project !== null && state.userInfo.project !== "") ? state.userInfo.project : "Нет"}
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
