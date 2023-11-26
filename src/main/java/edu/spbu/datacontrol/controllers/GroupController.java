@@ -104,7 +104,7 @@ public class GroupController {
     }
 
     @PatchMapping ("/update")
-    public  ResponseEntity<String> updateGroup(@RequestBody GroupDTO changedGroup) {
+    public  ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup) {
         Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
         if (group != null) {
             group.changeGroupData(changedGroup);
