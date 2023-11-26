@@ -5,6 +5,8 @@ export function localiseRole(role) {
             return "Участник"
         case "Data Engineer":
             return "Дата инженер"
+        case "Developer":
+            return "Разработчик"
         case "Team Lead":
             return "Team Lead"
         case "Product Owner":
