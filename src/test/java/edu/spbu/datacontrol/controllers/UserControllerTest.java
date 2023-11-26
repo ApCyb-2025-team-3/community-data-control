@@ -291,7 +291,7 @@ class UserControllerTest {
         UUID userId = getUserId(user);
         String newProjectName = "new project";
         ChangeUserProjectDTO changeUserProjectDTO =
-                new ChangeUserProjectDTO(userId, newProjectName, "", "", new String[]{""});
+                new ChangeUserProjectDTO(userId, newProjectName, "", "", LocalDate.now(), new String[]{""});
         this.mockMvc.perform(post("/api/user/changeUserProject")
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(changeUserProjectDTO))
         ).andExpect(status().isOk());
