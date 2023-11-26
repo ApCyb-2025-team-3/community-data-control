@@ -42,7 +42,7 @@ const MainInfo = ({ userId }) => {
                         oldUserInfo: { ...userInfo },
                         isGroupsVisible: false,
                         isMentorshipVisible: false,
-                        isChanging: false
+                        isChanging: false,
                     })
                     setLoading(false)
 
@@ -265,9 +265,11 @@ const MainInfo = ({ userId }) => {
                 newUserInfo.dismissReason = reason
                 newUserInfo.dismissedAt = `${date.getDate()}.${date.getMonth()
                 + 1}.${date.getFullYear()}`
+
                 setState({
                     ...state,
                     userInfo: newUserInfo,
+                    oldUserInfo: newUserInfo,
                 })
 
 
@@ -488,6 +490,8 @@ const MainInfo = ({ userId }) => {
         }
     };
 
+    console.log(state.userInfo)
+
     if (isLoading) {
 
         return (
@@ -528,7 +532,7 @@ const MainInfo = ({ userId }) => {
                                 <input type='email' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input type='tel' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, phoneNumber: event.target.value } }) }} value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input type='date' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, dob: event.target.value } }) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department !== "" ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <select onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, grade: event.target.value } }) }} value={state.userInfo.grade} className={`${classes.lPartInfoCol1DataGrade}`}>
                                     <option value='Junior'>Junior</option>
                                     <option value='Middle'>Middle</option>
@@ -551,7 +555,7 @@ const MainInfo = ({ userId }) => {
                                 <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={state.userInfo.department !== "" ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
                                 <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
@@ -564,7 +568,7 @@ const MainInfo = ({ userId }) => {
                         </div>
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
-                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
+                                <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project !== "" ? state.userInfo.project : "Нет"} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
                                 <input readOnly type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
