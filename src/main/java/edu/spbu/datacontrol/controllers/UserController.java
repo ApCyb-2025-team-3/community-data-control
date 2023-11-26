@@ -122,7 +122,7 @@ public class UserController {
         try {
             List<UserDTO> subordinateUsers = new ArrayList<>();
 
-            List<User> supervisors = userRepository.findByNameContainingIgnoreCase(partialName)
+            List<User> supervisors = userRepository.findByNameContainingIgnoreCaseAndIsActiveTrue(partialName)
                     .stream()
                     .filter(user -> user.getRole() == Role.SUPERVISOR)
                     .toList();
@@ -285,7 +285,7 @@ public class UserController {
 
         if (!partialName.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.findByNameContainingIgnoreCase(partialName).stream()
+                userRepository.findByNameContainingIgnoreCaseAndIsActiveTrue(partialName).stream()
                     .map(UserDTO::new)
                     .toList(), HttpStatus.OK);
         }
