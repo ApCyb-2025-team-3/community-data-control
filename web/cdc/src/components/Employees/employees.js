@@ -120,7 +120,7 @@ const Employees = () => {
         }
 
         const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersBySupervisor?name=" + encodeURIComponent(name)
+            + "/api/user/getUsersBySupervisor?partialName=" + encodeURIComponent(name)
 
         const userDtoList = await performGetRequest(url)
         setState({

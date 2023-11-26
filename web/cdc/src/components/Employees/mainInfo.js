@@ -92,7 +92,7 @@ const MainInfo = ({userId}) => {
                 const newUserInfo = state.userInfo
                 newUserInfo.isActive = false
                 newUserInfo.dismissReason = reason
-                newUserInfo.dismissedAt = `${date.getDay()}.${date.getMonth()
+                newUserInfo.dismissedAt = `${date.getDate()}.${date.getMonth()
                 + 1}.${date.getFullYear()}`
                 setState({
                     userId: state.userId,
