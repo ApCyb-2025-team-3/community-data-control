@@ -52,8 +52,7 @@ public class User {
     @ManyToMany
     private List<User> productOwners;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @ManyToMany(mappedBy = "members")
     private List<Group> groups;
 
     private String project;
