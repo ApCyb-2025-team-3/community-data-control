@@ -1,8 +1,7 @@
 import classes from './employees.module.css';
-import React, { useState } from "react";
+import React, {useState} from "react";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
-
 
 
 const AddUser = () => {
@@ -24,7 +23,37 @@ const AddUser = () => {
         invitedAt: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
     })
     const [allFilled, setAllFilled] = useState(false)
-    const [userAdded, setUserAdded] = useState(false)
+
+    async function getUsers(inputValue) {
+        try {
+
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
+
+            return response.data.map(user => ({
+                value: user.name,
+                label: user.name
+            }));
+        } catch (error) {
+            console.error('Ошибка при загрузке пользователей:', error);
+            return [];
+        }
+    }
+
+    async function getPO() {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
+
+            return response.data.map(user => ({
+                value: user.name,
+                label: user.name
+            }));
+        } catch (error) {
+            console.error('Ошибка при загрузке пользователей:', error);
+            return [];
+        }
+    }
 
     async function addUser() {
         try {
@@ -72,22 +101,6 @@ const AddUser = () => {
         }
     }
 
-    const getUsers = async (inputValue) => {
-        try {
-
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
-
-            return response.data.map(user => ({
-                id: user.id,
-                value: user.name,
-                label: user.name
-            }));
-        } catch (error) {
-            console.error('Ошибка при загрузке пользователей:', error);
-            return [];
-        }
-    };
-
     const customStyles = {
         control: provided => ({
             ...provided,
@@ -122,27 +135,6 @@ const AddUser = () => {
             },
         }),
         // Add more styles for other elements as needed
-    };
-
-    const promiseOptions = inputValue =>
-        new Promise(resolve => resolve(getUsers(inputValue)));
-
-    const promiseOptionsPO = inputValue =>
-        new Promise(resolve => resolve(getPO(inputValue)));
-
-    const getPO = async (inputValue) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
-
-            return response.data.map(user => ({
-                id: user.id,
-                value: user.name,
-                label: user.name
-            }));
-        } catch (error) {
-            console.error('Ошибка при загрузке пользователей:', error);
-            return [];
-        }
     };
 
     return (
@@ -193,9 +185,9 @@ const AddUser = () => {
                 defaultOptions
                 classNamePrefix="custom"
                 className="custom-container"
-                placeholder="Руководитель  "
+                placeholder="Руководитель"
                 styles={customStyles}
-                loadOptions={promiseOptions}
+                loadOptions={getUsers}
                 onChange={(selectedOption) => setUser({ ...user, supervisorName: selectedOption })}
 
             />
@@ -207,7 +199,7 @@ const AddUser = () => {
                 className="custom-container"
                 placeholder="Product Owners"
                 styles={customStyles}
-                loadOptions={promiseOptionsPO}
+                loadOptions={getPO}
                 onChange={(selectedOption) => setUser({ ...user, productOwnersNames: selectedOption })}
 
             />
@@ -222,9 +214,6 @@ const AddUser = () => {
             </div>
             </div>
             <div className={`${classes.addUserBlockBottom}`}>
-                <div style={{display: userAdded ? '' : 'none', height: 34 + `px`, fontSize: '2.5rem', color: '#33e629'}}>
-                    <p>Пользователь успешно добавлен!</p>
-                </div>
                 <button className={`${classes.addUserBlockBottomButton}`}
                         type='button'
                         onClick={() => {
