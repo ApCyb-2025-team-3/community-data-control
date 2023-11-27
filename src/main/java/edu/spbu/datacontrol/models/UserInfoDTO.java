@@ -57,7 +57,7 @@ public class UserInfoDTO {
 
     public UserInfoDTO(User user) {
         this.id = user.getId();
-        this.invitedAt = user.getInvitedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        this.invitedAt = user.getInvitedAt();
         this.isActive = user.isActive();
         this.name = user.getName();
         this.dob = user.getDob();
