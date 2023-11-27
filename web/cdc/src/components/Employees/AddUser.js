@@ -57,11 +57,12 @@ const AddUser = () => {
 
     async function addUser() {
         try {
+            const data = {...user}
             if (user.productOwnersNames.length !== 0) {
-                setUser({ ...user, productOwnersNames: user.productOwnersNames.map(item => item.value) })
+                data.productOwnersNames = user.productOwnersNames.map(item => item.value)
             }
             if (user.supervisorName !== "") {
-                setUser({ ...user, supervisorName: user.supervisorName.value })
+                data.supervisorName = user.supervisorName.value
             }
             const url = process.env.REACT_APP_BACKEND_URL + "/api/user/add"
             const response = await fetch(url, {
@@ -70,7 +71,7 @@ const AddUser = () => {
                     'Content-Type': 'application/json',
                     'Origin': 'http://localhost:3000'
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(data)
             });
 
             if (!response.ok) {
@@ -200,7 +201,7 @@ const AddUser = () => {
                 placeholder="Product Owners"
                 styles={customStyles}
                 loadOptions={getPO}
-                onChange={(selectedOption) => setUser({ ...user, productOwnersNames: selectedOption })}
+                onChange={(selectedOption) => {console.log(selectedOption); setUser({ ...user, productOwnersNames: selectedOption })}}
 
             />
             <input className={`${classes.InputField}`} id="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
