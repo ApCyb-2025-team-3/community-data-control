@@ -247,9 +247,22 @@ public class UserController {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             try {
+                Role oldRole = user.getRole();
                 user.setRole(EnumUtils.fromString(Role.class, role));
                 userRepository.save(user);
                 eventLog.save(new Event(user.getId(), EventType.CHANGE_ROLE, reason));
+
+                if (oldRole == Role.SUPERVISOR) {
+                    List<User> subordinates = userRepository.getUsersBySupervisor(user);
+                    subordinates.forEach(t -> t.setSupervisor(null));
+                    userRepository.saveAll(subordinates);
+
+                } else if (oldRole == Role.PRODUCT_OWNER) {
+                    List<User> subordinates = userRepository.getUsersByProductOwnersContaining(user);
+                    subordinates.forEach(t -> t.getProductOwners().remove(user));
+                    userRepository.saveAll(subordinates);
+                }
+
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>("Unknown role is sent", HttpStatus.BAD_REQUEST);
             }
