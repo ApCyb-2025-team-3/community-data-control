@@ -8,7 +8,6 @@ import edu.spbu.datacontrol.models.enums.Role;
 import edu.spbu.datacontrol.repositories.GroupRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 import edu.spbu.datacontrol.repositories.EventRepository;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -48,7 +47,7 @@ public class GroupController {
             User teamLead = userRepository.getUserById(teamLeadId);
             assignTeamLead(newGroup, teamLead);
             groupRepository.save(newGroup);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST
@@ -71,10 +70,17 @@ public class GroupController {
 
         List<User> currentMembers = group.getMembers();
         if(currentMembers.contains(newMember)) {
-            return new ResponseEntity<>("This user is already in the group!", HttpStatusCode.valueOf(409));
+            return new ResponseEntity<>("The user is already in this group!", HttpStatusCode.valueOf(409));
+        }
+
+        if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(newMember)) {
+            return new ResponseEntity<>("This user is already in the working team!", HttpStatusCode.valueOf(409));
         }
         currentMembers.add(newMember);
         groupRepository.save(group);
+
+        newMember.getGroups().add(group);
+        userRepository.save(newMember);
 
         Event addUser = new Event(userId, EventType.ACCEPT_TO_GROUP, LocalDate.now(),"Accepted the user to " + group.getName() + " group");
         eventLog.save(addUser);
@@ -109,17 +115,21 @@ public class GroupController {
     @PatchMapping ("/update")
     public  ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup) {
         Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
-        if (group != null) {
-            group.changeGroupData(changedGroup);
+        if (group == null) {
+            return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
+        }
+        try {
             User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
             assignTeamLead(group, teamLead);
+            group.changeGroupData(changedGroup);
             groupRepository.save(group);
-
-            return new ResponseEntity<>("Group was successfully modified",
-                    HttpStatusCode.valueOf(200));
+        }
+        catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>("Group was successfully modified",
+                HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/getActiveGroups")
@@ -276,8 +286,9 @@ public class GroupController {
         }
 
         teamLead.setRole(Role.TEAM_LEAD);
+        teamLead.getGroups().add(group);
         userRepository.save(teamLead);
-        Event assignTeamLeadRole = new Event(teamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "This user is new team leader");
+        Event assignTeamLeadRole = new Event(teamLead.getId(), EventType.CHANGE_PERSONAL_DATA, LocalDate.now(), "This user is new team leader");
         eventLog.save(assignTeamLeadRole);
 
         group.setTeamLead(teamLead);
