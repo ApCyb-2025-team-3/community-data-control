@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/group")
@@ -75,7 +76,7 @@ public class GroupController {
         currentMembers.add(newMember);
         groupRepository.save(group);
 
-        Event addUser = new Event(userId, EventType.ACCEPT_TO_GROUP, "Accepted the user to " + group.getName() + " group");
+        Event addUser = new Event(userId, EventType.ACCEPT_TO_GROUP, LocalDate.now(),"Accepted the user to " + group.getName() + " group");
         eventLog.save(addUser);
 
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
@@ -252,7 +253,7 @@ public class GroupController {
         userRepository.save(user);
         groupRepository.save(group);
 
-        Event excludeUser = new Event(userId, EventType.EXCLUDE_FROM_GROUP, "Excluded the user from the " + group.getName() + " group");
+        Event excludeUser = new Event(userId, EventType.EXCLUDE_FROM_GROUP, LocalDate.now(),"Excluded the user from the " + group.getName() + " group");
         eventLog.save(excludeUser);
 
         return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
