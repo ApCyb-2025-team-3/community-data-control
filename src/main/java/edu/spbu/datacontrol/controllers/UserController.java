@@ -4,13 +4,12 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +28,10 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody UserAdditionDTO userData) {
+
+        if (userData.getName() == null) {
+            return new ResponseEntity<>("Null user name", HttpStatus.BAD_REQUEST);
+        }
 
         User newUser = new User(userData);
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
@@ -283,7 +286,7 @@ public class UserController {
             user.setProject(changeUserProjectDTO.getProject());
             user.setDepartment(changeUserProjectDTO.getDepartment());
             user.setProjectChangedAt(changeUserProjectDTO.getChangedAt());
-            assignSupervisor(user,changeUserProjectDTO.getSupervisor());
+            assignSupervisor(user, changeUserProjectDTO.getSupervisor());
             assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
 
             userRepository.save(user);
