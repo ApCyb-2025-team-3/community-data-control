@@ -24,6 +24,7 @@ const AddUser = () => {
         invitedAt: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
     })
     const [allFilled, setAllFilled] = useState(false)
+    const [userAdded, setUserAdded] = useState(false)
 
     async function addUser() {
         try {
@@ -48,7 +49,7 @@ const AddUser = () => {
             }
 
             const result = await response.text();
-            console.log(result);
+
             setUser({
                 name: null,
                 dob: null,
@@ -63,6 +64,9 @@ const AddUser = () => {
                 mentorStatus: "Not participating",
                 invitedAt: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
             })
+
+            alert("Пользователь успешно добавлен")
+
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -70,6 +74,7 @@ const AddUser = () => {
 
     const getUsers = async (inputValue) => {
         try {
+
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
 
             return response.data.map(user => ({
@@ -216,9 +221,18 @@ const AddUser = () => {
             <input value={user.invitedAt} className={user.invitedAt === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата присоединения" onChange={(event) => { setUser({ ...user, invitedAt: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
             </div>
             </div>
-            <button type='button' onClick={() => {
-                { allFilled ? addUser(user) : alert("Заполните обязательные поля") }
-            }}>Добавить</button>
+            <div className={`${classes.addUserBlockBottom}`}>
+                <div style={{display: userAdded ? '' : 'none', height: 34 + `px`, fontSize: '2.5rem', color: '#33e629'}}>
+                    <p>Пользователь успешно добавлен!</p>
+                </div>
+                <button className={`${classes.addUserBlockBottomButton}`}
+                        type='button'
+                        onClick={() => {
+                            {allFilled ? addUser(user) : alert("Заполните обязательные поля")}
+                        }}>
+                    Добавить
+                </button>
+            </div>
         </div>)
 
 }
