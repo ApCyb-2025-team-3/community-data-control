@@ -24,6 +24,8 @@ public class GroupDTO {
 
     private Date disbandmentDate;
 
+    private String disbandmentReason;
+
     private String teamLeadName;
 
     public GroupDTO(Group group) {
@@ -33,6 +35,7 @@ public class GroupDTO {
         this.description = group.getDescription();
         this.creationDate = group.getCreationDate();
         this.disbandmentDate = group.getDisbandmentDate();
+        this.disbandmentReason = group.getDisbandmentReason();
         this.teamLeadName = group.isActive() ? group.getTeamLead().getName() : "None";
     }
 
