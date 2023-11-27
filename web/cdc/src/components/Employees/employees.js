@@ -18,20 +18,6 @@ const Employees = () => {
 
     const [isAdding, setIsAdding] = useState(false)
 
-    const testUserList = [
-        {userId: 0, name: "Somehow", role: "Team Lead", project: ""},
-        {userId: 1, name: "I", role: "Developer", project: "Apache Kafka"},
-        {userId: 2, name: "Know", role: "Team Lead", project: "Apache Kafka"},
-        {userId: 3, name: "Nothing", role: "Developer", project: "Apache Kafka"},
-        {userId: 4, name: "However", role: "Product Owner", project: "Apache Kafka"},
-        {userId: 5, name: "Somehow", role: "Team Lead", project: ""},
-        {userId: 6, name: "I", role: "Developer", project: "Apache Kafka"},
-        {userId: 7, name: "Know", role: "Team Lead", project: "Apache Kafka"},
-        {userId: 8, name: "Nothing", role: "Developer", project: "Apache Kafka"},
-        {userId: 9, name: "However", role: "Product Owner", project: "Apache Kafka"},
-        {userId: 10, name: "I", role: "Developer", project: "Apache Kafka"},
-    ]
-
     function setEmptyUserListToState() {
         setState({
             selectedUserId: state.selectedUserId,
@@ -205,7 +191,7 @@ const Employees = () => {
                                     className={`${classes.listLiInfoRoleProjProjBox}`}>
                                     <p>Проект:</p>
                                     <div className={`${classes.roleProjRojBoxProj}`}>
-                                        {userDto.project !== null ? userDto.project : "Нет"}
+                                        {(userDto.project !== "" && userDto.project !== null) ? userDto.project : "Нет"}
                                     </div>
                                 </div>
                             </div>

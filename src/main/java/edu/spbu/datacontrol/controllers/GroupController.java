@@ -75,7 +75,7 @@ public class GroupController {
         currentMembers.add(newMember);
         groupRepository.save(group);
 
-        Event addUser = new Event(userId, EventType.ADD_USER, "Accepted the user to " + group.getName() + " group");
+        Event addUser = new Event(userId, EventType.ACCEPT_TO_GROUP, "Accepted the user to " + group.getName() + " group");
         eventLog.save(addUser);
 
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
@@ -131,6 +131,22 @@ public class GroupController {
 
     }
 
+    @GetMapping("/getActiveGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getActiveGroupsByType(@RequestParam String groupType) {
+
+        try {
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByTypeAndIsActiveTrue(type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
+
+    }
+
     @GetMapping("/getAllGroups")
     public ResponseEntity<List<GroupDTO>> getAllGroups() {
 
@@ -173,7 +189,7 @@ public class GroupController {
                     .map(GroupDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
     }
 
@@ -187,6 +203,24 @@ public class GroupController {
                             .toList(), HttpStatus.OK);
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getGroupsByPartialNameAndType")
+    public ResponseEntity<List<GroupDTO>> getGroupsByPartialNameAndType(@RequestParam String partialName, @RequestParam String groupType) {
+
+        try {
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            if (!partialName.isBlank()) {
+                return new ResponseEntity<>(
+                    groupRepository.findByNameContainingIgnoreCaseAndType(partialName, type)
+                        .stream()
+                        .map(GroupDTO::new)
+                        .toList(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
     }
 
     @GetMapping("getActiveMembers")
@@ -218,7 +252,7 @@ public class GroupController {
         userRepository.save(user);
         groupRepository.save(group);
 
-        Event excludeUser = new Event(userId, EventType.DISMISS_USER, "Excluded the user from the " + group.getName() + " group");
+        Event excludeUser = new Event(userId, EventType.EXCLUDE_FROM_GROUP, "Excluded the user from the " + group.getName() + " group");
         eventLog.save(excludeUser);
 
         return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
