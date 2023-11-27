@@ -524,12 +524,12 @@ const MainInfo = ({ userId }) => {
                     {state.isChanging ?
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <input value={state.oldUserInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, name: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
+                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, name: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
                         </div>
                         :
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <div onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
+                            <div className={`${classes.lPartHeadingName}`}>{state.oldUserInfo.name}</div>
                         </div>}
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
@@ -616,7 +616,7 @@ const MainInfo = ({ userId }) => {
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.oldUserInfo.supervisor.value : "Не назначен"}
+                                    value={state.oldUserInfo.supervisor !== null ? state.oldUserInfo.supervisor : "Не назначен"}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                     {renderProductOwners(state.oldUserInfo.productOwners)}
