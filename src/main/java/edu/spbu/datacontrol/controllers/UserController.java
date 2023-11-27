@@ -270,6 +270,7 @@ public class UserController {
 
             user.setProject(changeUserProjectDTO.getProject());
             user.setDepartment(changeUserProjectDTO.getDepartment());
+            user.setProjectChangedAt(changeUserProjectDTO.getChangedAt());
             assignSupervisor(user,changeUserProjectDTO.getSupervisor());
             assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
 

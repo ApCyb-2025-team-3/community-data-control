@@ -58,6 +58,8 @@ public class User {
 
     private String project;
 
+    private LocalDate projectChangedAt;
+
     private String department;
 
     @Enumerated(EnumType.STRING)

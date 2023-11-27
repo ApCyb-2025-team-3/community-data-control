@@ -22,12 +22,16 @@ const MainInfo = ({ userId }) => {
     const [isLoading, setLoading] = useState(true)
     const today = new Date()
     const [dismissDateState, setDismissDateState] = useState(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
+    const [changeDate, setChangeDate] = useState({
+        date: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`,
+        isChanged: false
+    })
 
     useEffect(() => {
         async function getUserInfo() {
             try {
                 const url = process.env.REACT_APP_BACKEND_URL
-                    + "/api/user/" + state.userId + "/fullInfo"
+                    + "/api/user/" + userId + "/fullInfo"
                 const response = await fetch(url, {
                     method: "GET",
                     headers: {
@@ -39,13 +43,14 @@ const MainInfo = ({ userId }) => {
                     const userInfo = await response.json()
 
                     setState({
-                        userId: state.userId,
+                        userId: userId,
                         userInfo: userInfo,
                         oldUserInfo: { ...userInfo },
                         isGroupsVisible: false,
                         isMentorshipVisible: false,
                         isChanging: false
                     })
+
                     setLoading(false)
 
                 } else {
@@ -59,7 +64,7 @@ const MainInfo = ({ userId }) => {
         }
 
         getUserInfo()
-    }, [state.userId])
+    }, [userId])
 
     const customStyles = {
         control: (provided, state) => ({
@@ -196,6 +201,13 @@ const MainInfo = ({ userId }) => {
         }
     }
 
+    function isProjectDataChanged(newData, oldData) {
+        return newData.project !== oldData.project ||
+            newData.supervisor !== oldData.supervisor ||
+            newData.department !== oldData.department ||
+            newData.productOwners !== oldData.productOwners
+    }
+
     async function changeUserInfo(reason) {
 
         let userDTO = {
@@ -217,7 +229,7 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? '' : state.userInfo.supervisor.value,
             department: state.userInfo.department,
-            changedAt: state.userInfo.changedAt,
+            changedAt: changeDate.date,
             productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
@@ -233,15 +245,13 @@ const MainInfo = ({ userId }) => {
 
         if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
 
-        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await changeProjectData(newProjData, reason)
+        if (isProjectDataChanged(newProjData, oldProjData)) await changeProjectData(newProjData)
 
         if (state.userInfo.role !== state.oldUserInfo.role) await changeUserRoleRequest(state.userInfo.role, reason)
 
-
-        setState({ ...state, oldUserInfo: { ...state.userInfo } })
-
-
-
+        let newUserInfo = state.userInfo
+        newUserInfo.projectChangedAt = projectChangeDate
+        setState({ ...state, userInfo: newUserInfo, oldUserInfo: { ...newUserInfo } })
     }
 
     function dateToIEEE(date) {
@@ -325,7 +335,7 @@ const MainInfo = ({ userId }) => {
                     }}>
                         {state.isChanging ? "Сохранить" : "Внести изменения"}
                     </button>
-                    <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
+                    <Popup open={!state.isChanging && (changeDate.isChanged || JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
                         modal nested>
                         {
                             close => (
@@ -426,8 +436,6 @@ const MainInfo = ({ userId }) => {
         return visibleBlocks
     }
 
-    console.log(state.userInfo)
-
     function formatLocalDate(date) {
         return date === null ? "Не указано" : date.split("-").reverse().join(".")
     }
@@ -459,7 +467,6 @@ const MainInfo = ({ userId }) => {
         return productOwners
     }
 
-
     const getUsers = async (inputValue) => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
@@ -474,7 +481,6 @@ const MainInfo = ({ userId }) => {
             return [];
         }
     };
-
 
     const promiseOptions = inputValue =>
         new Promise(resolve => resolve(getUsers(inputValue)));
@@ -497,6 +503,8 @@ const MainInfo = ({ userId }) => {
         }
     };
 
+    console.log(changeDate.isChanged)
+
     if (isLoading) {
 
         return (
@@ -507,8 +515,10 @@ const MainInfo = ({ userId }) => {
             </div>
         )
     }
-    const projectChangeDate = state.userInfo.projectChangedAt !== null
-        ? state.userInfo.projectChangedAt : state.userInfo.invitedAt
+
+    const projectChangeDate = state.oldUserInfo.projectChangedAt !== null
+        ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
+
     return (
         <div className={`${classes.infoBlocks}`}>
             <div className={`${classes.mainBlock}`}>
@@ -521,7 +531,7 @@ const MainInfo = ({ userId }) => {
                         :
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <div onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
+                            <div onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}>{state.oldUserInfo.name}</div>
                         </div>}
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
@@ -557,12 +567,12 @@ const MainInfo = ({ userId }) => {
                             </div>
                             :
                             <div className={`${classes.lPartInfoCol1Data}`}>
-                                <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
-                                <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
-                                <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={(state.userInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
-                                <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
-                                <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
+                                <input readOnly value={state.oldUserInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
+                                <input readOnly value={state.oldUserInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
+                                <input readOnly value={formatLocalDate(state.oldUserInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input readOnly value={(state.oldUserInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={localiseGrade(state.oldUserInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
+                                <input readOnly value={localiseRole(state.oldUserInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
                         }
                         <div className={`${classes.lPartInfoCol2Title}`}>
@@ -574,7 +584,7 @@ const MainInfo = ({ userId }) => {
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
-                                <input type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input type='date' onChange={(event) => setChangeDate({date: event.target.value, isChanged: true})} value={changeDate.date} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
@@ -604,14 +614,14 @@ const MainInfo = ({ userId }) => {
                             :
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    {(state.userInfo.project !== null && state.userInfo.project !== "") ? state.userInfo.project : "Нет"}
+                                    {(state.oldUserInfo.project !== null && state.oldUserInfo.project !== "") ? state.userInfo.project : "Нет"}
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : "Не назначен"}
+                                    value={state.oldUserInfo.supervisor !== null ? state.oldUserInfo.supervisor.value : "Не назначен"}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
-                                    {renderProductOwners(state.userInfo.productOwners)}
+                                    {renderProductOwners(state.oldUserInfo.productOwners)}
                                 </ul>
                             </div>}
                     </div>

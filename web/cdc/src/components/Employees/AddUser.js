@@ -55,7 +55,7 @@ const AddUser = () => {
                 email: null,
                 phoneNumber: null,
                 supervisorName: "",
-                productOwnersNames: "",
+                productOwnersNames: [],
                 project: "",
                 department: "",
                 grade: "Unspecified",
