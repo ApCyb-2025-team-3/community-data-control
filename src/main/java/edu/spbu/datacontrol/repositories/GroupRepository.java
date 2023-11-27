@@ -20,7 +20,7 @@ public interface GroupRepository extends CrudRepository<Group, UUID> {
 
     List<Group> getGroupsByMembersContainsAndType(User user, GroupType type);
 
-    List<Group> findByNameContainingIgnoreCase(String partialName);
+    List<Group> findByNameContainingIgnoreCaseAndIsActiveTrue(String partialName);
 
     List<Group> findAllByOrderByIsActiveDesc();
 
