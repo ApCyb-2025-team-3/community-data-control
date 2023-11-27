@@ -34,8 +34,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @CreatedDate
-    private Date invitedAt;
+    private LocalDate invitedAt;
 
     private boolean isActive = true;
 
@@ -59,6 +58,8 @@ public class User {
 
     private String project;
 
+    private LocalDate projectChangedAt;
+
     private String department;
 
     @Enumerated(EnumType.STRING)
@@ -71,6 +72,7 @@ public class User {
     private MentorshipStatus mentorStatus;
 
     public User(UserAdditionDTO userData) {
+        this.invitedAt = userData.getInvitedAt();
         this.name = userData.getName();
         this.dob = userData.getDob();
         this.email = userData.getEmail();

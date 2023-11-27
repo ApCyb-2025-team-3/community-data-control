@@ -20,12 +20,14 @@ const MainInfo = ({ userId }) => {
         isChanging: false
     })
     const [isLoading, setLoading] = useState(true)
+    const today = new Date()
+    const [dismissDateState, setDismissDateState] = useState(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
 
     useEffect(() => {
         async function getUserInfo() {
             try {
                 const url = process.env.REACT_APP_BACKEND_URL
-                    + "/api/user/" + state.userId + "/fullInfo"
+                    + "/api/user/" + userId + "/fullInfo"
                 const response = await fetch(url, {
                     method: "GET",
                     headers: {
@@ -37,13 +39,14 @@ const MainInfo = ({ userId }) => {
                     const userInfo = await response.json()
 
                     setState({
-                        userId: state.userId,
+                        userId: userId,
                         userInfo: userInfo,
                         oldUserInfo: { ...userInfo },
                         isGroupsVisible: false,
                         isMentorshipVisible: false,
-                        isChanging: false,
+                        isChanging: false
                     })
+
                     setLoading(false)
 
                 } else {
@@ -57,7 +60,7 @@ const MainInfo = ({ userId }) => {
         }
 
         getUserInfo()
-    }, [state.userId])
+    }, [userId])
 
     const customStyles = {
         control: (provided, state) => ({
@@ -126,7 +129,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -147,7 +149,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -169,7 +170,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -192,7 +192,6 @@ const MainInfo = ({ userId }) => {
             }
 
             const result = await response.text();
-            console.log(result);
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
@@ -203,14 +202,14 @@ const MainInfo = ({ userId }) => {
         let userDTO = {
             userId: state.userId,
             name: state.userInfo.name,
-            dob: state.userInfo.dob,
+            dob: state.userInfo.dob.toString(),
             email: state.userInfo.email,
             phoneNumber: state.userInfo.phoneNumber
         }
         let oldPD = {
             id: state.userId,
             name: state.oldUserInfo.name,
-            dob: state.oldUserInfo.dob,
+            dob: state.oldUserInfo.dob.toString(),
             email: state.oldUserInfo.email,
             phoneNumber: state.oldUserInfo.phoneNumber
         }
@@ -219,6 +218,7 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? '' : state.userInfo.supervisor.value,
             department: state.userInfo.department,
+            changedAt: dateToIEEE(state.userInfo.projectChangedAt),
             productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
@@ -226,6 +226,7 @@ const MainInfo = ({ userId }) => {
             project: state.oldUserInfo.project,
             supervisor: state.oldUserInfo.supervisor === null ? null : state.oldUserInfo.supervisor.value,
             department: state.oldUserInfo.department,
+            changedAt: dateToIEEE(state.oldUserInfo.projectChangedAt),
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
@@ -233,23 +234,24 @@ const MainInfo = ({ userId }) => {
 
         if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
 
-        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await changeProjectData(newProjData, reason)
+        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await changeProjectData(newProjData)
 
         if (state.userInfo.role !== state.oldUserInfo.role) await changeUserRoleRequest(state.userInfo.role, reason)
 
-
         setState({ ...state, oldUserInfo: { ...state.userInfo } })
-
-
-
     }
 
-    async function handleUserDismissal(reason) {
+    function dateToIEEE(date) {
+        return (date !== undefined && date !== null) ? date.split(".").reverse().join("-") : ""
+    }
+
+    async function handleUserDismissal(reason, dismissedAt) {
 
         try {
 
             const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/dismiss?description=" + encodeURIComponent(reason)
+                + "/api/user/" + state.userId + "/dismiss?date=" + dateToIEEE(dismissedAt)
+                + "&description=" + encodeURIComponent(reason)
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -257,19 +259,15 @@ const MainInfo = ({ userId }) => {
                 },
             });
 
-            const date = new Date()
-
             if (response.ok) {
                 const newUserInfo = state.userInfo
                 newUserInfo.isActive = false
                 newUserInfo.dismissReason = reason
-                newUserInfo.dismissedAt = `${date.getDate()}.${date.getMonth()
-                + 1}.${date.getFullYear()}`
-
+                newUserInfo.dismissedAt = dismissedAt
                 setState({
                     ...state,
                     userInfo: newUserInfo,
-                    oldUserInfo: newUserInfo,
+                    oldUserInfo: newUserInfo
                 })
 
 
@@ -320,11 +318,22 @@ const MainInfo = ({ userId }) => {
                         <p>Менторство</p>
                     </button>
                     <button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }} onClick={() => {
-                        setState({ ...state, isChanging: !state.isChanging })
+                        if (state.isChanging) {setState({...state, isChanging: !state.isChanging})
+                        } else {
+                            setState({
+                                ...state,
+                                isChanging: !state.isChanging,
+                                userInfo: {
+                                    ...state.userInfo,
+                                    projectChangedAt: `${today.getFullYear()}-${today.getMonth()
+                                    + 1}-${today.getDate()}`
+                                }
+                            })
+                        }
                     }}>
                         {state.isChanging ? "Сохранить" : "Внести изменения"}
                     </button>
-                    <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
+                    <Popup open={!state.isChanging && JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo)}
                         modal nested>
                         {
                             close => (
@@ -332,9 +341,7 @@ const MainInfo = ({ userId }) => {
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
                                             Введите причину изменения данных
-                                            <form action="">
-                                                <input id={"changingReason"} placeholder="Причина" />
-                                            </form>
+                                            <input id={"changingReason"} placeholder="Причина" />
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     changeUserInfo(
@@ -367,14 +374,20 @@ const MainInfo = ({ userId }) => {
                                 <div className={`${classes.popUpMask}`}>
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
-                                            Введите причину увольнения
-                                            <form action="">
-                                                <input id={"dismissalReason"} placeholder="Причина" />
-                                            </form>
-                                            <div className={`${classes.popUpButtons}`}>
+                                            Введите причину и дату увольнения
+                                            <input id={"dismissalReason"}
+                                                   placeholder="Причина"></input>
+                                            <input type='date'
+                                                   id={"dismissalDate"}
+                                                   value={dismissDateState.date}
+                                                   onChange={(event) => setDismissDateState(event.currentTarget.value)}
+                                                   className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                            <div
+                                                className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     handleUserDismissal(
-                                                        document.getElementById("dismissalReason").value
+                                                        document.getElementById("dismissalReason").value,
+                                                        document.getElementById("dismissalDate").value.toString(),
                                                     )
                                                     close()
                                                 }}>
@@ -461,7 +474,7 @@ const MainInfo = ({ userId }) => {
                 id: user.id,
                 value: user.name,
                 label: user.name
-            }));
+            })).filter(t => t.id !== state.userId);
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
@@ -469,10 +482,10 @@ const MainInfo = ({ userId }) => {
     };
 
 
-    const promiseOptions = inputValue =>
+    const promiseOptions = (inputValue) =>
         new Promise(resolve => resolve(getUsers(inputValue)));
 
-    const promiseOptionsPO = inputValue =>
+    const promiseOptionsPO = (inputValue) =>
         new Promise(resolve => resolve(getPO(inputValue)));
 
     const getPO = async (inputValue) => {
@@ -483,14 +496,12 @@ const MainInfo = ({ userId }) => {
                 id: user.id,
                 value: user.name,
                 label: user.name
-            }));
+            })).filter(t => t.id !== state.userId);
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
         }
     };
-
-    console.log(state.userInfo)
 
     if (isLoading) {
 
@@ -502,8 +513,10 @@ const MainInfo = ({ userId }) => {
             </div>
         )
     }
-    const projectChangeDate = state.userInfo.projectChangedAt !== null
-        ? state.userInfo.projectChangedAt : state.userInfo.invitedAt
+
+    const projectChangeDate = state.oldUserInfo.projectChangedAt !== null
+        ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
+
     return (
         <div className={`${classes.infoBlocks}`}>
             <div className={`${classes.mainBlock}`}>
@@ -511,12 +524,12 @@ const MainInfo = ({ userId }) => {
                     {state.isChanging ?
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
+                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, name: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
                         </div>
                         :
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <div onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
+                            <div className={`${classes.lPartHeadingName}`}>{state.oldUserInfo.name}</div>
                         </div>}
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
@@ -532,7 +545,7 @@ const MainInfo = ({ userId }) => {
                                 <input type='email' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
                                 <input type='tel' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, phoneNumber: event.target.value } }) }} value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
                                 <input type='date' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, dob: event.target.value } }) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department !== "" ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
                                 <select onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, grade: event.target.value } }) }} value={state.userInfo.grade} className={`${classes.lPartInfoCol1DataGrade}`}>
                                     <option value='Junior'>Junior</option>
                                     <option value='Middle'>Middle</option>
@@ -552,12 +565,12 @@ const MainInfo = ({ userId }) => {
                             </div>
                             :
                             <div className={`${classes.lPartInfoCol1Data}`}>
-                                <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
-                                <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
-                                <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={(state.userInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
-                                <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
-                                <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
+                                <input readOnly value={state.oldUserInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
+                                <input readOnly value={state.oldUserInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
+                                <input readOnly value={formatLocalDate(state.oldUserInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input readOnly value={(state.oldUserInfo.department !== null && state.oldUserInfo.department !== "") ? state.oldUserInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={localiseGrade(state.oldUserInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
+                                <input readOnly value={localiseRole(state.oldUserInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
                         }
                         <div className={`${classes.lPartInfoCol2Title}`}>
@@ -569,7 +582,7 @@ const MainInfo = ({ userId }) => {
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
-                                <input readOnly type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangedAt: event.target.value } })} defaultValue={state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
@@ -599,14 +612,14 @@ const MainInfo = ({ userId }) => {
                             :
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    {(state.userInfo.project !== null && state.userInfo.project !== "") ? state.userInfo.project : "Нет"}
+                                    {(state.oldUserInfo.project !== null && state.oldUserInfo.project !== "") ? state.oldUserInfo.project : "Нет"}
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : "Не назначен"}
+                                    value={state.oldUserInfo.supervisor !== null ? state.oldUserInfo.supervisor.value : "Не назначен"}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
-                                    {renderProductOwners(state.userInfo.productOwners)}
+                                    {renderProductOwners(state.oldUserInfo.productOwners)}
                                 </ul>
                             </div>}
                     </div>
