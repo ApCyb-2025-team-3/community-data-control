@@ -203,14 +203,13 @@ public class UserController {
 
     @PostMapping("/changeUsersPersonalData")
     public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
-                                                          @RequestParam LocalDate date,
                                                           @RequestBody UserDataChangeDTO modifiedData) {
 
         User user = userRepository.findById(modifiedData.getUserId()).orElse(null);
         if (user != null) {
             user.changePersonalData(modifiedData);
             userRepository.save(user);
-            eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, date, reason));
+            eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, reason));
 
             return new ResponseEntity<>("User's personal data was successfully modified",
                     HttpStatus.OK);

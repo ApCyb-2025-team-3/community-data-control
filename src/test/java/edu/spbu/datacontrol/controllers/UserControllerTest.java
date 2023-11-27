@@ -60,7 +60,7 @@ class UserControllerTest {
 
         String description = "Testing dismiss";
         String response = this.mockMvc.perform(
-                        post("/api/user/" + id.toString() + "/dismiss")
+                        post("/api/user/" + id.toString() + "/dismiss?date=" + LocalDate.now())
                                 .param("description", description))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -77,7 +77,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
 
-        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
+        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss?date=" + LocalDate.now())
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
@@ -212,6 +212,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
+                .param("date", LocalDate.now().toString())
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
