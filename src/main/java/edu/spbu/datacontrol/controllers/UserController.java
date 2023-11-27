@@ -195,6 +195,18 @@ public class UserController {
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             dismissedUser.setSupervisor(null);
             userRepository.save(dismissedUser);
+
+            if (dismissedUser.getRole() == Role.SUPERVISOR) {
+                List<User> subordinates = userRepository.getUsersBySupervisor(dismissedUser);
+                subordinates.forEach(t -> t.setSupervisor(null));
+                userRepository.saveAll(subordinates);
+
+            } else if (dismissedUser.getRole() == Role.PRODUCT_OWNER) {
+                List<User> subordinates = userRepository.getUsersByProductOwnersContaining(dismissedUser);
+                subordinates.forEach(t -> t.getProductOwners().remove(dismissedUser));
+                userRepository.saveAll(subordinates);
+            }
+
             Event event = new Event(userId, EventType.DISMISS_USER, date, description);
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
