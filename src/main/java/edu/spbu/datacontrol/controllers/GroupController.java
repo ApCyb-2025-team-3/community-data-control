@@ -199,7 +199,7 @@ public class GroupController {
 
         if (!partialName.isBlank()) {
             return new ResponseEntity<>(
-                    groupRepository.findByNameContainingIgnoreCase(partialName).stream()
+                    groupRepository.findByNameContainingIgnoreCaseAndIsActiveTrue(partialName).stream()
                             .map(GroupDTO::new)
                             .toList(), HttpStatus.OK);
         }
