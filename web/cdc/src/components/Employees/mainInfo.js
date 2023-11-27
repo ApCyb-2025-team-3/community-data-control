@@ -616,7 +616,7 @@ const MainInfo = ({ userId }) => {
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.oldUserInfo.supervisor !== null ? state.oldUserInfo.supervisor : "Не назначен"}
+                                    value={state.oldUserInfo.supervisor !== null ? state.oldUserInfo.supervisor.value : "Не назначен"}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
                                     {renderProductOwners(state.oldUserInfo.productOwners)}
