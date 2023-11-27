@@ -199,8 +199,6 @@ const MainInfo = ({ userId }) => {
 
     async function changeUserInfo(reason) {
 
-        console.log(state.userInfo)
-
         let userDTO = {
             userId: state.userId,
             name: state.userInfo.name,
@@ -220,7 +218,7 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? '' : state.userInfo.supervisor.value,
             department: state.userInfo.department,
-            changedAt: state.userInfo.projectChangeAt,
+            changedAt: dateToIEEE(state.userInfo.projectChangedAt),
             productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
@@ -228,11 +226,9 @@ const MainInfo = ({ userId }) => {
             project: state.oldUserInfo.project,
             supervisor: state.oldUserInfo.supervisor === null ? null : state.oldUserInfo.supervisor.value,
             department: state.oldUserInfo.department,
-            changedAt: state.oldUserInfo.changedAt,
+            changedAt: dateToIEEE(state.oldUserInfo.projectChangedAt),
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
-
-        console.log(newProjData)
 
         if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await changePersonalDataRequest(userDTO, reason)
 
@@ -246,7 +242,7 @@ const MainInfo = ({ userId }) => {
     }
 
     function dateToIEEE(date) {
-        return date !== undefined ? date.split(".").reverse().join("-") : ""
+        return (date !== undefined && date !== null) ? date.split(".").reverse().join("-") : ""
     }
 
     async function handleUserDismissal(reason, dismissedAt) {
@@ -517,8 +513,6 @@ const MainInfo = ({ userId }) => {
             </div>
         )
     }
-
-    console.log(state.userInfo)
 
     const projectChangeDate = state.oldUserInfo.projectChangedAt !== null
         ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
