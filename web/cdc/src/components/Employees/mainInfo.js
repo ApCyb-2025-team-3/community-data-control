@@ -482,10 +482,10 @@ const MainInfo = ({ userId }) => {
     };
 
 
-    const promiseOptions = inputValue =>
+    const promiseOptions = (inputValue) =>
         new Promise(resolve => resolve(getUsers(inputValue)));
 
-    const promiseOptionsPO = inputValue =>
+    const promiseOptionsPO = (inputValue) =>
         new Promise(resolve => resolve(getPO(inputValue)));
 
     const getPO = async (inputValue) => {
@@ -514,6 +514,7 @@ const MainInfo = ({ userId }) => {
         )
     }
 
+    console.log(state.userInfo)
     console.log(state.oldUserInfo)
 
     const projectChangeDate = state.oldUserInfo.projectChangedAt !== null
@@ -526,7 +527,7 @@ const MainInfo = ({ userId }) => {
                     {state.isChanging ?
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
+                            <input value={state.oldUserInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, name: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
                         </div>
                         :
                         <div className={`${classes.lPartHeading}`}>
@@ -588,7 +589,7 @@ const MainInfo = ({ userId }) => {
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
-                                    loadOptions={promiseOptions}
+                                    loadOptions={promiseOptions.filter(t => t.id !== state.userId)}
                                     onChange={(selectedOption) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: selectedOption } })}
                                     classNamePrefix="custom"
                                     styles={customStyles}
@@ -605,7 +606,7 @@ const MainInfo = ({ userId }) => {
                                         classNamePrefix="custom"
                                         className="custom-container"
                                         styles={customStyles}
-                                        loadOptions={promiseOptionsPO}
+                                        loadOptions={promiseOptionsPO.filter(t => t.id !== state.userId)}
                                         onChange={(selectedOption) => setState({ ...state, userInfo: { ...state.userInfo, productOwners: selectedOption } })}
 
                                     />
