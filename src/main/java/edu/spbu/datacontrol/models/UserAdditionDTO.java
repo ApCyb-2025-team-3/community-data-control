@@ -31,11 +31,13 @@ public class UserAdditionDTO {
 
     private String mentorStatus;
 
+    private LocalDate invitedAt;
+
     public UserAdditionDTO() {}
 
     public UserAdditionDTO(String name, LocalDate dob, String email, String phoneNumber,
         String supervisorName, List<String> productOwnersNames, String project,
-        String department, String grade, String role, String mentorStatus) {
+        String department, String grade, String role, String mentorStatus, LocalDate invitedAt) {
         this.name = name;
         this.dob = dob;
         this.email = email;
@@ -47,5 +49,6 @@ public class UserAdditionDTO {
         this.grade = grade;
         this.role = role;
         this.mentorStatus = mentorStatus;
+        this.invitedAt = invitedAt;
     }
 }
