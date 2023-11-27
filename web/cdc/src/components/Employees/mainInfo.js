@@ -379,7 +379,7 @@ const MainInfo = ({ userId }) => {
                                                    placeholder="Причина"></input>
                                             <input type='date'
                                                    id={"dismissalDate"}
-                                                   value={dismissDateState.date}
+                                                   value={dismissDateState}
                                                    onChange={(event) => setDismissDateState(event.currentTarget.value)}
                                                    className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                             <div
