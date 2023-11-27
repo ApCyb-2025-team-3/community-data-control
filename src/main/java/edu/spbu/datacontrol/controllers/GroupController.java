@@ -131,6 +131,22 @@ public class GroupController {
 
     }
 
+    @GetMapping("/getActiveGroupsByType")
+    public ResponseEntity<List<GroupDTO>> getActiveGroupsByType(@RequestParam String groupType) {
+
+        try {
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            return new ResponseEntity<>(
+                groupRepository.getGroupsByTypeAndIsActiveTrue(type)
+                    .stream()
+                    .map(GroupDTO::new)
+                    .toList(), HttpStatusCode.valueOf(200));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
+
+    }
+
     @GetMapping("/getAllGroups")
     public ResponseEntity<List<GroupDTO>> getAllGroups() {
 
@@ -173,7 +189,7 @@ public class GroupController {
                     .map(GroupDTO::new)
                     .toList(), HttpStatusCode.valueOf(200));
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatusCode.valueOf(404));
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
         }
     }
 
@@ -189,10 +205,28 @@ public class GroupController {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
+    @GetMapping("/getGroupsByPartialNameAndType")
+    public ResponseEntity<List<GroupDTO>> getGroupsByPartialNameAndType(@RequestParam String partialName, @RequestParam String groupType) {
+
+        try {
+            GroupType type = EnumUtils.fromString(GroupType.class, groupType);
+            if (!partialName.isBlank()) {
+                return new ResponseEntity<>(
+                    groupRepository.findByNameContainingIgnoreCaseAndType(partialName, type)
+                        .stream()
+                        .map(GroupDTO::new)
+                        .toList(), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
+    }
+
     @GetMapping("getActiveMembers")
     public ResponseEntity<List<UserDTO>> getActiveMembers(@RequestParam UUID groupId) {
         Group group = groupRepository.findById(groupId).orElse(null);
-        return new ResponseEntity<>(userRepository.getUsersByGroupsContainsAndIsActiveTrue(group)
+        return new ResponseEntity<>(groupActiveMembers(group)
                 .stream().map(UserDTO::new).toList(), HttpStatusCode.valueOf(200));
     }
 
@@ -264,5 +298,16 @@ public class GroupController {
             member.getGroups().remove(group);
         }
         members.clear();
+    }
+
+    private List<User> groupActiveMembers(Group group) {
+        List<User> allMembers = group.getMembers();
+        List<User> activeMembers = new ArrayList<>();
+        for (User member : allMembers) {
+            if (member.isActive()) {
+                activeMembers.add(member);
+            }
+        }
+        return activeMembers;
     }
 }

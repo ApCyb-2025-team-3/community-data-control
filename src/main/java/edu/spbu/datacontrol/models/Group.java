@@ -27,6 +27,7 @@ public class Group {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private GroupType type;
 
     private String description;
