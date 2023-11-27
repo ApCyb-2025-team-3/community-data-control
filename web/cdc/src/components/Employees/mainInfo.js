@@ -199,17 +199,19 @@ const MainInfo = ({ userId }) => {
 
     async function changeUserInfo(reason) {
 
+        console.log(state.userInfo)
+
         let userDTO = {
             userId: state.userId,
             name: state.userInfo.name,
-            dob: state.userInfo.dob,
+            dob: state.userInfo.dob.toString(),
             email: state.userInfo.email,
             phoneNumber: state.userInfo.phoneNumber
         }
         let oldPD = {
             id: state.userId,
             name: state.oldUserInfo.name,
-            dob: state.oldUserInfo.dob,
+            dob: state.oldUserInfo.dob.toString(),
             email: state.oldUserInfo.email,
             phoneNumber: state.oldUserInfo.phoneNumber
         }
@@ -230,6 +232,8 @@ const MainInfo = ({ userId }) => {
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
+        console.log(newProjData)
+
         if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await changePersonalDataRequest(userDTO, reason)
 
         if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
@@ -242,7 +246,7 @@ const MainInfo = ({ userId }) => {
     }
 
     function dateToIEEE(date) {
-        return date.split(".").reverse().join("-")
+        return date !== undefined ? date.split(".").reverse().join("-") : ""
     }
 
     async function handleUserDismissal(reason, dismissedAt) {
@@ -474,7 +478,7 @@ const MainInfo = ({ userId }) => {
                 id: user.id,
                 value: user.name,
                 label: user.name
-            }));
+            })).filter(t => t.id !== state.userId);
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
@@ -496,7 +500,7 @@ const MainInfo = ({ userId }) => {
                 id: user.id,
                 value: user.name,
                 label: user.name
-            }));
+            })).filter(t => t.id !== state.userId);
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
@@ -515,7 +519,6 @@ const MainInfo = ({ userId }) => {
     }
 
     console.log(state.userInfo)
-    console.log(state.oldUserInfo)
 
     const projectChangeDate = state.oldUserInfo.projectChangedAt !== null
         ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
@@ -589,7 +592,7 @@ const MainInfo = ({ userId }) => {
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
-                                    loadOptions={promiseOptions.filter(t => t.id !== state.userId)}
+                                    loadOptions={promiseOptions}
                                     onChange={(selectedOption) => setState({ ...state, userInfo: { ...state.userInfo, supervisor: selectedOption } })}
                                     classNamePrefix="custom"
                                     styles={customStyles}
@@ -606,7 +609,7 @@ const MainInfo = ({ userId }) => {
                                         classNamePrefix="custom"
                                         className="custom-container"
                                         styles={customStyles}
-                                        loadOptions={promiseOptionsPO.filter(t => t.id !== state.userId)}
+                                        loadOptions={promiseOptionsPO}
                                         onChange={(selectedOption) => setState({ ...state, userInfo: { ...state.userInfo, productOwners: selectedOption } })}
 
                                     />
