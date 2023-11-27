@@ -41,8 +41,6 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus mentorStatus);
 
-    List<User> getUsersByGroupsContainsAndIsActiveTrue(Group group);
-
     List<User> getUsersByIsActiveFalse();
 
     List<User> getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(String department);
