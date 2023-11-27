@@ -192,7 +192,7 @@ public class GroupController {
     @GetMapping("getActiveMembers")
     public ResponseEntity<List<UserDTO>> getActiveMembers(@RequestParam UUID groupId) {
         Group group = groupRepository.findById(groupId).orElse(null);
-        return new ResponseEntity<>(userRepository.getUsersByGroupsContainsAndIsActiveTrue(group)
+        return new ResponseEntity<>(groupActiveMembers(group)
                 .stream().map(UserDTO::new).toList(), HttpStatusCode.valueOf(200));
     }
 
@@ -264,5 +264,16 @@ public class GroupController {
             member.getGroups().remove(group);
         }
         members.clear();
+    }
+
+    private List<User> groupActiveMembers(Group group) {
+        List<User> allMembers = group.getMembers();
+        List<User> activeMembers = new ArrayList<>();
+        for (User member : allMembers) {
+            if (member.isActive()) {
+                activeMembers.add(member);
+            }
+        }
+        return activeMembers;
     }
 }
