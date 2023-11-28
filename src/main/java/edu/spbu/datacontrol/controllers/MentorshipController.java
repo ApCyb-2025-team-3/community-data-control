@@ -31,10 +31,10 @@ public class MentorshipController {
     }
 
     @PatchMapping("/becomeMentee")
-    public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> becomeMentee(@RequestParam UUID userId) {
         try {
-            changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
-            User user = userRepository.getUserById(userDTO.getId());
+            changeMentorshipStatus(userId, MentorshipStatus.MENTEE);
+            User user = userRepository.getUserById(userId);
             userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
@@ -44,10 +44,10 @@ public class MentorshipController {
     }
 
     @PatchMapping("/becomeMentor")
-    public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> becomeMentor(@RequestParam UUID userId) {
         try {
-            changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);
-            User user = userRepository.getUserById(userDTO.getId());
+            changeMentorshipStatus(userId, MentorshipStatus.MENTOR);
+            User user = userRepository.getUserById(userId);
             userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
@@ -57,8 +57,8 @@ public class MentorshipController {
     }
 
     @PatchMapping("/exitFromTheMentoringProgram")
-    public ResponseEntity<String> exitFromTheMentoringProgram(@RequestBody UserDTO userDTO) {
-        User user = userRepository.getUserById(userDTO.getId());
+    public ResponseEntity<String> exitFromTheMentoringProgram(@RequestParam UUID userId) {
+        User user = userRepository.getUserById(userId);
 
         if (user == null) {
             return new ResponseEntity<>("User hasn't been found", HttpStatusCode.valueOf(404));
