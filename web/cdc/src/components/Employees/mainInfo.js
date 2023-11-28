@@ -132,25 +132,27 @@ const MainInfo = ({ userId }) => {
         }
     }
     async function changeUserGradeRequest(newGrade, reason) {
-        try {
+        // try {
             const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${state.userId}/changeGrade?grade=${newGrade}&reason=${reason}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
+            const response = await fetch(url
+            //     , {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Origin': 'http://localhost:3000'
+            //     }
+            // }
+            );
 
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
+        //     if (!response.ok) {
+        //         throw new Error('Ошибка запроса');
+        //     }
 
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
+        //     const result = await response.text();
+        //     console.log(result);
+        // } catch (error) {
+        //     console.error('Ошибка при отправке запроса:', error);
+        // }
     }
 
     async function changeUserRoleRequest(newRole, reason) {
