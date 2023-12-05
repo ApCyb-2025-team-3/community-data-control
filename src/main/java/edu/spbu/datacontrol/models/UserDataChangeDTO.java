@@ -20,6 +20,4 @@ public class UserDataChangeDTO {
     private String email;
 
     private String phoneNumber;
-
-    private String department;
 }

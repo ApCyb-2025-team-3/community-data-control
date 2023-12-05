@@ -3,19 +3,27 @@ package edu.spbu.datacontrol.models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class UserInfoDTO {
 
     @NotNull
     private UUID id;
 
-    private Date invitedAt;
+    private LocalDate invitedAt;
+
+    private LocalDate dismissedAt;
+
+    private String dismissReason;
 
     private Boolean isActive;
 
@@ -29,9 +37,11 @@ public class UserInfoDTO {
 
     private Pair<UUID, String> supervisor;
 
-    private Map<UUID, String> productOwners;
+    private List<Pair<UUID, String>> productOwners;
 
     private String project;
+
+    private LocalDate projectChangedAt;
 
     private String department;
 
@@ -58,7 +68,7 @@ public class UserInfoDTO {
             this.supervisor = new Pair<>(supervisor.getId(), supervisor.getName());
         }
         this.productOwners = user.getProductOwners().stream()
-            .collect(Collectors.toMap(User::getId, User::getName));
+            .map(u -> new Pair<>(u.getId(), u.getName())).toList();
         this.project = user.getProject();
         this.department = user.getDepartment();
         this.grade = user.getGrade().toString();

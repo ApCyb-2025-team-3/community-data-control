@@ -4,9 +4,11 @@ import edu.spbu.datacontrol.models.User;
 import edu.spbu.datacontrol.models.enums.Grade;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
 import edu.spbu.datacontrol.models.enums.Role;
+import edu.spbu.datacontrol.models.Group;
 
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +25,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByName(String name);
 
+    User getUserByName(String name);
+
     List<User> getUsersByNameAndRole(String name, Role role);
 
     List<User> getUsersByNameInAndRole(List<String> names, Role role);
@@ -30,6 +34,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     List<User> getUsersByRoleAndIsActiveTrue(Role role);
 
     List<User> getUsersBySupervisor(User supervisor);
+
+    List<User> getUsersByProductOwnersContaining(User productOwner);
 
     List<User> findAllByOrderByName();
 
@@ -39,7 +45,18 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersByIsActiveFalse();
 
-    List<User> getUsersByDepartmentAndIsActiveTrue(String department);
+    List<User> getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(String department);
 
-    List<User> getUsersByProjectAndIsActiveTrue(String project);
+    List<User> getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(String project);
+
+    List<User> findByNameContainingIgnoreCaseAndIsActiveTrue(String partialName);
+
+    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTOR' " +
+            "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentor.id = u.id)")
+    List<User> getFreeMentors();
+
+    @Query("SELECT u FROM User u WHERE u.mentorStatus = 'MENTEE' " +
+            "AND NOT EXISTS (SELECT m FROM Mentorship m WHERE m.mentee.id = u.id)")
+    List<User> getFreeMentees();
+
 }

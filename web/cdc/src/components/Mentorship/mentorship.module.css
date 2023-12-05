@@ -1,0 +1,618 @@
+.wrapperBlocksContainer {
+    display: flex;
+
+    width: 100%;
+    max-width: 1920px;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding-top: 20px;
+    padding-bottom: 70px;
+    gap: 15px;
+}
+
+.wrapperBlocksContainerTitle {
+    margin: 0;
+    /* margin-left: 11.46%; */
+
+    width: 88.54%;
+
+    color: #000;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 3.6rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.blocksObtaining {
+    display: flex;
+    width: 78.125%;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 20px;
+    padding-bottom: 20px;
+    gap: 50px;
+}
+
+.blocksContainerBlocks {
+    display: flex;
+    width: 100%;
+}
+
+.blockPrograms {
+    display: flex;
+    width: 100%;
+    height: 520px;
+    padding: 35px 3.125%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+    border-radius: 30px;
+    border: 3px solid #000;
+}
+
+.programsControlPanel {
+    display: flex;
+    width: 19.33%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.programsControlPanel p {
+    margin: 0;
+
+    color: #000;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.programsControlPanel button {
+    display: flex;
+
+    width: 3rem;
+    height: 3rem;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 10px;
+    border: 2px solid #000;
+
+    cursor: pointer;
+
+    background: none;
+    
+    transition: all 0.15s ease; 
+}
+
+.programsControlPanel button:hover {
+    box-shadow: 0 0 5px 1px #808080;
+}
+
+.programsControlPanel button img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.programsTable {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.programsTableTitles {
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    padding: 6px 0px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.programsTableTitles div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.programsTableTitles div p, .titlesComplete {
+    margin: 0;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.titlesComplete {
+    text-align: center;
+}
+
+.titlesMentor {
+    width: 33.7748%;
+}
+
+.titlesMentee {
+    width: 32.5828%;
+}
+
+.titlesStartDate, .titlesEndDate {
+ width: 11.258%;
+}
+
+.titlesComplete {
+    width: 8.4768%;
+}
+
+.programsTableTitles div button {
+    display: flex;
+    width: 3rem;
+    height: 3rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 2px solid #000;
+    background: none;
+    cursor: pointer;
+
+    transition: all 0.15s ease; 
+}
+
+.programsTableTitles div button:hover {
+    box-shadow: 0 0 5px 1px #808080;
+}
+
+.programsTableTitles div button img {
+    width: 2rem;
+    height: 2rem;
+}
+
+
+
+.programsTableBody {
+    display: flex;
+    width: calc(100% + 1rem);
+    height: 405px;
+    flex-direction: column;
+    align-items: center;
+
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.programsTableBody li {
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.programsTableBodyMentor, .programsTableBodyMentee {
+    display: flex;
+    width: 31.4%;
+    height: 3rem;
+    align-items: center;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.programsTableBodyStartDate, .programsTableBodyEndDate {
+    display: flex;
+    width: 8.33%;
+    justify-content: center;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;  
+}
+
+.programsTableBodyComplete {
+    display: flex;
+    width: 7.33%;
+    justify-content: center;
+    align-items: center;
+
+    border: 0;
+    background: none;
+
+    transition: all 0.15s ease; 
+}
+
+.programsTableBodyComplete img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    
+    transition: all 0.15s ease; 
+}
+
+.programsTableBodyComplete :hover {
+    box-shadow: 0 0 5px 1px #808080;
+}
+
+.blocksFreMen {
+    display: flex;
+    width: calc(106.25% + 1rem);
+    align-items: flex-start;
+    gap: 50px;
+}
+
+.freeMentors {
+    display: flex;
+    width: 25%;
+    height: 200px;
+    padding: 35px 50px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+    border-radius: 30px;
+    border: 3px solid #000;
+}
+
+.freeMentorsTitle {
+    margin: 0;
+    
+    display: flex;
+
+    width: 100%;
+    height: 40px;
+
+    flex-direction: column;
+    justify-content: center;
+
+    color: #000;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.freeMentorsTable {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    width: 100%;
+
+    height: 150px;
+    padding-right: 2rem;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.freeMentorsTable li {
+    margin: 0;
+
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    align-items: center;
+}
+
+.freeMentorsTable li div {
+    width: 100%;
+    height: 3rem;
+
+    color: #000;
+
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+
+
+
+.freeMentees {
+    display: flex;
+    width: 25%;
+    height: 200px;
+    padding: 35px 50px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+    border-radius: 30px;
+    border: 3px solid #000;
+}
+
+.freeMenteesTitle {
+    margin: 0;
+    
+    display: flex;
+
+    width: 100%;
+    height: 40px;
+
+    flex-direction: column;
+    justify-content: center;
+
+    color: #000;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.freeMenteesTable {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    width: 100%;
+
+    height: 150px;
+    padding-right: 2rem;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.freeMenteesTable li {
+    margin: 0;
+
+    display: flex;
+    width: 100%;
+    height: 3rem;
+    align-items: center;
+}
+
+.freeMenteesTable li div {
+    width: 100%;
+    height: 3rem;
+
+    color: #000;
+
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+
+/* footer section */
+
+.wrapperFooterContainer {
+    display: flex;
+
+    width: 100%;
+    height: 115px;
+
+    max-width: 1920px;
+
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* left block in footer */
+
+.footerInfobox {
+    display: flex;
+
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 5.2%;
+
+    gap: 10px;
+}
+
+.footerInfoboxCopyright {
+    margin: 0;
+
+    color: #000;
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.footerInfoboxAttribution {
+    margin: 0;
+
+    color: #000;
+
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+/* logo on the right side in footer */
+
+.wrapperFooterContainer img {
+    width: 50px;
+    height: 50px;
+    margin-right: 5.2%;
+}
+
+
+
+
+
+
+.popUp {
+    display: flex;
+    width: 500px;
+    min-height: 180px;
+    padding: 35px 4.5rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-shrink: 0;
+    border-radius: 30px;
+    border: 3px solid #000;
+    background-color: #FFFFFF;
+}
+
+.popUpMask {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    position: fixed;
+}
+
+.popUpContent {
+    display: flex;
+    width: 100%;
+    height: 95%;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 15px;
+    color: #000;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2.3rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.popUpContent form {
+    display: flex;
+    /* width: 100%; */
+    height: 36px;
+    padding: 0 10px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 2px solid #000;
+}
+
+.popUpContent form input {
+    width: 100%;
+    height: 32px;
+    border: none;
+    outline: none;
+    padding: 0;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.popUpButtons {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.popUpButtons button {
+    display: flex;
+    cursor: pointer;
+    width: 50%;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    background: none;
+    border-radius: 10px;
+    border: 2px solid #000;
+
+    transition: all 0.15s ease;
+}
+
+.floatList {
+    display: flex;
+    width: calc(100% - 1rem);
+    height: 100px;
+    overflow: scroll;
+    overflow-x: hidden;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.floatListItem {
+    display: flex;
+    width: 100%;
+    height: 30px;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.floatName {
+    width: 45%;
+    height: 30px;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}

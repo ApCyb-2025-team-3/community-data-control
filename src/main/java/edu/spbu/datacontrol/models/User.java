@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -33,8 +34,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @CreatedDate
-    private Date invitedAt;
+    private LocalDate invitedAt;
 
     private boolean isActive = true;
 
@@ -49,14 +49,15 @@ public class User {
     @ManyToOne
     private User supervisor;
 
-    @OneToMany
+    @ManyToMany
     private List<User> productOwners;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @ManyToMany(mappedBy = "members")
     private List<Group> groups;
 
     private String project;
+
+    private LocalDate projectChangedAt;
 
     private String department;
 
@@ -70,6 +71,7 @@ public class User {
     private MentorshipStatus mentorStatus;
 
     public User(UserAdditionDTO userData) {
+        this.invitedAt = userData.getInvitedAt();
         this.name = userData.getName();
         this.dob = userData.getDob();
         this.email = userData.getEmail();
@@ -106,8 +108,6 @@ public class User {
         this.email = modifiedData.getEmail() != null ? modifiedData.getEmail() : this.email;
         this.phoneNumber = modifiedData.getPhoneNumber() != null ? modifiedData.getPhoneNumber()
             : this.phoneNumber;
-        this.department =
-            modifiedData.getDepartment() != null ? modifiedData.getDepartment() : this.department;
     }
 
     public boolean hasMentorshipStatus(MentorshipStatus status){
