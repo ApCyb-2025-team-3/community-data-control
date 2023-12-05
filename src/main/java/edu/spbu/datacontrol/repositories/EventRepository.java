@@ -1,7 +1,6 @@
 package edu.spbu.datacontrol.repositories;
 
 import edu.spbu.datacontrol.models.Event;
-import edu.spbu.datacontrol.models.enums.EventType;
 import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 
@@ -12,6 +11,4 @@ public interface EventRepository extends CrudRepository<Event, UUID> {
     Event getEventById(UUID eventId);
 
     List<Event> getEventsByUserId(UUID userId);
-
-    Event findFirstByUserIdAndTypeOrderByCreatedAtDesc(UUID userID, EventType type);
 }

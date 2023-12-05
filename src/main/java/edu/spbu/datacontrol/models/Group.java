@@ -27,7 +27,6 @@ public class Group {
 
     private String name;
 
-    @Enumerated(EnumType.STRING)
     private GroupType type;
 
     private String description;
@@ -55,7 +54,7 @@ public class Group {
         this.members = new ArrayList<>();
     }
 
-    public void changeGroupData(ModifiedGroupDTO modifiedData) {
+    public void changeGroupData(GroupDTO modifiedData) {
 
         this.name = modifiedData.getName() != null ? modifiedData.getName() : this.name;
         this.description = modifiedData.getDescription() != null ? modifiedData.getDescription()
