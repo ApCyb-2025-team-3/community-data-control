@@ -16,4 +16,19 @@ public interface GroupRepository extends CrudRepository<Group, UUID> {
 
     List<Group> getGroupsByIsActiveTrue();
 
+    List<Group> getGroupsByTypeAndIsActiveTrue(GroupType type);
+
+    List <Group> getGroupsByMembersContains(User user);
+
+    List<Group> getGroupsByMembersContainsAndType(User user, GroupType type);
+
+    List<Group> findByNameContainingIgnoreCaseAndIsActiveTrue(String partialName);
+
+    List<Group> findByNameContainingIgnoreCaseAndType(String partialName, GroupType groupType);
+
+    List<Group> findAllByOrderByIsActiveDesc();
+
+    List<Group> getGroupsByTypeOrderByIsActiveDesc(GroupType type);
+
+
 }
