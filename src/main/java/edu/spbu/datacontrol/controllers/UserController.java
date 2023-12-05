@@ -4,12 +4,12 @@ import edu.spbu.datacontrol.models.*;
 import edu.spbu.datacontrol.models.enums.*;
 import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +28,10 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody UserAdditionDTO userData) {
+
+        if (userData.getName() == null) {
+            return new ResponseEntity<>("Null user name", HttpStatus.BAD_REQUEST);
+        }
 
         User newUser = new User(userData);
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
@@ -68,16 +72,16 @@ public class UserController {
                 EventType.CHANGE_PROJECT);
             if (projectChange != null) {
                 userInfo.setProjectChangedAt(
-                    projectChange.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
-                        .toLocalDate());
+                    projectChange.getEventDate());
+            } else {
+                userInfo.setProjectChangedAt(user.getInvitedAt());
             }
 
             Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
                 EventType.DISMISS_USER);
             if (dismiss != null) {
                 userInfo.setDismissedAt(
-                    dismiss.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
-                        .toLocalDate());
+                    dismiss.getEventDate());
                 userInfo.setDismissReason(dismiss.getDescription());
             }
 
@@ -180,6 +184,7 @@ public class UserController {
 
     @PostMapping("/{userId}/dismiss")
     public ResponseEntity<String> dismissUserById(@PathVariable UUID userId,
+                                                  @RequestParam LocalDate date,
                                                   @RequestParam String description) {
 
         User dismissedUser = userRepository.findById(userId).orElse(null);
@@ -190,7 +195,19 @@ public class UserController {
             dismissedUser.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
             dismissedUser.setSupervisor(null);
             userRepository.save(dismissedUser);
-            Event event = new Event(userId, EventType.DISMISS_USER, description);
+
+            if (dismissedUser.getRole() == Role.SUPERVISOR) {
+                List<User> subordinates = userRepository.getUsersBySupervisor(dismissedUser);
+                subordinates.forEach(t -> t.setSupervisor(null));
+                userRepository.saveAll(subordinates);
+
+            } else if (dismissedUser.getRole() == Role.PRODUCT_OWNER) {
+                List<User> subordinates = userRepository.getUsersByProductOwnersContaining(dismissedUser);
+                subordinates.forEach(t -> t.getProductOwners().remove(dismissedUser));
+                userRepository.saveAll(subordinates);
+            }
+
+            Event event = new Event(userId, EventType.DISMISS_USER, date, description);
             eventLog.save(event);
             return new ResponseEntity<>("User was successfully dismissed",
                     HttpStatus.OK);
@@ -245,9 +262,22 @@ public class UserController {
         User user = userRepository.findById(userId).orElse(null);
         if (user != null) {
             try {
+                Role oldRole = user.getRole();
                 user.setRole(EnumUtils.fromString(Role.class, role));
                 userRepository.save(user);
                 eventLog.save(new Event(user.getId(), EventType.CHANGE_ROLE, reason));
+
+                if (oldRole == Role.SUPERVISOR) {
+                    List<User> subordinates = userRepository.getUsersBySupervisor(user);
+                    subordinates.forEach(t -> t.setSupervisor(null));
+                    userRepository.saveAll(subordinates);
+
+                } else if (oldRole == Role.PRODUCT_OWNER) {
+                    List<User> subordinates = userRepository.getUsersByProductOwnersContaining(user);
+                    subordinates.forEach(t -> t.getProductOwners().remove(user));
+                    userRepository.saveAll(subordinates);
+                }
+
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>("Unknown role is sent", HttpStatus.BAD_REQUEST);
             }
@@ -267,12 +297,13 @@ public class UserController {
 
             user.setProject(changeUserProjectDTO.getProject());
             user.setDepartment(changeUserProjectDTO.getDepartment());
-            assignSupervisor(user,changeUserProjectDTO.getSupervisor());
+            user.setProjectChangedAt(changeUserProjectDTO.getChangedAt());
+            assignSupervisor(user, changeUserProjectDTO.getSupervisor());
             assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
 
             userRepository.save(user);
             eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
-                    oldProject, changeUserProjectDTO.getProject()));
+                changeUserProjectDTO.getChangedAt(), oldProject, changeUserProjectDTO.getProject()));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }

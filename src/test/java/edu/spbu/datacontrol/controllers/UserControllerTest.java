@@ -60,7 +60,7 @@ class UserControllerTest {
 
         String description = "Testing dismiss";
         String response = this.mockMvc.perform(
-                        post("/api/user/" + id.toString() + "/dismiss")
+                        post("/api/user/" + id.toString() + "/dismiss?date=" + LocalDate.now())
                                 .param("description", description))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -77,7 +77,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
 
-        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
+        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss?date=" + LocalDate.now())
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
@@ -212,6 +212,7 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
+                .param("date", LocalDate.now().toString())
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
@@ -291,7 +292,7 @@ class UserControllerTest {
         UUID userId = getUserId(user);
         String newProjectName = "new project";
         ChangeUserProjectDTO changeUserProjectDTO =
-                new ChangeUserProjectDTO(userId, newProjectName, "", "", new String[]{""});
+                new ChangeUserProjectDTO(userId, newProjectName, "", "", LocalDate.now(), new String[]{""});
         this.mockMvc.perform(post("/api/user/changeUserProject")
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(changeUserProjectDTO))
         ).andExpect(status().isOk());
@@ -403,7 +404,8 @@ class UserControllerTest {
                 "Data Science",
                 grades[gradeId],
                 roles[roleId],
-                ""
+                "",
+                LocalDate.now()
         );
     }
 

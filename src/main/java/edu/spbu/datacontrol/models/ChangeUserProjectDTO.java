@@ -1,6 +1,7 @@
 package edu.spbu.datacontrol.models;
 
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import lombok.Getter;
 
 import java.util.UUID;
@@ -17,18 +18,21 @@ public class ChangeUserProjectDTO {
 
     private String department;
 
+    private LocalDate changedAt;
+
     private String[] productOwners;
 
     public ChangeUserProjectDTO() {
     }
 
     public ChangeUserProjectDTO(UUID userId, String project, String supervisor, String department,
-                                String[] productOwners) {
+                                LocalDate changedAt, String[] productOwners) {
 
         this.userId = userId;
         this.project = project;
         this.supervisor = supervisor;
         this.department = department;
+        this.changedAt = changedAt;
         this.productOwners = productOwners;
     }
 }

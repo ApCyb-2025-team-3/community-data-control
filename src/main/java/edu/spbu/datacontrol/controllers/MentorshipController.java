@@ -1,7 +1,9 @@
 package edu.spbu.datacontrol.controllers;
 
 import edu.spbu.datacontrol.models.*;
+import edu.spbu.datacontrol.models.enums.EventType;
 import edu.spbu.datacontrol.models.enums.MentorshipStatus;
+import edu.spbu.datacontrol.repositories.EventRepository;
 import edu.spbu.datacontrol.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.repositories.UserRepository;
 
@@ -19,17 +21,20 @@ import java.util.stream.StreamSupport;
 public class MentorshipController {
     private final UserRepository userRepository;
     private final MentorshipRepository mentorshipRepository;
+    private final EventRepository eventLog;
 
-    public MentorshipController(UserRepository userRepository, MentorshipRepository mentorshipRepository) {
+    public MentorshipController(UserRepository userRepository, MentorshipRepository mentorshipRepository,
+                                EventRepository eventLog) {
         this.userRepository = userRepository;
         this.mentorshipRepository = mentorshipRepository;
+        this.eventLog = eventLog;
     }
 
     @PatchMapping("/becomeMentee")
-    public ResponseEntity<String> becomeMentee(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> becomeMentee(@RequestParam UUID userId) {
         try {
-            changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTEE);
-            User user = userRepository.getUserById(userDTO.getId());
+            changeMentorshipStatus(userId, MentorshipStatus.MENTEE);
+            User user = userRepository.getUserById(userId);
             userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
@@ -39,10 +44,10 @@ public class MentorshipController {
     }
 
     @PatchMapping("/becomeMentor")
-    public ResponseEntity<String> becomeMentor(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> becomeMentor(@RequestParam UUID userId) {
         try {
-            changeMentorshipStatus(userDTO.getId(), MentorshipStatus.MENTOR);
-            User user = userRepository.getUserById(userDTO.getId());
+            changeMentorshipStatus(userId, MentorshipStatus.MENTOR);
+            User user = userRepository.getUserById(userId);
             userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
@@ -50,6 +55,35 @@ public class MentorshipController {
         }
         return new ResponseEntity<>("The user has become mentor now", HttpStatusCode.valueOf(200));
     }
+
+    @PatchMapping("/exitFromTheMentoringProgram")
+    public ResponseEntity<String> exitFromTheMentoringProgram(@RequestParam UUID userId) {
+        User user = userRepository.getUserById(userId);
+
+        if (user == null) {
+            return new ResponseEntity<>("User hasn't been found", HttpStatusCode.valueOf(404));
+        }
+
+        if (user.getMentorStatus() == MentorshipStatus.NOT_PARTICIPATING){
+            return new ResponseEntity<>("The user is not already in the mentoring program",
+                    HttpStatusCode.valueOf(400));
+        }
+
+        List<Mentorship> mentorships = mentorshipRepository.getMentorshipsByUserId(user.getId());
+        mentorshipRepository.deleteAll(mentorships);
+
+        user.setMentorStatus(MentorshipStatus.NOT_PARTICIPATING);
+        user = userRepository.save(user);
+
+        Event exitFromTheMentoringProgram = new Event(user.getId(), EventType.EXIT_FROM_THE_MENTORING_PROGRAM, "");
+        eventLog.save(exitFromTheMentoringProgram);
+
+        return new ResponseEntity<>("The user has successfully left the mentoring program",
+                HttpStatusCode.valueOf(200));
+
+    }
+
+
 
     @PostMapping("/create")
     public ResponseEntity<String> createMentorship(@RequestParam UUID mentorId, @RequestParam UUID menteeId, @RequestParam Date disbandmentDate) {
@@ -176,6 +210,9 @@ public class MentorshipController {
             throw new IllegalArgumentException("This user is in mentorship pair already!");
         }
         User user = userRepository.getUserById(userId);
+        if (user.getMentorStatus() == MentorshipStatus.NOT_PARTICIPATING) {
+            eventLog.save( new Event(userId, EventType.JOINING_THE_MENTORING_PROGRAM,""));
+        }
         user.setMentorStatus(mentorStatus);
     }
 

@@ -35,13 +35,13 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     List<User> getUsersBySupervisor(User supervisor);
 
+    List<User> getUsersByProductOwnersContaining(User productOwner);
+
     List<User> findAllByOrderByName();
 
     List<User> getUsersByGradeAndIsActiveTrue(Grade grade);
 
     List<User> getUsersByMentorStatusAndIsActiveTrue(MentorshipStatus mentorStatus);
-
-    List<User> getUsersByGroupsContainsAndIsActiveTrue(Group group);
 
     List<User> getUsersByIsActiveFalse();
 
