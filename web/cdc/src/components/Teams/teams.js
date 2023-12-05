@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet'
 import classes from './teams.module.css';
 import add from '../../icons/add-icon.svg';
-import info from '../../icons/info-icon.svg';
+import search from '../../icons/search-icon.svg';
+import sort from '../../icons/sort-icon.svg';
 import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
@@ -17,305 +18,342 @@ function Teams() {
                 <div className={`${classes.blocksObtaining}`}>
                 <div className={`${classes.leftBlock}`}>
                     <div className={`${classes.teamsControlPanel}`}>
-                    <div className={`${classes.panelAddTeam}`}>
-                        <p>Команды</p>
-                        <button className={`${classes.panelAddTeamButton}`}>
-                        <img src={add} alt="add" />
+                        <div className={`${classes.panelAddTeam}`}>
+                            <p>Команды</p>
+                            <button className={`${classes.panelAddTeamButton}`}>
+                            <img src={add} alt="add" />
+                            </button>
+                        </div>
+                        <div className={`${classes.panelSwitch}`}>
+                            <button className={`${classes.switchActive}`} style={{ width: "120px" }}>активные</button>
+                            <button className={`${classes.switchAll}`} style={{ width: "60px" }}>все</button>
+                        </div>
+                    </div>
+                    <form action="" className={`${classes.panelSearch}`}>
+                        <input placeholder="Команда"/>
+                        <button 
+                        // onClick={
+                        //     (event) => {
+                        //         getUsersByName(event.target.value)
+                        //     }}
+                        >
+                            <img src={search} alt="search"/>
                         </button>
-                    </div>
-                    <div className={`${classes.panelSwitch}`}>
-                        <button className={`${classes.switchAll}`}>все</button>
-                        <button className={`${classes.switchActive}`}>активные</button>
-                    </div>
+                    </form>
+                    <div className={`${classes.tableButtons}`}>
+                    <button 
+                        // onClick={
+                        //     (event) => {
+                        //         getUsersByName(event.target.value)
+                        //     }}
+                        >
+                            <img src={sort} alt="search"/>
+                        </button>
+                        <button 
+                        // onClick={
+                        //     (event) => {
+                        //         getUsersByName(event.target.value)
+                        //     }}
+                        >
+                            <img src={sort} alt="search"/>
+                        </button>
+                        <button 
+                        // onClick={
+                        //     (event) => {
+                        //         getUsersByName(event.target.value)
+                        //     }}
+                        >
+                            <img src={sort} alt="search"/>
+                        </button>
                     </div>
                     <ul className={`${classes.teamsTable}`}>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     <li>
+                    {/* onClick={() => {
+                                 handleUserSelection(userDto.id)
+                             }}> */}
                         <div className={`${classes.lilActive}`} />
                         <div className={`${classes.lilName}`}>Spauspauspau</div>
                         <div className={`${classes.lilLeader}`}>Yurasov I.</div>
-                        <div className={`${classes.lilCreation}`}>24.10</div>
-                        <button className={`${classes.lilInfo}`}>
-                        <img src={info} alt="info" />
-                        </button>
+                        <div className={`${classes.lilCreation}`}>88.88.8888</div>
                     </li>
                     </ul>
                 </div>
@@ -338,7 +376,7 @@ function Teams() {
                         </div>
                         <div className={`${classes.leacreCreated}`}>
                         <p>Создана:</p>
-                        <div className={`${classes.leacreCreatedDate}`}>10.10</div>
+                        <div className={`${classes.leacreCreatedDate}`}>10.10.8888</div>
                         </div>
                     </div>
                     <div className={`${classes.bodyDescription}`}>
@@ -468,8 +506,8 @@ function Teams() {
                         </ul>
                     </div>
                     <div className={`${classes.bodyUpdate}`}>
-                        <p>Дата изм.:</p>
-                        <div className={`${classes.bodyUpdateDate}`}>23.08</div>
+                        <p>Дата изменения:</p>
+                        <div className={`${classes.bodyUpdateDate}`}>23.08.8888</div>
                     </div>
                     <div className={`${classes.bodyButtons}`}>
                         <button>Внести изменения</button>

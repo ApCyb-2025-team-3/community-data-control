@@ -1,8 +1,9 @@
 import { Helmet } from 'react-helmet'
 import classes from './mentorship.module.css';
 import add from '../../icons/add-icon.svg';
+import sort from '../../icons/sort-icon.svg';
+import date from '../../icons/sort-date-icon.svg';
 import complete from '../../icons/complete-icon.svg';
-import search from '../../icons/search-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
 
 function Mentorship() {
@@ -23,10 +24,30 @@ function Mentorship() {
                 </div>
                 <div className={`${classes.programsTable}`}>
                 <div className={`${classes.programsTableTitles}`}>
-                    <p className={`${classes.titlesMentor}`}>Ментор</p>
-                    <p className={`${classes.titlesMentee}`}>Менти</p>
-                    <p className={`${classes.titlesStartDate}`}>Дата начала</p>
-                    <p className={`${classes.titlesEndDate}`}>Дата конца</p>
+                    <div className={`${classes.titlesMentor}`}>
+                        <p>Ментор</p>
+                        <button>
+                            <img src={sort} alt="sort"/>
+                        </button>
+                    </div>
+                    <div className={`${classes.titlesMentee}`}>
+                        <p>Менти</p>
+                        <button>
+                            <img src={sort} alt="sort"/>
+                        </button>
+                    </div>
+                    <div className={`${classes.titlesStartDate}`}>
+                        <p>Дата начала</p>
+                        <button>
+                            <img src={date} alt="sort"/>
+                        </button>
+                    </div>
+                    <div className={`${classes.titlesEndDate}`}>
+                        <p>Дата конца</p>
+                        <button>
+                            <img src={date} alt="sort"/>
+                        </button>
+                    </div>
                     <p className={`${classes.titlesComplete}`}>Завершить</p>
                 </div>
                 <ul className={`${classes.programsTableBody}`}>
@@ -37,359 +58,8 @@ function Mentorship() {
                         <div className={`${classes.programsTableBodyMentee}`}>
                             Barkov Vaniamin Yurievich
                         </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
-                        <button className={`${classes.programsTableBodyComplete}`}>
-                            <img src={complete} alt="complete" />
-                        </button>
-                    </li>
-                    <li>
-                        <div className={`${classes.programsTableBodyMentor}`}>
-                            Shchegolyayev Kazimir Ivanovich
-                        </div>
-                        <div className={`${classes.programsTableBodyMentee}`}>
-                            Barkov Vaniamin Yurievich
-                        </div>
-                        <div className={`${classes.programsTableBodyStartDate}`}>24.10</div>
-                        <div className={`${classes.programsTableBodyEndDate}`}>31.12</div>
+                        <div className={`${classes.programsTableBodyStartDate}`}>88.88.8888</div>
+                        <div className={`${classes.programsTableBodyEndDate}`}>88.88.8888</div>
                         <button className={`${classes.programsTableBodyComplete}`}>
                             <img src={complete} alt="complete" />
                         </button>
@@ -462,79 +132,11 @@ function Mentorship() {
                     <li>
                     <div>Pasternak Lavrenti Andreevich</div>
                     </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
                 </ul>
                 </div>
-                <div className={`${classes.blockMenteeByMentor}`}>
-                <div className={`${classes.menteeByMentorHeading}`}>
-                    <p>Менти по ментору</p>
-                    <form action="">
-                    <input placeholder="Name" />
-                    <button>
-                        <img src={search} alt="" />
-                    </button>
-                    </form>
-                </div>
-                <ul className={`${classes.mentorsByMenteeTable}`}>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
-                    <li>
-                    <div>Pasternak Lavrenti Andreevich</div>
-                    </li>
+                <div className={`${classes.freeMentees}`}>
+                <p className={`${classes.freeMenteesTitle}`}>Ожидающие менти</p>
+                <ul className={`${classes.freeMenteesTable}`}>
                     <li>
                     <div>Pasternak Lavrenti Andreevich</div>
                     </li>
