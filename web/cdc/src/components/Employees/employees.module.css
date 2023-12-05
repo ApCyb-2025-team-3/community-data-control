@@ -955,7 +955,7 @@
     margin: 0;
     padding-right: 2rem;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
 
     overflow: scroll;
@@ -1400,8 +1400,8 @@
 }
 
 .addUserBlockTitle {
-    margin-left: 50%;
     align-items: center;
+    text-align: center;
     justify-content: right;
     width: 100%;
     height: 28px;
