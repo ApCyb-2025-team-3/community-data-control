@@ -51,5 +51,5 @@ jobs:
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@v4.0.0
       with:
-        directory: /home/runner/work/community-data-control
+        directory: /home/runner/work/community-data-control/community-data-control
             
