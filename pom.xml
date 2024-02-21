@@ -11,7 +11,7 @@
   </parent>
   <groupId>edu.spbu</groupId>
   <artifactId>community-data-control</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>community-data-control</name>
   <description>community-data-control</description>
   <properties>
@@ -99,6 +99,12 @@
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>2.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>10.1.16</version>
     </dependency>
 
   </dependencies>
