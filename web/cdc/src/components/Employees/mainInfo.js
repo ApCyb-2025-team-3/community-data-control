@@ -7,7 +7,7 @@ import Groups from "./groups";
 import Mentorships from "./mentorships";
 import { localiseGrade, localiseRole } from "./localise";
 import AsyncSelect from 'react-select/async';
-import axios from 'axios';
+import { UserAPI } from './UserAPI';
 
 const MainInfo = ({ userId }) => {
 
@@ -26,17 +26,10 @@ const MainInfo = ({ userId }) => {
     useEffect(() => {
         async function getUserInfo() {
             try {
-                const url = process.env.REACT_APP_BACKEND_URL
-                    + "/api/user/" + userId + "/fullInfo"
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        "Origin": "http://localhost:3000",
-                    },
-                });
-
-                if (response.ok) {
-                    const userInfo = await response.json()
+                const response = await UserAPI.getFullInfo(userId)
+                console.log(response)
+                if (response !== null) {
+                    const userInfo = response
 
                     setState({
                         userId: userId,
@@ -46,7 +39,6 @@ const MainInfo = ({ userId }) => {
                         isMentorshipVisible: false,
                         isChanging: false
                     })
-
                     setLoading(false)
 
                 } else {
@@ -61,6 +53,51 @@ const MainInfo = ({ userId }) => {
 
         getUserInfo()
     }, [userId])
+
+    const [nameIsCorrect, setNameIsCorrect] = useState(true)
+    const [emailIsCorrect, setEmailIsCorrect] = useState(true)
+    const [phoneIsCorrect, setPhoneIsCorrect] = useState(true)
+    const [dobIsCorrect, setDobIsCorrect] = useState(true)
+    const [invitedAtIsCorrect, setInvitedAtIsCorrect] = useState(true)
+
+    const handleName = (event) => {
+        event.target.value.length > 0 ? setNameIsCorrect(true) : setNameIsCorrect(false)
+        setState({...state, userInfo: {...state.userInfo, name : event.target.value}})
+    }
+
+    const handleEmail = (event) => {
+        event.target.value.match("^[-a-z0-9!#$%&'*+/=?^_`{|}~]+(?:.[-a-z0-9!#$%&'*+/=?^_`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?.)*(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$") ?
+            setEmailIsCorrect(true) : setEmailIsCorrect(false)
+        setState({...state, userInfo: {...state.userInfo, email : event.target.value}})
+    }
+
+    const handlePhone = (event) => {
+        const phoneRegex = /^\+\d{10,14}$/;
+        phoneRegex.test(event.target.value) ? 
+            setPhoneIsCorrect(true) : setPhoneIsCorrect(false)
+        setState({...state, userInfo: {...state.userInfo, phoneNumber : event.target.value}})
+    }
+
+    const handleDate = (event, ind) => {
+        if (!event.target.value) {
+            ind === 1 ?
+                setDobIsCorrect(false) : setInvitedAtIsCorrect(false)
+            return 
+        }
+        const selectedDate = new Date(event.target.value);
+        const minDate = new Date("1900-01-01");
+        const today = new Date();
+        if (isNaN(selectedDate.getTime()) || selectedDate < minDate || selectedDate > today) {
+            ind === 1 ?
+                setDobIsCorrect(false) : setInvitedAtIsCorrect(false)
+            return
+        }
+        ind === 1 ?
+            setDobIsCorrect(true) : setInvitedAtIsCorrect(true)
+        ind === 1 ? 
+            setState({...state, userInfo: {...state.userInfo, dob : event.target.value}}) :
+            setState({...state, userInfo: {...state.userInfo, invitedAt : event.target.value}})
+    }
 
     const customStyles = {
         control: (provided, state) => ({
@@ -112,91 +149,7 @@ const MainInfo = ({ userId }) => {
     }
 
 
-    async function changePersonalDataRequest(userDto, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/user/changeUsersPersonalData?reason=" + reason
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(userDto)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-    async function changeUserGradeRequest(newGrade, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${state.userId}/changeGrade?grade=${newGrade}&reason=${reason}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-
-    async function changeUserRoleRequest(newRole, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(state.userId)}/changeRole?role=${encodeURIComponent(newRole)}&reason=${encodeURIComponent(reason)}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-
-    async function changeProjectData(newData) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + '/api/user/changeUserProject'
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(newData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-
+    
     async function changeUserInfo(reason) {
 
         let userDTO = {
@@ -230,13 +183,13 @@ const MainInfo = ({ userId }) => {
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
-        if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await changePersonalDataRequest(userDTO, reason)
+        if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await UserAPI.changePersonalDataRequest(userDTO, reason)
 
-        if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
+        if (state.userInfo.grade !== state.oldUserInfo.grade) await UserAPI.changeUserGradeRequest(state.userInfo.grade, reason, userId)
 
-        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await changeProjectData(newProjData)
+        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await UserAPI.changeProjectData(newProjData)
 
-        if (state.userInfo.role !== state.oldUserInfo.role) await changeUserRoleRequest(state.userInfo.role, reason)
+        if (state.userInfo.role !== state.oldUserInfo.role) await UserAPI.changeUserRoleRequest(state.userInfo.role, reason, userId)
 
         setState({ ...state, oldUserInfo: { ...state.userInfo } })
     }
@@ -318,7 +271,10 @@ const MainInfo = ({ userId }) => {
                         <p>Менторство</p>
                     </button>
                     <button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }} onClick={() => {
-                        if (state.isChanging) {setState({...state, isChanging: !state.isChanging})
+                        if (state.isChanging) {
+                            if (nameIsCorrect && emailIsCorrect && phoneIsCorrect && dobIsCorrect && invitedAtIsCorrect)
+                                setState({...state, isChanging: !state.isChanging})
+                            else alert('Проверьте введенные данные')
                         } else {
                             setState({
                                 ...state,
@@ -347,7 +303,7 @@ const MainInfo = ({ userId }) => {
                                                     changeUserInfo(
                                                         document.getElementById("changingReason").value
                                                     )
-                                                    close()
+                                                    close() 
                                                 }}>
                                                     Подтвердить
                                                 </button>
@@ -435,7 +391,12 @@ const MainInfo = ({ userId }) => {
     }
 
     function formatLocalDate(date) {
-        return date === null ? "Не указано" : date.split("-").reverse().join(".")
+        const localDate = date === null ? null : date.split("-").reverse()
+        if (localDate === null) return null
+        else {
+            localDate[1] = localDate[1].length === 1 ? '0' + localDate[1] : localDate[1]
+            return localDate.join()
+        }
     }
 
     function renderProductOwners(productOwnersList) {
@@ -468,9 +429,8 @@ const MainInfo = ({ userId }) => {
 
     const getUsers = async (inputValue) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
-
-            return response.data.map(user => ({
+            const response = await UserAPI.getUserByRole('supervisor')
+            return response.map(user => ({
                 id: user.id,
                 value: user.name,
                 label: user.name
@@ -490,9 +450,8 @@ const MainInfo = ({ userId }) => {
 
     const getPO = async (inputValue) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
-
-            return response.data.map(user => ({
+            const response = await UserAPI.getUserByRole(`product owner`);
+            return response.map(user => ({
                 id: user.id,
                 value: user.name,
                 label: user.name
@@ -514,7 +473,7 @@ const MainInfo = ({ userId }) => {
         )
     }
 
-    const projectChangeDate = state.oldUserInfo.projectChangedAt !== null
+    const projectChangeDate = state.oldUserInfo.projectdAt !== null
         ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
 
     return (
@@ -524,7 +483,7 @@ const MainInfo = ({ userId }) => {
                     {state.isChanging ?
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, name: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
+                            <input value={state.userInfo.name} onChange={(event) => { handleName(event) }} className={`${classes.lPartHeadingNameInput}`} />{!nameIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>incorrect name</p>}
                         </div>
                         :
                         <div className={`${classes.lPartHeading}`}>
@@ -542,10 +501,10 @@ const MainInfo = ({ userId }) => {
                         </div>
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol1Data}`}>
-                                <input type='email' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
-                                <input type='tel' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, phoneNumber: event.target.value } }) }} value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
-                                <input type='date' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, dob: event.target.value } }) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input type='email' onChange={(event) => { handleEmail(event) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}/>{!emailIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>incorrect email</p>}
+                                <input type='tel' onChange={(event) =>  { handlePhone(event)} } value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />{!phoneIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>incorrect phone</p>}
+                                <input type='date' onChange={(event) => { handleDate(event, 1) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>{!dobIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>incorrect date</p>}
+                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}/>
                                 <select onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, grade: event.target.value } }) }} value={state.userInfo.grade} className={`${classes.lPartInfoCol1DataGrade}`}>
                                     <option value='Junior'>Junior</option>
                                     <option value='Middle'>Middle</option>

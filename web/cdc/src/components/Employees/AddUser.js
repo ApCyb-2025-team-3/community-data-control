@@ -1,10 +1,12 @@
 import classes from './employees.module.css';
-import React, {useState} from "react";
+import React, { useState, useRef } from "react";
 import AsyncSelect from 'react-select/async';
-import axios from 'axios';
+import { UserAPI } from './UserAPI';
 
 
 const AddUser = () => {
+
+    const formRef = useRef();
 
     const today = new Date()
 
@@ -20,17 +22,25 @@ const AddUser = () => {
         grade: "Unspecified",
         role: "Non Member",
         mentorStatus: "Not participating",
-        invitedAt: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+        invitedAt: today.getMonth() >= 9 ? 
+            `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}` : 
+            `${today.getFullYear()}-0${today.getMonth() + 1}-${today.getDate()}`
     })
     const [allFilled, setAllFilled] = useState(false)
+    const [nameFilled, setNameFilled] = useState(false)
+    const [emailFilled, setEmailFilled] = useState(false)
+    const [phoneFilled, setPhoneFilled] = useState(false)
+    const [dateOfBirthFilled, setDOBFilled] = useState(false)
+    const [invitedAtFilled, setInvitedAtFilled] = useState(true)
+
+    
 
     async function getUsers(inputValue) {
         try {
 
-            const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
+            const response = await UserAPI.getUserByRole('supervisor');
 
-            return response.data.map(user => ({
+            return response.map(user => ({
                 value: user.name,
                 label: user.name
             }));
@@ -42,10 +52,8 @@ const AddUser = () => {
 
     async function getPO() {
         try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
-
-            return response.data.map(user => ({
+            const response = await UserAPI.getUserByRole('product owner');
+            return response.map(user => ({
                 value: user.name,
                 label: user.name
             }));
@@ -55,8 +63,8 @@ const AddUser = () => {
         }
     }
 
-    async function addUser() {
-        try {
+    async function addUser(event) {
+        
             const data = {...user}
             if (user.productOwnersNames.length !== 0) {
                 data.productOwnersNames = user.productOwnersNames.map(item => item.value)
@@ -64,27 +72,13 @@ const AddUser = () => {
             if (user.supervisorName !== "") {
                 data.supervisorName = user.supervisorName.value
             }
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/user/add"
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
+            const response = await UserAPI.addUserRequest(data)
 
             setUser({
-                name: null,
+                name: "",
                 dob: null,
-                email: null,
-                phoneNumber: null,
+                email: "",
+                phoneNumber: "",
                 supervisorName: "",
                 productOwnersNames: [],
                 project: "",
@@ -92,14 +86,56 @@ const AddUser = () => {
                 grade: "Unspecified",
                 role: "Non Member",
                 mentorStatus: "Not participating",
-                invitedAt: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+                invitedAt: today.getMonth() >= 9 ? 
+                    `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}` : 
+                    `${today.getFullYear()}-0${today.getMonth() + 1}-${today.getDate()}`
             })
-
             alert("Пользователь успешно добавлен")
+            formRef.current.reset()
+            
+            return response.data
+    }
 
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
+    const nameHandler = (e) => {
+        const nameRegex = /^[А-Яа-яЁёA-Za-z\s-]+$/
+        nameRegex.test(e.target.value) ?
+            setNameFilled(true) : setNameFilled(false)
+        setUser({...user, name : e.target.value})
+    }
+
+    const emailHandler = (e) => {
+        const emailRegex = /^[-a-z0-9!#$%&'*+/=?^_`{|}~]+(?:\.[-a-z0-9!#$%&'*+/=?^_`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?\.)*(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$/
+        emailRegex.test(e.target.value) ?
+            setEmailFilled(true) : setEmailFilled(false)
+        setUser({...user, email : e.target.value})
+    }
+
+    const phoneHandler = (e) => {
+        const phoneRegex = /^\+\d{10,14}$/;
+        phoneRegex.test(e.target.value) ?
+            setPhoneFilled(true) : setPhoneFilled(false)
+        setUser({...user, phoneNumber : e.target.value})
+    }
+
+    const DateHandler = (e, ind) => {
+        if (!e.target.value) {
+            ind === 1 ?
+                setDOBFilled(false) : setInvitedAtFilled(false)
+            return 
         }
+        const selectedDate = new Date(e.target.value);
+        const minDate = new Date("1900-01-01");
+        const today = new Date();
+        if (isNaN(selectedDate.getTime()) || selectedDate < minDate || selectedDate > today) {
+            ind === 1 ?
+                setDOBFilled(false) : setInvitedAtFilled(false)
+            return
+        }
+        ind === 1 ?
+        setDOBFilled(true) : setInvitedAtFilled(true)
+        ind === 1 ?
+        setUser({...user, dob : e.target.value}) : setUser({...user, invitedAt : e.target.value})
+        
     }
 
     const customStyles = {
@@ -139,7 +175,7 @@ const AddUser = () => {
     };
 
     return (
-        <div className={`${classes.addUserBlock}`}>
+        <form name="form" className={`${classes.addUserBlock}`}>
             <div className={`${classes.addUserBlockTitle}`}>
                 ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
             </div>
@@ -159,11 +195,11 @@ const AddUser = () => {
                 <div>Дата присоединения</div>
             </div>
             <div className={`${classes.addUserBlockFields}`}>
-            <input value={user.name} className={user.name === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="name" placeholder="Имя" onChange={(event) => { setUser({ ...user, name: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
-            <input value={user.dob} className={user.dob === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата рождения" onChange={(event) => { setUser({ ...user, dob: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
-            <input value={user.email} className={user.email === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="email" type="email" placeholder="Email" onChange={(event) => { setUser({ ...user, email: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
-            <input value={user.phoneNumber} className={user.phoneNumber === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="phone" type="tel" placeholder="Номер телефона" onChange={(event) => { setUser({ ...user, phoneNumber: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
-            <select id="role" placeholder="Роль" value={user.role} onChange={(event) => setUser({ ...user, role: event.target.value })} >
+            <input defaultValue={user.name} className={!nameFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="name" placeholder="Имя" onChange={(event) => { nameHandler(event); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+            <input defaultValue={user.dob} className={!dateOfBirthFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="dob" type="date" placeholder="Дата рождения" onChange={(event) => { DateHandler(event, 1); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+            <input defaultValue={user.email} className={!emailFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="email" type="email" placeholder="Email" onChange={(event) => { emailHandler(event); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+            <input defaultValue={user.phoneNumber} className={!phoneFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="phoneNumber" type="tel" placeholder="Номер телефона" onChange={(event) => { phoneHandler(event); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+            <select name="role" placeholder="Роль" value={user.role} onChange={(event) => setUser({ ...user, role: event.target.value })} >
                 <option value="Member">Участник</option>
                 <option value="Data Engineer">Дата инженер</option>
                 <option value="Developer" >Разработчик</option>
@@ -172,7 +208,7 @@ const AddUser = () => {
                 <option value="Supervisor">Руководитель</option>
                 <option value="Non Member">Гость</option>
             </select>
-            <select id="grade" placeholder="Позиция" value={user.grade} onChange={(event) => setUser({ ...user, grade: event.target.value })} >
+            <select name="grade" placeholder="Позиция" value={user.grade} onChange={(event) => setUser({ ...user, grade: event.target.value })} >
                 <option value="Junior">Junior</option>
                 <option value="Middle">Middle</option>
                 <option value="Senior">Senior</option>
@@ -204,26 +240,26 @@ const AddUser = () => {
                 onChange={(selectedOption) => {console.log(selectedOption); setUser({ ...user, productOwnersNames: selectedOption })}}
 
             />
-            <input className={`${classes.InputField}`} id="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
-            <input className={`${classes.InputField}`} id="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
+            <input className={`${classes.InputField}`} name="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
+            <input className={`${classes.InputField}`} name="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
             <select id="mentorStasus" value={user.mentorStatus} placeholder="Менторство" onChange={(event) => setUser({ ...user, mentorStatus: event.target.value })} >
                 <option value="Mentor">Ментор</option>
                 <option value="Mentee" >Менти</option>
                 <option value="Not participating">Не участвует</option>
             </select>
-            <input value={user.invitedAt} className={user.invitedAt === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата присоединения" onChange={(event) => { setUser({ ...user, invitedAt: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber && user.invitedAt) }} />
+            <input defaultValue={user.invitedAt} className={!invitedAtFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="invitedAt" type="date" placeholder="Дата присоединения" onChange={(event) => { DateHandler(event, 2); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
             </div>
             </div>
             <div className={`${classes.addUserBlockBottom}`}>
                 <button className={`${classes.addUserBlockBottomButton}`}
                         type='button'
-                        onClick={() => {
-                            {allFilled ? addUser(user) : alert("Заполните обязательные поля")}
+                        onClick={(event) => {
+                            allFilled ? addUser(event) : alert("Заполните обязательные поля")
                         }}>
                     Добавить
                 </button>
             </div>
-        </div>)
+        </form>)
 
 }
 
