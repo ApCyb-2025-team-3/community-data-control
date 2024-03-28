@@ -29,7 +29,7 @@ public class UserController {
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody UserAdditionDTO userData) {
 
-        if (userData.getName() == null) {
+        if (userData.getName() == null || userData.getName().isEmpty()) {
             return new ResponseEntity<>("Null user name", HttpStatus.BAD_REQUEST);
         }
         if (userData.getProductOwnersNames() == null) {
