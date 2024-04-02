@@ -32,6 +32,9 @@ public class UserController {
         if (userData.getName() == null) {
             return new ResponseEntity<>("Null user name", HttpStatus.BAD_REQUEST);
         }
+        if (userData.getProductOwnersNames() == null) {
+            return new ResponseEntity<>("Null ProductOwnersNames", HttpStatus.NOT_ACCEPTABLE);
+        }
 
         User newUser = new User(userData);
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
@@ -69,19 +72,19 @@ public class UserController {
             UserInfoDTO userInfo = new UserInfoDTO(user);
 
             Event projectChange = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
-                EventType.CHANGE_PROJECT);
+                    EventType.CHANGE_PROJECT);
             if (projectChange != null) {
                 userInfo.setProjectChangedAt(
-                    projectChange.getEventDate());
+                        projectChange.getEventDate());
             } else {
                 userInfo.setProjectChangedAt(user.getInvitedAt());
             }
 
             Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
-                EventType.DISMISS_USER);
+                    EventType.DISMISS_USER);
             if (dismiss != null) {
                 userInfo.setDismissedAt(
-                    dismiss.getEventDate());
+                        dismiss.getEventDate());
                 userInfo.setDismissReason(dismiss.getDescription());
             }
 
@@ -163,9 +166,9 @@ public class UserController {
 
         if (!department.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(department).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatus.OK);
+                    userRepository.getUsersByDepartmentContainingIgnoreCaseAndIsActiveTrue(department).stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatus.OK);
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
@@ -175,9 +178,9 @@ public class UserController {
 
         if (!project.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(project).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatus.OK);
+                    userRepository.getUsersByProjectContainingIgnoreCaseAndIsActiveTrue(project).stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatus.OK);
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
@@ -282,7 +285,7 @@ public class UserController {
                 return new ResponseEntity<>("Unknown role is sent", HttpStatus.BAD_REQUEST);
             }
             return new ResponseEntity<>("User's role was successfully changed",
-                HttpStatus.OK);
+                    HttpStatus.OK);
         }
 
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
@@ -303,7 +306,7 @@ public class UserController {
 
             userRepository.save(user);
             eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
-                changeUserProjectDTO.getChangedAt(), oldProject, changeUserProjectDTO.getProject()));
+                    changeUserProjectDTO.getChangedAt(), oldProject, changeUserProjectDTO.getProject()));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);
         }
@@ -316,9 +319,9 @@ public class UserController {
 
         if (!partialName.isBlank()) {
             return new ResponseEntity<>(
-                userRepository.findByNameContainingIgnoreCaseAndIsActiveTrue(partialName).stream()
-                    .map(UserDTO::new)
-                    .toList(), HttpStatus.OK);
+                    userRepository.findByNameContainingIgnoreCaseAndIsActiveTrue(partialName).stream()
+                            .map(UserDTO::new)
+                            .toList(), HttpStatus.OK);
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
