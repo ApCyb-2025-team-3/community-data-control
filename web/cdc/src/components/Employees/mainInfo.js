@@ -501,7 +501,7 @@ const MainInfo = ({ userId }) => {
                         </div>
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol1Data}`}>
-                                <input type='email' onChange={(event) => { handleEmail(event) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}/>{!emailIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Некорректый формат email'а</p>}
+                                <input type='email' onChange={(event) => { handleEmail(event) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}/>{!emailIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Некорректый формат электронной почты</p>}
                                 <input type='tel' onChange={(event) =>  { handlePhone(event)} } value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />{!phoneIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Некорректый формат номера телефона</p>}
                                 <input type='date' onChange={(event) => { handleDate(event, 1) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>{!dobIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Неверная дата</p>}
                                 <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}/>
