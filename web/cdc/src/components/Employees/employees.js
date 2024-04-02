@@ -28,7 +28,7 @@ const Employees = () => {
 
     async function getUsersByRole (role) {
 
-        if (role === "" || role === "Non Member") {
+        if (role === "") {
             setEmptyUserListToState()
             return
         }
