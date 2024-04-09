@@ -69,8 +69,9 @@ class UserControllerTest {
         userData.setName("FakeProductOwner");
         userData.setRole("Developer");
         addUser(userData);
-        userData.setProductOwnersNames(new ArrayList<>(List.of("FakeProductOwner")));
 
+        userData = generateSimpleUser();
+        userData.setProductOwnersNames(new ArrayList<>(List.of("FakeProductOwner")));
         addUser(userData, status().isConflict());
     }
 
