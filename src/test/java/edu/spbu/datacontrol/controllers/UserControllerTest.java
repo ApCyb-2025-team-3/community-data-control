@@ -72,7 +72,7 @@ class UserControllerTest {
 
         userData = generateSimpleUser();
         userData.setProductOwnersNames(new ArrayList<>(List.of("FakeProductOwner")));
-        addUser(userData, status().isConflict());
+        addUser(userData); // User will be added without product owners
     }
 
     @Test
