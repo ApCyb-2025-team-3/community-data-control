@@ -35,6 +35,9 @@ public class UserController {
         if (userData.getProductOwnersNames() == null) {
             return new ResponseEntity<>("Null ProductOwnersNames", HttpStatus.NOT_ACCEPTABLE);
         }
+        if (userData.getInvitedAt() == null) {
+            userData.setInvitedAt(LocalDate.now());
+        }
 
         User newUser = new User(userData);
         this.assignProductOwners(newUser, userData.getProductOwnersNames());
