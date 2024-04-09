@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -39,6 +40,63 @@ class UserControllerTest {
     void addUserTest() throws Exception {
 
         UserAdditionDTO userData = generateSimpleUser();
+
+        addUser(userData);
+    }
+
+    @Test
+    void addUserWithEmptyName() throws Exception {
+
+        UserAdditionDTO userData = generateSimpleUser();
+        userData.setName("");
+
+        addUser(userData, status().isBadRequest());
+    }
+
+    @Test
+    void addUserWithNullName() throws Exception {
+
+        UserAdditionDTO userData = generateSimpleUser();
+        userData.setName(null);
+
+        addUser(userData, status().isBadRequest());
+    }
+
+    @Test
+    void addUserWithWrongProductOwners() throws Exception {
+
+        UserAdditionDTO userData = generateSimpleUser();
+        userData.setProductOwnersNames(new ArrayList<>(List.of("string")));
+
+        addUser(userData, status().isConflict());
+    }
+
+    @Test
+    void addUserWithNullProductOwners() throws Exception {
+
+        UserAdditionDTO userData = generateSimpleUser();
+        userData.setProductOwnersNames(null);
+
+        addUser(userData, status().isNotAcceptable());
+    }
+
+    @Test
+    void addUserWithMostlyNullInfo() throws Exception {
+
+        UserAdditionDTO userData = new UserAdditionDTO(
+            "user",
+            LocalDate.now().minusYears(18),
+            null,
+            null,
+            null,
+            new ArrayList<>(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
 
         addUser(userData);
     }
@@ -370,9 +428,18 @@ class UserControllerTest {
 
         String json = objectMapper.writeValueAsString(user);
         this.mockMvc.perform(
+                post("/api/user/add")
+                    .contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isCreated());
+    }
+
+    private void addUser(UserAdditionDTO user, ResultMatcher expected) throws Exception {
+
+        String json = objectMapper.writeValueAsString(user);
+        this.mockMvc.perform(
                         post("/api/user/add")
                                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isCreated());
+                .andExpect(expected);
     }
 
     private String generateRandomString() {
