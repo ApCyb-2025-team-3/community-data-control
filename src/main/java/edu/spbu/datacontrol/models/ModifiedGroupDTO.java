@@ -20,4 +20,9 @@ public class ModifiedGroupDTO {
 
     private UUID teamLead;
 
+    public ModifiedGroupDTO(UUID id, String name, String description, UUID teamLead) {
+        this.name = name;
+        this.description = description;
+        this.teamLead = teamLead;
+    }
 }

@@ -41,12 +41,15 @@ public class GroupController {
         try {
             Group currentGroups = groupRepository.getGroupByName(groupInfoDTO.getName());
             if(currentGroups != null){
-                return new ResponseEntity<>("A group with this name already exists!", HttpStatusCode.valueOf(409));
+                return new ResponseEntity<>("A group by that name already exists!", HttpStatusCode.valueOf(409));
             }
             Group newGroup = new Group(groupInfoDTO);
-            User teamLead = userRepository.getUserById(teamLeadId);
-            assignTeamLead(newGroup, teamLead);
-            groupRepository.save(newGroup);
+            if(newGroup.getName().isBlank()) {
+                return new ResponseEntity<>("The group should have a name!", HttpStatusCode.valueOf(409));
+            }
+                User teamLead = userRepository.getUserById(teamLeadId);
+                assignTeamLead(newGroup, teamLead);
+                groupRepository.save(newGroup);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
                 e.getMessage(),
@@ -93,10 +96,13 @@ public class GroupController {
     public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
                                                @RequestParam String disbandmentReason) {
 
-        Group disbandedGroup = groupRepository.findById(groupId).orElse(null);
+        Group disbandedGroup = groupRepository.getGroupById(groupId);
 
         if (disbandedGroup != null) {
 
+            if(!disbandedGroup.isActive()) {
+                return new ResponseEntity<>("This group has already been disbanded.", HttpStatusCode.valueOf(409));
+            }
             Date disbandmentDate = new Date();
             disbandedGroup.setDisbandmentDate(disbandmentDate);
             disbandedGroup.setDisbandmentReason(disbandmentReason);
@@ -104,32 +110,34 @@ public class GroupController {
             disbandedGroup.setTeamLead(null);
             dismissGroupMembers(disbandedGroup);
             groupRepository.save(disbandedGroup);
-            return new ResponseEntity<>("Group was successfully disbanded",
+            return new ResponseEntity<>("Group was successfully disbanded.",
                     HttpStatusCode.valueOf(200));
 
         }
-        return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>("This group hasn't been found.", HttpStatusCode.valueOf(404));
 
     }
 
     @PatchMapping ("/update")
     public  ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup) {
-        Group group = groupRepository.findById(changedGroup.getId()).orElse(null);
+        Group group = groupRepository.getGroupById(changedGroup.getId());
         if (group == null) {
             return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
         }
-        try {
-            User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
-            assignTeamLead(group, teamLead);
-            group.changeGroupData(changedGroup);
-            groupRepository.save(group);
-        }
-        catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        if (group.isActive()) {
+            try {
+                User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
+                assignTeamLead(group, teamLead);
+                group.changeGroupData(changedGroup);
+                groupRepository.save(group);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            }
 
-        return new ResponseEntity<>("Group was successfully modified",
-                HttpStatusCode.valueOf(200));
+            return new ResponseEntity<>("Group was successfully modified",
+                    HttpStatusCode.valueOf(200));
+        }
+        return new ResponseEntity<>("This group is inactive", HttpStatusCode.valueOf(409));
     }
 
     @GetMapping("/getActiveGroups")
@@ -270,28 +278,30 @@ public class GroupController {
     }
 
     private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
-        List<User> currentMembers = group.getMembers();
-        if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(teamLead)) {
-            throw new IllegalArgumentException("This user is in a work team already!");
-        }
-        if (!currentMembers.contains(teamLead)) {
-            currentMembers.add(teamLead);
-        }
-        User previousTeamLead = group.getTeamLead();
-        if (previousTeamLead != null) {
-            previousTeamLead.setRole(Role.DEVELOPER);
-            userRepository.save(previousTeamLead);
-            Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
-            eventLog.save(revokeTeamLeadRole);
-        }
+        if (teamLead !=null) {
+            List<User> currentMembers = group.getMembers();
+            if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(teamLead)) {
+                throw new IllegalArgumentException("This user is in a work team already!");
+            }
+            if (!currentMembers.contains(teamLead)) {
+                currentMembers.add(teamLead);
+            }
+            User previousTeamLead = group.getTeamLead();
+            if (previousTeamLead != null) {
+                previousTeamLead.setRole(Role.DEVELOPER);
+                userRepository.save(previousTeamLead);
+                Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
+                eventLog.save(revokeTeamLeadRole);
+            }
 
-        teamLead.setRole(Role.TEAM_LEAD);
-        teamLead.getGroups().add(group);
-        userRepository.save(teamLead);
-        Event assignTeamLeadRole = new Event(teamLead.getId(), EventType.CHANGE_PERSONAL_DATA, LocalDate.now(), "This user is new team leader");
-        eventLog.save(assignTeamLeadRole);
+            teamLead.setRole(Role.TEAM_LEAD);
+            teamLead.getGroups().add(group);
+            userRepository.save(teamLead);
+            Event assignTeamLeadRole = new Event(teamLead.getId(), EventType.CHANGE_PERSONAL_DATA, LocalDate.now(), "This user is new team leader");
+            eventLog.save(assignTeamLeadRole);
 
-        group.setTeamLead(teamLead);
+            group.setTeamLead(teamLead);
+        }
     }
 
     private boolean isInWorkTeam (User user) {
