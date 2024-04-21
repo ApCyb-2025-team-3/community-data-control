@@ -35,7 +35,6 @@ public class MentorshipController {
         try {
             changeMentorshipStatus(userId, MentorshipStatus.MENTEE);
             User user = userRepository.getUserById(userId);
-            userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
@@ -48,7 +47,6 @@ public class MentorshipController {
         try {
             changeMentorshipStatus(userId, MentorshipStatus.MENTOR);
             User user = userRepository.getUserById(userId);
-            userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
 
@@ -212,8 +210,12 @@ public class MentorshipController {
         User user = userRepository.getUserById(userId);
         if (user.getMentorStatus() == MentorshipStatus.NOT_PARTICIPATING) {
             eventLog.save( new Event(userId, EventType.JOINING_THE_MENTORING_PROGRAM,""));
+            user.setMentorStatus(mentorStatus);
+            userRepository.save(user);
         }
-        user.setMentorStatus(mentorStatus);
+        else {
+            throw new IllegalArgumentException("This user is a " + user.getMentorStatus() + " already!");
+        }
     }
 
     private boolean isInMentorship(UUID userId) {
