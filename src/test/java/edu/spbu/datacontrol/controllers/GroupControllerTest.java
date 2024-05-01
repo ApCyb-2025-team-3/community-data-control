@@ -16,7 +16,6 @@ import java.util.UUID;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 
-
 public class GroupControllerTest {
     GroupRepository mockGroupRepository = Mockito.mock(GroupRepository.class);
     UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
@@ -24,7 +23,6 @@ public class GroupControllerTest {
 
     @Test
     public void isUpdateComplete() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -61,7 +59,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantChangedToAnAlreadyAssignedTeamLead() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -87,7 +84,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantChangedGroupThatDoesNotExist() throws Exception {
-
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupById(null)).thenReturn(null);
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
@@ -100,7 +96,6 @@ public class GroupControllerTest {
 
     @Test
     public void dontHaveToChangeTeamLeadAndEmptyFields() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -128,7 +123,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantUpdateDisbandedGroup() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -156,13 +150,11 @@ public class GroupControllerTest {
 
     @Test
     public void canCreateGroup() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
 
         GroupInfoDTO groupInfo = new GroupInfoDTO("Test1", "WORKING_TEAM", null);
-
 
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
@@ -177,7 +169,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantCreateGroupWithoutName() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -198,7 +189,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantCreateGroupWithExistingName() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -211,7 +201,6 @@ public class GroupControllerTest {
         testGroup.setActive(true);
 
         teamLead1.getGroups().add(testGroup);
-
 
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
@@ -226,7 +215,6 @@ public class GroupControllerTest {
 
     @Test
     public void canDisbandSuccessfully() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -239,7 +227,6 @@ public class GroupControllerTest {
         testGroup.setActive(true);
 
         teamLead1.getGroups().add(testGroup);
-
 
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
@@ -257,7 +244,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantDisbandAlreadyDisbandedGroup() throws Exception {
-
         User teamLead1 = new User();
         UUID uuidUser = teamLead1.getId();
         teamLead1.setGroups(new ArrayList<>());
@@ -270,7 +256,6 @@ public class GroupControllerTest {
         testGroup.setActive(true);
 
         teamLead1.getGroups().add(testGroup);
-
 
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
@@ -289,7 +274,6 @@ public class GroupControllerTest {
 
     @Test
     public void cantDisbandNotExistingGroup() throws Exception {
-
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
 
