@@ -62,8 +62,8 @@ public class GroupController {
 
     @PatchMapping("/accept")
     public ResponseEntity<String> acceptUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
-        Group group = groupRepository.findById(groupId).orElse(null);
-        User newMember = userRepository.findById(userId).orElse(null);
+        Group group = groupRepository.getGroupById(groupId);
+        User newMember = userRepository.getUserById(userId);
         if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
@@ -98,7 +98,7 @@ public class GroupController {
 
         Group disbandedGroup = groupRepository.getGroupById(groupId);
 
-        if (disbandedGroup != null) {
+        if (disbandedGroup == null) return new ResponseEntity<>("This group hasn't been found.", HttpStatusCode.valueOf(404));
 
             if(!disbandedGroup.isActive()) {
                 return new ResponseEntity<>("This group has already been disbanded.", HttpStatusCode.valueOf(409));
@@ -113,9 +113,6 @@ public class GroupController {
             return new ResponseEntity<>("Group was successfully disbanded.",
                     HttpStatusCode.valueOf(200));
 
-        }
-        return new ResponseEntity<>("This group hasn't been found.", HttpStatusCode.valueOf(404));
-
     }
 
     @PatchMapping ("/update")
@@ -124,20 +121,19 @@ public class GroupController {
         if (group == null) {
             return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
         }
-        if (group.isActive()) {
-            try {
-                User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
-                assignTeamLead(group, teamLead);
-                group.changeGroupData(changedGroup);
-                groupRepository.save(group);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            }
-
-            return new ResponseEntity<>("Group was successfully modified",
-                    HttpStatusCode.valueOf(200));
+        if (!group.isActive()) return new ResponseEntity<>("This group is inactive", HttpStatusCode.valueOf(409));
+        try {
+            User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
+            assignTeamLead(group, teamLead);
+            group.changeGroupData(changedGroup);
+            groupRepository.save(group);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("This group is inactive", HttpStatusCode.valueOf(409));
+
+        return new ResponseEntity<>("Group was successfully modified",
+                    HttpStatusCode.valueOf(200));
+
     }
 
     @GetMapping("/getActiveGroups")
@@ -244,15 +240,15 @@ public class GroupController {
 
     @GetMapping("getActiveMembers")
     public ResponseEntity<List<UserDTO>> getActiveMembers(@RequestParam UUID groupId) {
-        Group group = groupRepository.findById(groupId).orElse(null);
+        Group group = groupRepository.getGroupById(groupId);
         return new ResponseEntity<>(groupActiveMembers(group)
                 .stream().map(UserDTO::new).toList(), HttpStatusCode.valueOf(200));
     }
 
     @PatchMapping("/exclude")
     public ResponseEntity<String> excludeUser(@RequestParam UUID groupId, @RequestParam UUID userId) {
-        Group group = groupRepository.findById(groupId).orElse(null);
-        User user = userRepository.findById(userId).orElse(null);
+        Group group = groupRepository.getGroupById(groupId);
+        User user = userRepository.getUserById(userId);
         if (group == null) {
             return new ResponseEntity<>("This group hasn't been found", HttpStatusCode.valueOf(404));
         }
@@ -278,7 +274,7 @@ public class GroupController {
     }
 
     private void assignTeamLead(Group group, User teamLead) throws IllegalArgumentException {
-        if (teamLead !=null) {
+        if (teamLead == null) return;
             List<User> currentMembers = group.getMembers();
             if (group.getType() == GroupType.WORKING_TEAM && isInWorkTeam(teamLead)) {
                 throw new IllegalArgumentException("This user is in a work team already!");
@@ -301,7 +297,6 @@ public class GroupController {
             eventLog.save(assignTeamLeadRole);
 
             group.setTeamLead(teamLead);
-        }
     }
 
     private boolean isInWorkTeam (User user) {
