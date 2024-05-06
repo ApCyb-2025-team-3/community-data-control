@@ -1,6 +1,5 @@
-package edu.spbu.datacontrol;
+package edu.spbu.datacontrol.eventservice.models;
 
-import edu.spbu.datacontrol.enums.EventType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;

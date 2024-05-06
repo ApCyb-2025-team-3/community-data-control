@@ -118,6 +118,12 @@
             <artifactId>commons</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
+      <dependency>
+        <groupId>edu.spbu.datacontrol</groupId>
+        <artifactId>event-service</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <scope>compile</scope>
+      </dependency>
 
     </dependencies>
 

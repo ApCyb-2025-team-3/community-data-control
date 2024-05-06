@@ -3,8 +3,14 @@ package edu.spbu.datacontrol.userservice;
 
 import edu.spbu.datacontrol.*;
 import edu.spbu.datacontrol.enums.*;
+import edu.spbu.datacontrol.eventservice.EventClient;
+import edu.spbu.datacontrol.eventservice.models.Event;
+import edu.spbu.datacontrol.eventservice.models.EventType;
 import edu.spbu.datacontrol.userservice.models.ChangeUserProjectDTO;
 import edu.spbu.datacontrol.userservice.models.UserInfoDTO;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +26,14 @@ import java.util.UUID;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final EventRepository eventLog;
+    private final EventClient eventLog;
 
-    public UserController(UserRepository userRepository, EventRepository eventRepository) {
+    @Value("${event.service.url}")
+    private String eventServiceUrl;
+
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.eventLog = eventRepository;
+        this.eventLog = new EventClient(eventServiceUrl);
     }
 
     @PostMapping("/add")
@@ -52,7 +61,7 @@ public class UserController {
 
         newUser = userRepository.save(newUser);
         Event userAddition = new Event(newUser.getId(), EventType.ADD_USER, "");
-        eventLog.save(userAddition);
+        eventLog.saveEvent(userAddition);
 
         return new ResponseEntity<>("User successfully added.", HttpStatus.CREATED);
     }
@@ -75,7 +84,7 @@ public class UserController {
         if (user != null) {
             UserInfoDTO userInfo = new UserInfoDTO(user);
 
-            Event projectChange = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
+            Event projectChange = eventLog.getLastByUserAndType(userId,
                     EventType.CHANGE_PROJECT);
             if (projectChange != null) {
                 userInfo.setProjectChangedAt(
@@ -84,7 +93,7 @@ public class UserController {
                 userInfo.setProjectChangedAt(user.getInvitedAt());
             }
 
-            Event dismiss = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId,
+            Event dismiss = eventLog.getLastByUserAndType(userId,
                     EventType.DISMISS_USER);
             if (dismiss != null) {
                 userInfo.setDismissedAt(
@@ -215,7 +224,7 @@ public class UserController {
             }
 
             Event event = new Event(userId, EventType.DISMISS_USER, date, description);
-            eventLog.save(event);
+            eventLog.saveEvent(event);
             return new ResponseEntity<>("User was successfully dismissed",
                     HttpStatus.OK);
         }
@@ -231,7 +240,7 @@ public class UserController {
         if (user != null) {
             user.changePersonalData(modifiedData);
             userRepository.save(user);
-            eventLog.save(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, reason));
+            eventLog.saveEvent(new Event(user.getId(), EventType.CHANGE_PERSONAL_DATA, reason));
 
             return new ResponseEntity<>("User's personal data was successfully modified",
                     HttpStatus.OK);
@@ -250,7 +259,7 @@ public class UserController {
             try {
                 user.setGrade(EnumUtils.fromString(Grade.class, grade));
                 userRepository.save(user);
-                eventLog.save(new Event(user.getId(), EventType.CHANGE_GRADE, reason));
+                eventLog.saveEvent(new Event(user.getId(), EventType.CHANGE_GRADE, reason));
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>("Unknown grade is sent", HttpStatus.BAD_REQUEST);
             }
@@ -272,7 +281,7 @@ public class UserController {
                 Role oldRole = user.getRole();
                 user.setRole(EnumUtils.fromString(Role.class, role));
                 userRepository.save(user);
-                eventLog.save(new Event(user.getId(), EventType.CHANGE_ROLE, reason));
+                eventLog.saveEvent(new Event(user.getId(), EventType.CHANGE_ROLE, reason));
 
                 if (oldRole == Role.SUPERVISOR) {
                     List<User> subordinates = userRepository.getUsersBySupervisor(user);
@@ -309,7 +318,7 @@ public class UserController {
             assignProductOwners(user, Arrays.stream(changeUserProjectDTO.getProductOwners()).toList());
 
             userRepository.save(user);
-            eventLog.save(new Event(user.getId(), EventType.CHANGE_PROJECT,
+            eventLog.saveEvent(new Event(user.getId(), EventType.CHANGE_PROJECT,
                     changeUserProjectDTO.getChangedAt(), oldProject, changeUserProjectDTO.getProject()));
 
             return new ResponseEntity<>("User's project was successfully modified", HttpStatus.OK);

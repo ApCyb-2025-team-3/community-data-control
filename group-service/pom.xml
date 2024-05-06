@@ -7,7 +7,7 @@
         <artifactId>community-data-control</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-    <groupId>edu.spbu</groupId>
+    <groupId>edu.spbu.datacontrol</groupId>
     <artifactId>group-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>group-service</name>

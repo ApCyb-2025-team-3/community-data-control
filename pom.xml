@@ -17,6 +17,9 @@
   <description>community-data-control</description>
     <modules>
         <module>commons</module>
+        <module>group-service</module>
+        <module>user-service</module>
+        <module>event-service</module>
     </modules>
     <properties>
     <java.version>17</java.version>
