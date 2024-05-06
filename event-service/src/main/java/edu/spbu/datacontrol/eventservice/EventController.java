@@ -2,7 +2,9 @@ package edu.spbu.datacontrol.eventservice;
 
 import edu.spbu.datacontrol.eventservice.models.Event;
 import edu.spbu.datacontrol.eventservice.models.EventType;
+
 import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -41,8 +43,7 @@ public class EventController {
     }
 
     @GetMapping("/lastByUserAndType")
-    public ResponseEntity<Event> findLastEventByUserIdAndType(@RequestParam UUID userId, @RequestParam
-        EventType type) {
+    public ResponseEntity<Event> findLastEventByUserIdAndType(@RequestParam UUID userId, @RequestParam EventType type) {
 
         Event result = eventLog.findFirstByUserIdAndTypeOrderByCreatedAtDesc(userId, type);
         if (result != null) {

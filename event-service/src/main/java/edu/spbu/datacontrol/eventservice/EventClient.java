@@ -4,17 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.spbu.datacontrol.eventservice.models.Event;
 import edu.spbu.datacontrol.eventservice.models.EventType;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.UUID;
-import jdk.jshell.spi.ExecutionControl;
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.UUID;
 
 public class EventClient {
 
@@ -30,7 +30,7 @@ public class EventClient {
 
         try {
 
-            URI requestUri = new URI(serviceUrl + "/" + eventId);
+            URI requestUri = new URI("%s/%s".formatted(serviceUrl, eventId));
             ResponseEntity<Event> response = client.getForEntity(requestUri, Event.class);
 
             return response.getBody();
@@ -80,5 +80,4 @@ public class EventClient {
             throw new RuntimeException("Wrong URI syntax!");
         }
     }
-
 }
