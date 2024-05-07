@@ -3,14 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>edu.spbu</groupId>
+        <artifactId>community-data-control</artifactId>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
     <groupId>edu.spbu.datacontrol</groupId>
     <artifactId>user-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${parent.version}</version>
     <name>user-service</name>
     <description>user-service</description>
     <properties>
@@ -116,12 +115,12 @@
         <dependency>
             <groupId>edu.spbu.datacontrol</groupId>
             <artifactId>commons</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
       <dependency>
         <groupId>edu.spbu.datacontrol</groupId>
         <artifactId>event-service</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${project.version}</version>
         <scope>compile</scope>
       </dependency>
 

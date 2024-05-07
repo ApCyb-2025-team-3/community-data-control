@@ -8,7 +8,7 @@
         <artifactId>community-data-control</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>${parent.version}</version>
     <dependencies>
 
         <dependency>
