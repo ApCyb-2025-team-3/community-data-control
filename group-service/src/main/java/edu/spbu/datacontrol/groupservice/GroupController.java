@@ -1,22 +1,36 @@
 package edu.spbu.datacontrol.groupservice;
 
 
-import edu.spbu.datacontrol.*;
-import edu.spbu.datacontrol.enums.EnumUtils;
-import edu.spbu.datacontrol.enums.EventType;
-import edu.spbu.datacontrol.enums.GroupType;
-import edu.spbu.datacontrol.enums.Role;
+import edu.spbu.datacontrol.commons.Group;
+import edu.spbu.datacontrol.commons.GroupDTO;
+import edu.spbu.datacontrol.commons.GroupInfoDTO;
+import edu.spbu.datacontrol.commons.ModifiedGroupDTO;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.commons.UserDTO;
+import edu.spbu.datacontrol.commons.enums.EnumUtils;
+import edu.spbu.datacontrol.commons.enums.GroupType;
+import edu.spbu.datacontrol.commons.enums.Role;
+import edu.spbu.datacontrol.eventservice.EventClient;
+import edu.spbu.datacontrol.eventservice.models.Event;
+import edu.spbu.datacontrol.eventservice.models.EventType;
+import edu.spbu.datacontrol.groupservice.repositories.GroupRepository;
 import edu.spbu.datacontrol.userservice.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/group")
@@ -24,13 +38,14 @@ public class GroupController {
     private final GroupRepository groupRepository;
 
     private final UserRepository userRepository;
+    private final EventClient eventLog;
+    @Value("${event.service.url}")
+    private String eventServiceUrl;
 
-    private final EventRepository eventLog;
-
-    public GroupController(GroupRepository groupRepository, UserRepository userRepository, EventRepository eventLog) {
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
-        this.eventLog = eventLog;
+        this.eventLog = new EventClient(eventServiceUrl);
     }
 
     @PostMapping("/create")
@@ -84,7 +99,7 @@ public class GroupController {
         userRepository.save(newMember);
 
         Event addUser = new Event(userId, EventType.ACCEPT_TO_GROUP, LocalDate.now(), "Accepted the user to " + group.getName() + " group");
-        eventLog.save(addUser);
+        eventLog.saveEvent(addUser);
 
         return new ResponseEntity<>("User has been successfully added to group " + group.getName(), HttpStatusCode.valueOf(200));
 
@@ -267,7 +282,7 @@ public class GroupController {
         groupRepository.save(group);
 
         Event excludeUser = new Event(userId, EventType.EXCLUDE_FROM_GROUP, LocalDate.now(), "Excluded the user from the " + group.getName() + " group");
-        eventLog.save(excludeUser);
+        eventLog.saveEvent(excludeUser);
 
         return new ResponseEntity<>("The user has been excluded from this group", HttpStatusCode.valueOf(200));
     }
@@ -288,14 +303,14 @@ public class GroupController {
             previousTeamLead.setRole(Role.DEVELOPER);
             userRepository.save(previousTeamLead);
             Event revokeTeamLeadRole = new Event(previousTeamLead.getId(), EventType.CHANGE_PERSONAL_DATA, "Role of a team leader has been revoked");
-            eventLog.save(revokeTeamLeadRole);
+            eventLog.saveEvent(revokeTeamLeadRole);
         }
 
         teamLead.setRole(Role.TEAM_LEAD);
         teamLead.getGroups().add(group);
         userRepository.save(teamLead);
         Event assignTeamLeadRole = new Event(teamLead.getId(), EventType.CHANGE_PERSONAL_DATA, LocalDate.now(), "This user is new team leader");
-        eventLog.save(assignTeamLeadRole);
+        eventLog.saveEvent(assignTeamLeadRole);
 
         group.setTeamLead(teamLead);
     }

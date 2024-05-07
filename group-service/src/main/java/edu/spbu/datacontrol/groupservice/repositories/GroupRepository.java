@@ -1,11 +1,11 @@
-package edu.spbu.datacontrol.groupservice;
+package edu.spbu.datacontrol.groupservice.repositories;
 
 
 import java.util.UUID;
 
-import edu.spbu.datacontrol.Group;
-import edu.spbu.datacontrol.User;
-import edu.spbu.datacontrol.enums.GroupType;
+import edu.spbu.datacontrol.commons.Group;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.commons.enums.GroupType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

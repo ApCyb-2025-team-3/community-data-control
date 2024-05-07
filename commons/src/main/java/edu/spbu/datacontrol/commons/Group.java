@@ -1,7 +1,7 @@
-package edu.spbu.datacontrol;
+package edu.spbu.datacontrol.commons;
 
-import edu.spbu.datacontrol.enums.EnumUtils;
-import edu.spbu.datacontrol.enums.GroupType;
+import edu.spbu.datacontrol.commons.enums.EnumUtils;
+import edu.spbu.datacontrol.commons.enums.GroupType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

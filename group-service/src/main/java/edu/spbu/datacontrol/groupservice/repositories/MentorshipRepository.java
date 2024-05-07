@@ -1,7 +1,7 @@
-package edu.spbu.datacontrol.mentorship.repositories;
+package edu.spbu.datacontrol.groupservice.repositories;
 
 
-import edu.spbu.datacontrol.User;
+import edu.spbu.datacontrol.commons.User;
 import edu.spbu.datacontrol.mentorship.models.Mentorship;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -1,15 +1,15 @@
-package edu.spbu.datacontrol.mentorship;
+package edu.spbu.datacontrol.groupservice;
 
 
-import edu.spbu.datacontrol.Event;
-import edu.spbu.datacontrol.EventRepository;
-import edu.spbu.datacontrol.User;
-import edu.spbu.datacontrol.UserDTO;
-import edu.spbu.datacontrol.enums.EventType;
-import edu.spbu.datacontrol.enums.MentorshipStatus;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.commons.UserDTO;
+import edu.spbu.datacontrol.commons.enums.MentorshipStatus;
+import edu.spbu.datacontrol.eventservice.EventRepository;
+import edu.spbu.datacontrol.eventservice.models.Event;
+import edu.spbu.datacontrol.eventservice.models.EventType;
+import edu.spbu.datacontrol.groupservice.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.mentorship.models.Mentorship;
 import edu.spbu.datacontrol.mentorship.models.MentorshipDTO;
-import edu.spbu.datacontrol.mentorship.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.userservice.UserRepository;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;

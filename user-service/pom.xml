@@ -8,7 +8,7 @@
         <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>edu.spbu</groupId>
+    <groupId>edu.spbu.datacontrol</groupId>
     <artifactId>user-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>user-service</name>
@@ -114,7 +114,7 @@
             <version>10.1.16</version>
         </dependency>
         <dependency>
-            <groupId>edu.spbu</groupId>
+            <groupId>edu.spbu.datacontrol</groupId>
             <artifactId>commons</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>

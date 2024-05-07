@@ -1,7 +1,7 @@
 package edu.spbu.datacontrol.userservice.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import edu.spbu.datacontrol.User;
+import edu.spbu.datacontrol.commons.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;

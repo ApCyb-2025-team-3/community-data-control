@@ -1,4 +1,4 @@
-package edu.spbu.datacontrol.enums;
+package edu.spbu.datacontrol.commons.enums;
 
 import lombok.Getter;
 

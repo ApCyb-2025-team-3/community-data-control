@@ -1,16 +1,17 @@
 package edu.spbu.datacontrol.userservice;
 
 
-import edu.spbu.datacontrol.*;
-import edu.spbu.datacontrol.enums.*;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.commons.UserAdditionDTO;
+import edu.spbu.datacontrol.commons.UserDTO;
+import edu.spbu.datacontrol.commons.UserDataChangeDTO;
+import edu.spbu.datacontrol.commons.enums.*;
 import edu.spbu.datacontrol.eventservice.EventClient;
 import edu.spbu.datacontrol.eventservice.models.Event;
 import edu.spbu.datacontrol.eventservice.models.EventType;
 import edu.spbu.datacontrol.userservice.models.ChangeUserProjectDTO;
 import edu.spbu.datacontrol.userservice.models.UserInfoDTO;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

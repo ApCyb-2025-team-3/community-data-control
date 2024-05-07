@@ -1,4 +1,4 @@
-package edu.spbu.datacontrol;
+package edu.spbu.datacontrol.commons;
 
 import java.util.Date;
 import java.util.UUID;

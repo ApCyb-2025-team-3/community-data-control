@@ -1,6 +1,6 @@
 package edu.spbu.datacontrol.mentorship.models;
 
-import edu.spbu.datacontrol.User;
+import edu.spbu.datacontrol.commons.User;
 import jakarta.persistence.*;
 
 import java.util.Date;

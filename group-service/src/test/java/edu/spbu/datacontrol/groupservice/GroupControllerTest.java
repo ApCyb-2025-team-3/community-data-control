@@ -1,7 +1,12 @@
 package edu.spbu.datacontrol.groupservice;
 
 
-import edu.spbu.datacontrol.*;
+import edu.spbu.datacontrol.commons.Group;
+import edu.spbu.datacontrol.commons.GroupInfoDTO;
+import edu.spbu.datacontrol.commons.ModifiedGroupDTO;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.eventservice.EventClient;
+import edu.spbu.datacontrol.groupservice.repositories.GroupRepository;
 import edu.spbu.datacontrol.userservice.UserRepository;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -9,7 +14,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
@@ -18,7 +22,7 @@ import static org.springframework.test.util.AssertionErrors.assertEquals;
 public class GroupControllerTest {
     GroupRepository mockGroupRepository = Mockito.mock(GroupRepository.class);
     UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
-    EventRepository mockEventLog = Mockito.mock(EventRepository.class);
+    EventClient mockEventLog = Mockito.mock(EventClient.class);
 
     @Test
     public void isUpdateComplete() throws Exception {
@@ -41,7 +45,7 @@ public class GroupControllerTest {
 
         Mockito.when(mockUserRepository.getUserById(uuidUser2)).thenReturn(teamLead2);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, "Test2", "update", uuidUser2));
 
@@ -74,7 +78,7 @@ public class GroupControllerTest {
 
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, "Test2", "update", uuidUser));
 
@@ -85,7 +89,7 @@ public class GroupControllerTest {
     public void cantChangedGroupThatDoesNotExist() throws Exception {
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupById(null)).thenReturn(null);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(null, "543", "%", null));
 
@@ -111,7 +115,7 @@ public class GroupControllerTest {
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, null, null, null));
 
@@ -138,7 +142,7 @@ public class GroupControllerTest {
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> disband = groupController.disbandGroup(groupId, "testing");
         ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, "543", "%", null));
@@ -158,7 +162,7 @@ public class GroupControllerTest {
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupByName("Test1")).thenReturn(null);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.createGroup(groupInfo, uuidUser);
 
@@ -178,7 +182,7 @@ public class GroupControllerTest {
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupByName(null)).thenReturn(null);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.createGroup(groupInfo, uuidUser);
 
@@ -204,7 +208,7 @@ public class GroupControllerTest {
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupByName("Test1")).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.createGroup(groupInfo, uuidUser);
 
@@ -229,7 +233,7 @@ public class GroupControllerTest {
 
         Mockito.when(mockUserRepository.getUserById(uuidUser)).thenReturn(teamLead1);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.disbandGroup(groupId, "Testing");
 
@@ -260,7 +264,7 @@ public class GroupControllerTest {
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
         Mockito.when(mockGroupRepository.getGroupByName("Test1")).thenReturn(testGroup);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.disbandGroup(groupId, "Testing");
         ResponseEntity<String> response2 = groupController.disbandGroup(groupId, "Testing2");
@@ -274,7 +278,7 @@ public class GroupControllerTest {
     @Test
     public void cantDisbandNotExistingGroup() throws Exception {
         Mockito.when(mockUserRepository.getUserById(null)).thenReturn(null);
-        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository, mockEventLog);
+        GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> response = groupController.disbandGroup(null, "Testing");
 

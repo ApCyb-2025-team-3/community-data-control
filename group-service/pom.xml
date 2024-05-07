@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.0</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -113,12 +113,12 @@
             <version>10.1.16</version>
         </dependency>
         <dependency>
-            <groupId>edu.spbu</groupId>
+            <groupId>edu.spbu.datacontrol</groupId>
             <artifactId>commons</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>edu.spbu</groupId>
+            <groupId>edu.spbu.datacontrol</groupId>
             <artifactId>user-service</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

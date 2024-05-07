@@ -1,9 +1,9 @@
-package edu.spbu.datacontrol;
+package edu.spbu.datacontrol.commons;
 
-import edu.spbu.datacontrol.enums.EnumUtils;
-import edu.spbu.datacontrol.enums.Grade;
-import edu.spbu.datacontrol.enums.MentorshipStatus;
-import edu.spbu.datacontrol.enums.Role;
+import edu.spbu.datacontrol.commons.enums.EnumUtils;
+import edu.spbu.datacontrol.commons.enums.Grade;
+import edu.spbu.datacontrol.commons.enums.MentorshipStatus;
+import edu.spbu.datacontrol.commons.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

@@ -109,7 +109,7 @@
 
     </dependencies>
 
-    <groupId>edu.spbu</groupId>
+    <groupId>edu.spbu.datacontrol</groupId>
     <artifactId>commons</artifactId>
 
     <properties>

@@ -1,4 +1,4 @@
-package edu.spbu.datacontrol;
+package edu.spbu.datacontrol.commons;
 
 import jakarta.validation.constraints.NotNull;
 

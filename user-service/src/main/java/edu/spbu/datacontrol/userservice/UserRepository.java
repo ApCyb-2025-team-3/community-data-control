@@ -1,10 +1,10 @@
 package edu.spbu.datacontrol.userservice;
 
 
-import edu.spbu.datacontrol.User;
-import edu.spbu.datacontrol.enums.Grade;
-import edu.spbu.datacontrol.enums.MentorshipStatus;
-import edu.spbu.datacontrol.enums.Role;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.commons.enums.Grade;
+import edu.spbu.datacontrol.commons.enums.MentorshipStatus;
+import edu.spbu.datacontrol.commons.enums.Role;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

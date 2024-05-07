@@ -3,8 +3,8 @@ package edu.spbu.datacontrol.userservice;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import edu.spbu.datacontrol.User;
-import edu.spbu.datacontrol.enums.Role;
+import edu.spbu.datacontrol.commons.User;
+import edu.spbu.datacontrol.commons.enums.Role;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import java.util.ArrayList;
 import java.util.List;
