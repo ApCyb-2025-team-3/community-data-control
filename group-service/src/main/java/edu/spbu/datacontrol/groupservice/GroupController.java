@@ -48,7 +48,7 @@ public class GroupController {
         this.groupRepository = groupRepository;
 
         if (userServiceUrl == null) {
-            userServiceUrl = "localhost:5001";
+            userServiceUrl = "localhost:5002";
         }
         this.userClient = new UserClient("http://" + userServiceUrl);
 
