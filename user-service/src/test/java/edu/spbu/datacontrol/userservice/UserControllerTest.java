@@ -1,47 +1,76 @@
 package edu.spbu.datacontrol.userservice;
 
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.spbu.datacontrol.commons.UserAdditionDTO;
 import edu.spbu.datacontrol.commons.UserDTO;
 import edu.spbu.datacontrol.commons.UserDataChangeDTO;
 import edu.spbu.datacontrol.userservice.models.ChangeUserProjectDTO;
 import edu.spbu.datacontrol.userservice.models.UserInfoDTO;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @SpringBootTest
+@WireMockTest
 @AutoConfigureMockMvc
 @AutoConfigureEmbeddedDatabase
 class UserControllerTest {
+    static WireMockServer mockEventService = new WireMockServer();
 
     @Autowired
     private MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(
             new JavaTimeModule()).setDateFormat(new StdDateFormat().withColonInTimeZone(true));
+
+    @BeforeAll
+    static void beforeAll(){
+        mockEventService.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockEventService.stop();
+    }
+
+    @AfterEach
+    void afterEach() throws URISyntaxException {
+        mockEventService.resetAll();
+        WireMock.stubFor(WireMock.get("localhost:5001/api/event/add").willReturn(aResponse().withStatus(201)));
+    }
 
     @Test
     void addUserTest() throws Exception {
@@ -119,7 +148,8 @@ class UserControllerTest {
         addUser(user);
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByRole").param("role", user.getRole())
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getUsersByRole").param("role", user.getRole())
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson,
@@ -129,7 +159,8 @@ class UserControllerTest {
 
         String description = "Testing dismiss";
         String response = this.mockMvc.perform(
-                        post("/api/user/" + id.toString() + "/dismiss?date=" + LocalDate.now())
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                    .post("/api/user/" + id.toString() + "/dismiss?date=" + LocalDate.now())
                                 .param("description", description))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -146,18 +177,22 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
 
-        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss?date=" + LocalDate.now())
+        this.mockMvc.perform(
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/api/user/" + userId.toString() + "/dismiss?date=" + LocalDate.now())
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByRole").param("role", user.getRole())
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getUsersByRole").param("role", user.getRole())
         ).andReturn().getResponse().getContentAsString();
         List<UserDTO> result = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         assertTrue(result.stream().noneMatch(t -> t.getId().equals(userId)));
 
         usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByGrade").param("grade", user.getGrade())
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getUsersByGrade").param("grade", user.getGrade())
         ).andReturn().getResponse().getContentAsString();
         result = objectMapper.readValue(usersListJson, new TypeReference<>() {});
         assertTrue(result.stream().noneMatch(t -> t.getId().equals(userId)));
@@ -182,7 +217,8 @@ class UserControllerTest {
         addUser(subordinate);
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersBySupervisor").param("partialName", supervisor.getName())
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getUsersBySupervisor").param("partialName", supervisor.getName())
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
@@ -262,7 +298,8 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(newUserData);
 
         this.mockMvc.perform(
-                post("/api/user/changeUsersPersonalData")
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/api/user/changeUsersPersonalData")
                         .param("reason", "test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
@@ -280,13 +317,16 @@ class UserControllerTest {
         addUser(user);
 
         UUID userId = getUserId(user);
-        this.mockMvc.perform(post("/api/user/" + userId.toString() + "/dismiss")
+        this.mockMvc.perform(
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/api/user/" + userId.toString() + "/dismiss")
                 .param("date", LocalDate.now().toString())
                 .param("description", "For testing purpose.")
         ).andExpect(status().isOk());
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getDismissedUsers")).andReturn().getResponse().getContentAsString();
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getDismissedUsers")).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
@@ -306,7 +346,8 @@ class UserControllerTest {
 
         UUID userId = getUserId(user);
         String userJson = this.mockMvc.perform(
-                get("/api/user/" + userId.toString() + "/fullInfo")
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/" + userId.toString() + "/fullInfo")
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         UserInfoDTO result = objectMapper.readValue(userJson, UserInfoDTO.class);
@@ -327,7 +368,9 @@ class UserControllerTest {
         addUser(user);
 
         UUID userId = getUserId(user);
-        this.mockMvc.perform(post("/api/user/" + userId + "/changeGrade")
+        this.mockMvc.perform(
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/api/user/" + userId + "/changeGrade")
                 .param("grade", "Senior")
                 .param("reason", "For testing purpose.")
         ).andExpect(status().isOk());
@@ -343,9 +386,11 @@ class UserControllerTest {
         addUser(user);
 
         UUID userId = getUserId(user);
-        this.mockMvc.perform(post("/api/user/" + userId + "/changeRole")
-            .param("role", "Supervisor")
-            .param("reason", "For testing purpose.")
+        this.mockMvc.perform(
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/api/user/" + userId + "/changeRole")
+                .param("role", "Supervisor")
+                .param("reason", "For testing purpose.")
         ).andExpect(status().isOk());
 
         UserDTO modifiedUser = getUserById(userId);
@@ -362,7 +407,9 @@ class UserControllerTest {
         String newProjectName = "new project";
         ChangeUserProjectDTO changeUserProjectDTO =
                 new ChangeUserProjectDTO(userId, newProjectName, "", "", LocalDate.now(), new String[]{""});
-        this.mockMvc.perform(post("/api/user/changeUserProject")
+        this.mockMvc.perform(
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/api/user/changeUserProject")
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(changeUserProjectDTO))
         ).andExpect(status().isOk());
 
@@ -384,7 +431,8 @@ class UserControllerTest {
         String partialName = "John";
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByPartialName").param("partialName", partialName)
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getUsersByPartialName").param("partialName", partialName)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {
@@ -401,7 +449,8 @@ class UserControllerTest {
         addUser(user);
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/" + methodUrl).params(params)
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/" + methodUrl).params(params)
         ).andReturn().getResponse().getContentAsString();
 
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
@@ -412,7 +461,8 @@ class UserControllerTest {
     private UUID getUserIdByName(String userName) throws Exception {
 
         String usersListJson = this.mockMvc.perform(
-                get("/api/user/getUsersByPartialName").param("partialName", userName)
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/getUsersByPartialName").param("partialName", userName)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         List<UserDTO> usersList = objectMapper.readValue(usersListJson, new TypeReference<>() {});
 
@@ -429,7 +479,8 @@ class UserControllerTest {
     private UserDTO getUserById(UUID userId) throws Exception {
 
         String userJson = this.mockMvc.perform(
-                get("/api/user/" + userId.toString())
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .get("/api/user/" + userId.toString())
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         return objectMapper.readValue(userJson, UserDTO.class);
@@ -439,7 +490,8 @@ class UserControllerTest {
 
         String json = objectMapper.writeValueAsString(user);
         this.mockMvc.perform(
-                post("/api/user/add")
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                    .post("/api/user/add")
                     .contentType(MediaType.APPLICATION_JSON).content(json))
             .andExpect(status().isCreated());
     }
@@ -448,9 +500,10 @@ class UserControllerTest {
 
         String json = objectMapper.writeValueAsString(user);
         this.mockMvc.perform(
-                        post("/api/user/add")
-                                .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(expected);
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                    .post("/api/user/add")
+                    .contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(expected);
     }
 
     private String generateRandomString() {

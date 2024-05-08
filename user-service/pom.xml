@@ -112,6 +112,14 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>10.1.16</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>3.5.4</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>edu.spbu.datacontrol</groupId>
             <artifactId>commons</artifactId>
