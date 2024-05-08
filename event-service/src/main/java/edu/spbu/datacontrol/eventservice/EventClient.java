@@ -23,11 +23,10 @@ public class EventClient {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public EventClient(String serviceUrl) {
-        this.serviceUrl = serviceUrl;
+        this.serviceUrl = serviceUrl + "/api/event";
     }
 
     public Event getEventById(UUID eventId) {
-
         try {
 
             URI requestUri = new URI("%s/%s".formatted(serviceUrl, eventId));

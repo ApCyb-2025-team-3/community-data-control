@@ -34,11 +34,11 @@ public class UserController {
 
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.eventLog = new EventClient(eventServiceUrl);
 
         if (eventServiceUrl == null) {
             eventServiceUrl = "localhost:5001";
         }
+        this.eventLog = new EventClient("http://" + eventServiceUrl);
     }
 
     @PostMapping("/add")

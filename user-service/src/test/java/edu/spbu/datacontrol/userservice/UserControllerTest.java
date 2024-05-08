@@ -2,6 +2,8 @@ package edu.spbu.datacontrol.userservice;
 
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -14,12 +16,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import edu.spbu.datacontrol.commons.User;
 import edu.spbu.datacontrol.commons.UserAdditionDTO;
 import edu.spbu.datacontrol.commons.UserDTO;
 import edu.spbu.datacontrol.commons.UserDataChangeDTO;
 import edu.spbu.datacontrol.userservice.models.ChangeUserProjectDTO;
 import edu.spbu.datacontrol.userservice.models.UserInfoDTO;
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,33 +33,29 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@SpringBootTest
 @WireMockTest
 @AutoConfigureMockMvc
-@AutoConfigureEmbeddedDatabase
 class UserControllerTest {
-    static WireMockServer mockEventService = new WireMockServer();
-
-    @Autowired
+    static WireMockServer mockEventService = new WireMockServer(options().bindAddress("127.0.0.1").port(5001));
+    UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
     private MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(
             new JavaTimeModule()).setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     @BeforeAll
-    static void beforeAll(){
+    static void beforeAll() {
         mockEventService.start();
     }
 
@@ -69,15 +67,32 @@ class UserControllerTest {
     @AfterEach
     void afterEach() throws URISyntaxException {
         mockEventService.resetAll();
-        WireMock.stubFor(WireMock.get("localhost:5001/api/event/add").willReturn(aResponse().withStatus(201)));
     }
 
     @Test
     void addUserTest() throws Exception {
 
-        UserAdditionDTO userData = generateSimpleUser();
+        //mockEventService.start();
+        mockEventService.stubFor(WireMock.post(urlPathEqualTo("/api/event/add"))
+            .willReturn(aResponse().withStatus(201)));
 
-        addUser(userData);
+        // For test
+        mockEventService.stubFor(WireMock.get(urlPathEqualTo("/api/event/add"))
+            .willReturn(aResponse().withStatus(200)));
+
+        boolean t = mockEventService.isRunning();
+        UserAdditionDTO userData = generateSimpleUser();
+        User expected = new User(userData);
+
+        Mockito.when(mockUserRepository.save(expected)).thenReturn(expected);
+        UserController userController = new UserController(mockUserRepository);
+
+        ResponseEntity<String> result = userController.addUser(userData);
+
+        assertEquals(HttpStatus.CREATED, result.getStatusCode());
+        //addUser(userData);
+
+        //mockEventService.stop();
     }
 
     @Test
