@@ -29,7 +29,7 @@ public class EventClient {
     public Event getEventById(UUID eventId) {
         try {
 
-            URI requestUri = new URI("%s/%s".formatted(serviceUrl, eventId));
+            URI requestUri = new URI(serviceUrl + "/" + eventId);
             ResponseEntity<Event> response = client.getForEntity(requestUri, Event.class);
 
             return response.getBody();
