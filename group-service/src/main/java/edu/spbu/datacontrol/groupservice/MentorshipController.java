@@ -4,13 +4,17 @@ package edu.spbu.datacontrol.groupservice;
 import edu.spbu.datacontrol.commons.User;
 import edu.spbu.datacontrol.commons.UserDTO;
 import edu.spbu.datacontrol.commons.enums.MentorshipStatus;
-import edu.spbu.datacontrol.eventservice.EventRepository;
+
+import edu.spbu.datacontrol.eventservice.EventClient;
 import edu.spbu.datacontrol.eventservice.models.Event;
 import edu.spbu.datacontrol.eventservice.models.EventType;
+
 import edu.spbu.datacontrol.groupservice.repositories.MentorshipRepository;
-import edu.spbu.datacontrol.mentorship.models.Mentorship;
-import edu.spbu.datacontrol.mentorship.models.MentorshipDTO;
-import edu.spbu.datacontrol.userservice.UserRepository;
+import edu.spbu.datacontrol.groupservice.repositories.UserRepository;
+import edu.spbu.datacontrol.groupservice.models.Mentorship;
+import edu.spbu.datacontrol.groupservice.models.MentorshipDTO;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +29,18 @@ import java.util.stream.StreamSupport;
 public class MentorshipController {
     private final UserRepository userRepository;
     private final MentorshipRepository mentorshipRepository;
-    private final EventRepository eventLog;
+    private final EventClient eventLog;
+    @Value("${event.service.url}")
+    private String eventServiceUrl;
 
-    public MentorshipController(UserRepository userRepository, MentorshipRepository mentorshipRepository,
-                                EventRepository eventLog) {
+    public MentorshipController(UserRepository userRepository, MentorshipRepository mentorshipRepository) {
         this.userRepository = userRepository;
         this.mentorshipRepository = mentorshipRepository;
-        this.eventLog = eventLog;
+
+        if (eventServiceUrl == null) {
+            eventServiceUrl = "localhost:5001";
+        }
+        this.eventLog = new EventClient("http://" + eventServiceUrl);
     }
 
     @PatchMapping("/becomeMentee")
@@ -42,7 +51,6 @@ public class MentorshipController {
             userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
-
         }
         return new ResponseEntity<>("The user has become mentee now", HttpStatusCode.valueOf(200));
     }
@@ -55,7 +63,6 @@ public class MentorshipController {
             userRepository.save(user);
         } catch (IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatusCode.valueOf(409));
-
         }
         return new ResponseEntity<>("The user has become mentor now", HttpStatusCode.valueOf(200));
     }
@@ -80,7 +87,7 @@ public class MentorshipController {
         user = userRepository.save(user);
 
         Event exitFromTheMentoringProgram = new Event(user.getId(), EventType.EXIT_FROM_THE_MENTORING_PROGRAM, "");
-        eventLog.save(exitFromTheMentoringProgram);
+        eventLog.saveEvent(exitFromTheMentoringProgram);
 
         return new ResponseEntity<>("The user has successfully left the mentoring program",
                 HttpStatusCode.valueOf(200));
@@ -214,7 +221,7 @@ public class MentorshipController {
         }
         User user = userRepository.getUserById(userId);
         if (user.getMentorStatus() == MentorshipStatus.NOT_PARTICIPATING) {
-            eventLog.save(new Event(userId, EventType.JOINING_THE_MENTORING_PROGRAM, ""));
+            eventLog.saveEvent(new Event(userId, EventType.JOINING_THE_MENTORING_PROGRAM, ""));
         }
         user.setMentorStatus(mentorStatus);
     }
