@@ -14,8 +14,8 @@ import edu.spbu.datacontrol.eventservice.EventClient;
 import edu.spbu.datacontrol.eventservice.models.Event;
 import edu.spbu.datacontrol.eventservice.models.EventType;
 import edu.spbu.datacontrol.groupservice.repositories.GroupRepository;
+import edu.spbu.datacontrol.groupservice.repositories.UserRepository;
 import edu.spbu.datacontrol.userservice.UserClient;
-import edu.spbu.datacontrol.userservice.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/group")
 public class GroupController {
     private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+
     private final UserClient userClient;
     private final EventClient eventLog;
     @Value("${event.service.url}")
@@ -44,8 +46,9 @@ public class GroupController {
     @Value("${user.service.url}")
     private String userServiceUrl;
 
-    public GroupController(GroupRepository groupRepository) {
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
 
         if (userServiceUrl == null) {
             userServiceUrl = "localhost:5002";

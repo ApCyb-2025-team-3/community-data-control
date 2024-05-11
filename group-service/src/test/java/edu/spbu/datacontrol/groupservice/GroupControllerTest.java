@@ -7,7 +7,7 @@ import edu.spbu.datacontrol.commons.ModifiedGroupDTO;
 import edu.spbu.datacontrol.commons.User;
 import edu.spbu.datacontrol.eventservice.EventClient;
 import edu.spbu.datacontrol.groupservice.repositories.GroupRepository;
-import edu.spbu.datacontrol.userservice.UserRepository;
+import edu.spbu.datacontrol.groupservice.repositories.UserRepository;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatusCode;
