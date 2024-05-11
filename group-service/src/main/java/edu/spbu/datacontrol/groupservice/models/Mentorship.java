@@ -1,4 +1,4 @@
-package edu.spbu.datacontrol.mentorship.models;
+package edu.spbu.datacontrol.groupservice.models;
 
 import edu.spbu.datacontrol.commons.User;
 import jakarta.persistence.*;
