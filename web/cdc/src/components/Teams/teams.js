@@ -484,205 +484,192 @@ const Teams = () => {
         //     return <AddUser/>
         // }
 
-        const InfoBlock = () => {
-            return (
-                <div className={`${classes.rightBlock}`}>
-                    <div className={`${classes.teamInfoHeading}`}>
-                        <div className={`${classes.headingTitle}`}>
-                            <p>Команда:</p>
-                            <div className={`${classes.headingTitleTeamName}`}>{groupDto.name}</div>
-                        </div>
-
-                        <div className={`${classes.headingActivity}`}>
-                            <p>Активность:</p>
-                            <div className={`${classes.headingActivityStatus}`} style={{background: activeColor(groupDto.active)}} />
-                        </div>
+        return (
+            <div className={`${classes.rightBlock}`}>
+                <div className={`${classes.teamInfoHeading}`}>
+                    <div className={`${classes.headingTitle}`}>
+                        <p>Команда:</p>
+                        <div className={`${classes.headingTitleTeamName}`}>{groupDto.name}</div>
                     </div>
-
+    
+                    <div className={`${classes.headingActivity}`}>
+                        <p>Активность:</p>
+                        <div className={`${classes.headingActivityStatus}`} style={{background: activeColor(groupDto.active)}} />
+                    </div>
+                </div>
+    
+            <div 
+                className={`${classes.infoBody}`}
+                style={groupDto.active ? {justifyContent: "flex-between"} : {justifyContent: "flex-start"}}
+            >
+                <div className={`${classes.bodyLeacre}`}>
+                    <div className={`${classes.leacreLeader}`}>
+                    <p>Лидер:</p>
+                    <div className={`${classes.leacreLeaderName}`}>{groupDto.teamLeadName}</div>
+                    </div>
+                    <div className={`${classes.leacreCreated}`}>
+                    <p>Создана:</p>
+                    <div className={`${classes.leacreCreatedDate}`}>{changeDateFormat(groupDto.creationDate)}</div>
+                    </div>
+                </div>
+    
+                <div className={`${classes.bodyDescription}`}>
+                    <p>Описание:</p>
+                    <div className={`${classes.bodyDescriptionText}`}>{groupDto.description}</div>
+                </div>
+    
                 <div 
-                    className={`${classes.infoBody}`}
-                    style={groupDto.active ? {justifyContent: "flex-between"} : {justifyContent: "flex-start"}}
+                    className={`${classes.bodyMembers}`}
+                    style={groupDto.active ? {display: "flex"} : {display: "none"}}
                 >
-                    <div className={`${classes.bodyLeacre}`}>
-                        <div className={`${classes.leacreLeader}`}>
-                        <p>Лидер:</p>
-                        <div className={`${classes.leacreLeaderName}`}>{groupDto.teamLeadName}</div>
-                        </div>
-                        <div className={`${classes.leacreCreated}`}>
-                        <p>Создана:</p>
-                        <div className={`${classes.leacreCreatedDate}`}>{changeDateFormat(groupDto.creationDate)}</div>
-                        </div>
-                    </div>
-
-                    <div className={`${classes.bodyDescription}`}>
-                        <p>Описание:</p>
-                        <div className={`${classes.bodyDescriptionText}`}>{groupDto.description}</div>
-                    </div>
-
-                    <div 
-                        className={`${classes.bodyMembers}`}
-                        style={groupDto.active ? {display: "flex"} : {display: "none"}}
-                    >
-                        <p>Члены:</p>
-                        <ul className={`${classes.bodyMembersTable}`}>
-                            {renderActiveMemberList(groupDto.id, userList)}
-                        </ul>
-                    </div>
-
-                    {disbandedDate(groupDto)}
-                    {disbandedReason(groupDto)}
-
-                    <div 
-                        className={`${classes.bodyButtons}`}
-                        style={groupDto.active ? {display: "flex"} : {display: "none"}}
-                    >
-                        <Popup trigger=
-                            {<button
-                                className={`${classes.bodyButtonsButton}`}
-                            >
-                                Внести изменения
-                            </button>}
-                                modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUpMask}`}>
-                                        <div className={`${classes.popUp}`}>
-                                            <div className={`${classes.popUpContent}`}>
-                                                Внести изменения
-                                                <AsyncSelect
-                                                    cacheOptions
-                                                    defaultOptions
-                                                    classNamePrefix="custom"
-                                                    className="custom-container"
-                                                    placeholder="Тимлид  "
-                                                    styles={customStyles}
-                                                    loadOptions={promiseOptions}
-                                                    onChange={(selectedOption) => setModifiedInfo(selectedOption.id)}
-
-                                                />
+                    <p>Члены:</p>
+                    <ul className={`${classes.bodyMembersTable}`}>
+                        {renderActiveMemberList(groupDto.id, userList)}
+                    </ul>
+                </div>
+    
+                {disbandedDate(groupDto)}
+                {disbandedReason(groupDto)}
+    
+                <div 
+                    className={`${classes.bodyButtons}`}
+                    style={groupDto.active ? {display: "flex"} : {display: "none"}}
+                >
+                    <Popup trigger=
+                        {<button
+                            className={`${classes.bodyButtonsButton}`}
+                        >
+                            Внести изменения
+                        </button>}
+                            modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            Внести изменения
+                                            <AsyncSelect
+                                                cacheOptions
+                                                defaultOptions
+                                                classNamePrefix="custom"
+                                                className="custom-container"
+                                                placeholder="Тимлид  "
+                                                styles={customStyles}
+                                                loadOptions={promiseOptions}
+                                                onChange={(selectedOption) => setModifiedInfo(selectedOption.id)}
+    
+                                            />
+                                        <form action="">
+                                            <input id={"teamName"} placeholder="Название"
+                                            onChange={(event) => setModifiedInfo({ ...modifiedInfo, name: event.target.value })}
+                                            />
+                                        </form>
+                                        <form action="">
+                                            <input id={"teamDescription"} placeholder="Описание" 
+                                            onChange={(event) => setModifiedInfo({ ...modifiedInfo, name: event.target.value })}
+                                            />
+                                        </form>
+    
+                                        <div className={`${classes.popUpButtons}`}>
+                                            <button onClick={(event) => {
+                                                // setModifiedInfo({ ...modifiedInfo, id: groupDto.id })
+                                                updateTeam()
+                                                close()
+                                            }}>
+                                                Подтвердить
+                                            </button>
+                                            <button onClick=
+                                                {() => close()}>
+                                            Отменить
+                                            </button>
+                                        </div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </Popup>
+    
+                    <Popup trigger=
+                        {<button
+                            className={`${classes.bodyButtonsButton}`}
+                        >
+                            + сотрудника
+                        </button>}
+                            modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            Выберите сотрудника
                                             <form action="">
-                                                <input id={"teamName"} placeholder="Название"
-                                                onChange={(event) => setModifiedInfo({ ...modifiedInfo, name: event.target.value })}
-                                                />
+                                                <input id={"newMember"} placeholder="Сотрудник" required/>
                                             </form>
-                                            <form action="">
-                                                <input id={"teamDescription"} placeholder="Описание" 
-                                                onChange={(event) => setModifiedInfo({ ...modifiedInfo, name: event.target.value })}
-                                                />
-                                            </form>
-
+    
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
-                                                    // setModifiedInfo({ ...modifiedInfo, id: groupDto.id })
-                                                    updateTeam()
+                                                    addNewMember(groupDto.id, document.getElementById("newMember").value)
                                                     close()
                                                 }}>
                                                     Подтвердить
                                                 </button>
                                                 <button onClick=
                                                     {() => close()}>
-                                                Отменить
+                                                 Отменить
                                                 </button>
                                             </div>
-                                            </div>
-                                            <div>
-                                            </div>
+                                        </div>
+                                        <div>
                                         </div>
                                     </div>
-                                )
-                            }
-                        </Popup>
-
-                        <Popup trigger=
-                            {<button
-                                className={`${classes.bodyButtonsButton}`}
-                            >
-                                + сотрудника
-                            </button>}
-                                modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUpMask}`}>
-                                        <div className={`${classes.popUp}`}>
-                                            <div className={`${classes.popUpContent}`}>
-                                                Выберите сотрудника
-                                                <form action="">
-                                                    <input id={"newMember"} placeholder="Сотрудник" required/>
-                                                </form>
-
-                                                <div className={`${classes.popUpButtons}`}>
-                                                    <button onClick={(event) => {
-                                                        addNewMember(groupDto.id, document.getElementById("newMember").value)
-                                                        close()
-                                                    }}>
-                                                        Подтвердить
-                                                    </button>
-                                                    <button onClick=
-                                                        {() => close()}>
-                                                     Отменить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div>
+                                </div>
+                            )
+                        }
+                    </Popup>
+    
+                    <Popup trigger=
+                        {<button
+                            className={`${classes.bodyButtonsButton}`}
+                        >
+                            Расформировать
+                        </button>}
+                            modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            Введите причину увольнения
+                                            <form action="">
+                                                <input id={"disbandReason"} placeholder="Причина" required/>
+                                            </form>
+                                            <div className={`${classes.popUpButtons}`}>
+                                                <button onClick={(event) => {
+                                                    disband(groupDto.id, document.getElementById("disbandReason").value)
+                                                    close()
+                                                }}>
+                                                    Подтвердить
+                                                </button>
+                                                <button onClick=
+                                                    {() => close()}>
+                                                 Отменить
+                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            }
-                        </Popup>
-
-                        <Popup trigger=
-                            {<button
-                                className={`${classes.bodyButtonsButton}`}
-                            >
-                                Расформировать
-                            </button>}
-                                modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUpMask}`}>
-                                        <div className={`${classes.popUp}`}>
-                                            <div className={`${classes.popUpContent}`}>
-                                                Введите причину увольнения
-                                                <form action="">
-                                                    <input id={"disbandReason"} placeholder="Причина" required/>
-                                                </form>
-                                                <div className={`${classes.popUpButtons}`}>
-                                                    <button onClick={(event) => {
-                                                        disband(groupDto.id, document.getElementById("disbandReason").value)
-                                                        close()
-                                                    }}>
-                                                        Подтвердить
-                                                    </button>
-                                                    <button onClick=
-                                                        {() => close()}>
-                                                     Отменить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
+                                        <div>
                                         </div>
                                     </div>
-                                )
-                            }
-                        </Popup>
-                    </div>
+                                </div>
+                            )
+                        }
+                    </Popup>
                 </div>
             </div>
-            );
-        }
-
-
-        if (state.isGroupSelected === 0) {
-            return (
-                <div className={`${classes.rightBlock}`} style={{ display: "none" }}></div>
-            );
-        } else {
-            return(
-                <InfoBlock />
-            )
-        }
+        </div>
+        );
     }
 
     function disbandedDate (groupDto) {
