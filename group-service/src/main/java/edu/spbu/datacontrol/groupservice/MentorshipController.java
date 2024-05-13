@@ -5,9 +5,9 @@ import edu.spbu.datacontrol.commons.User;
 import edu.spbu.datacontrol.commons.UserDTO;
 import edu.spbu.datacontrol.commons.enums.MentorshipStatus;
 
-import edu.spbu.datacontrol.eventservice.EventClient;
-import edu.spbu.datacontrol.eventservice.models.Event;
-import edu.spbu.datacontrol.eventservice.models.EventType;
+import edu.spbu.datacontrol.commons.EventClient;
+import edu.spbu.datacontrol.commons.Event;
+import edu.spbu.datacontrol.commons.EventType;
 
 import edu.spbu.datacontrol.groupservice.repositories.MentorshipRepository;
 import edu.spbu.datacontrol.groupservice.repositories.UserRepository;

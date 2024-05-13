@@ -533,11 +533,11 @@ class UserControllerTest {
         String generatedPhone = generateRandomString();
 
         String[] grades = new String[]{"Junior", "Middle", "Senior", "Team Lead"};
-        int gradeId = random.nextInt(0, 4);
+        int gradeId = random.nextInt(4);
 
         String[] roles = new String[]{"Member", "Data Engineer", "Developer", "Team Lead",
                 "Product Owner"};
-        int roleId = random.nextInt(0, 5);
+        int roleId = random.nextInt(5);
 
         return new UserAdditionDTO(
                 generatedName,

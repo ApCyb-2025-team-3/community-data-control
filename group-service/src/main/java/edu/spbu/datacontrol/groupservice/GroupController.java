@@ -10,12 +10,11 @@ import edu.spbu.datacontrol.commons.UserDTO;
 import edu.spbu.datacontrol.commons.enums.EnumUtils;
 import edu.spbu.datacontrol.commons.enums.GroupType;
 import edu.spbu.datacontrol.commons.enums.Role;
-import edu.spbu.datacontrol.eventservice.EventClient;
-import edu.spbu.datacontrol.eventservice.models.Event;
-import edu.spbu.datacontrol.eventservice.models.EventType;
+import edu.spbu.datacontrol.commons.EventClient;
+import edu.spbu.datacontrol.commons.Event;
+import edu.spbu.datacontrol.commons.EventType;
 import edu.spbu.datacontrol.groupservice.repositories.GroupRepository;
 import edu.spbu.datacontrol.groupservice.repositories.UserRepository;
-import edu.spbu.datacontrol.userservice.UserClient;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,22 +37,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupController {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-
-    private final UserClient userClient;
     private final EventClient eventLog;
     @Value("${event.service.url}")
     private String eventServiceUrl;
-    @Value("${user.service.url}")
-    private String userServiceUrl;
 
     public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
-
-        if (userServiceUrl == null) {
-            userServiceUrl = "localhost:5002";
-        }
-        this.userClient = new UserClient("http://" + userServiceUrl);
 
         if (eventServiceUrl == null) {
             eventServiceUrl = "localhost:5001";

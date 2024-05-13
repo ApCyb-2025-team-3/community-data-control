@@ -5,7 +5,7 @@ import edu.spbu.datacontrol.commons.Group;
 import edu.spbu.datacontrol.commons.GroupInfoDTO;
 import edu.spbu.datacontrol.commons.ModifiedGroupDTO;
 import edu.spbu.datacontrol.commons.User;
-import edu.spbu.datacontrol.eventservice.EventClient;
+import edu.spbu.datacontrol.commons.EventClient;
 import edu.spbu.datacontrol.groupservice.repositories.GroupRepository;
 import edu.spbu.datacontrol.groupservice.repositories.UserRepository;
 import org.junit.Test;

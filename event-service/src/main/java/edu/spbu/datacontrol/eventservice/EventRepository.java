@@ -1,7 +1,7 @@
 package edu.spbu.datacontrol.eventservice;
 
-import edu.spbu.datacontrol.eventservice.models.Event;
-import edu.spbu.datacontrol.eventservice.models.EventType;
+import edu.spbu.datacontrol.commons.Event;
+import edu.spbu.datacontrol.commons.EventType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package edu.spbu.datacontrol.eventservice.models;
+package edu.spbu.datacontrol.commons;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

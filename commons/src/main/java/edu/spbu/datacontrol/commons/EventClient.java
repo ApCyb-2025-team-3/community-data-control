@@ -1,9 +1,7 @@
-package edu.spbu.datacontrol.eventservice;
+package edu.spbu.datacontrol.commons;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.spbu.datacontrol.eventservice.models.Event;
-import edu.spbu.datacontrol.eventservice.models.EventType;
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

@@ -119,7 +119,7 @@
         </dependency>
         <dependency>
             <groupId>edu.spbu.datacontrol</groupId>
-            <artifactId>user-service</artifactId>
+            <artifactId>userservice</artifactId>
             <version>${project.version}</version>
         </dependency>
 
