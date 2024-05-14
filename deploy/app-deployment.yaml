@@ -22,7 +22,7 @@ spec:
   selector:
     matchLabels:
       app: datacontrol-app
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -30,21 +30,28 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-        - name: frontend
-          image: docker.io/library/data-control-app-frontend:latest
+        - name: event-service
+          image: docker.io/library/data-control-app-event-service:latest
           imagePullPolicy: Never
           ports:
-            - containerPort: 80
-              name: frontend
-#        - name: event-service
-#          image: docker.io/library/data-control-app-event-service:latest
-#          imagePullPolicy: Never
-#          ports:
-#            - containerPort: 5001
-#              name: event-service
+            - containerPort: 5001
+              name: event-service
         - name: user-service
           image: docker.io/library/data-control-app-user-service:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 5002
               name: user-service
+        - name: frontend
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_APP_BACKEND_URL
+              value: http://$(POD_IP):5002
+          image: docker.io/library/data-control-app-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              name: frontend
