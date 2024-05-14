@@ -1,9 +1,71 @@
 import axios from "axios"
 
+
+const clientId = 'Ov23ctQnsqB3lpRUyEJf';
+const clientSecret = '902ad4e7133fd188e0420d54fb45b52de8a34648';
+const tokenUrl = 'http://localhost:5002/login/oauth2/code/github';
+
+
 export class UserAPI {
 
+
+    
+    static async getAccessToken() {
+        try {
+            const response = await axios.post(tokenUrl, {
+                grant_type: 'client_credentials',
+                client_id: clientId,
+                client_secret: clientSecret
+            });
+            return response.data.access_token;
+        } catch (error) {
+            console.error('Error fetching access token', error);
+            throw error;
+        }
+    }
+    accessToken;
+
+
+    static async initialize() {
+        this.accessToken = await this.getAccessToken();
+
+        axios.interceptors.request.use(
+            config => {
+                config.headers.Authorization = `Bearer ${this.accessToken}`;
+                return config;
+            },
+            error => {
+                return Promise.reject(error);
+            }
+        );
+
+        axios.interceptors.response.use(
+            response => response,
+            async error => {
+                if (error.response.status === 401 && !error.config._retry) {
+                    error.config._retry = true;
+                    this.accessToken = await this.getAccessToken();
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${this.accessToken}`;
+                    return axios(error.config);
+                }
+                return Promise.reject(error);
+            }
+        );
+    }
+
+
     static async #getRequestLogic(url) {
-        const result = await axios.get(url)
+        await this.initialize();
+
+        const result = await axios.get(url, { withCredentials: true, maxRedirects: 10 })
+            .then(response => {
+                console.log(response)
+                if (response.request?.responseURL !== url) {
+                    localStorage.clear()
+                    document.location = response.request.responseURL;
+                    return
+                }
+            })
             .catch(function (error) {
                 if (error.response) {
                     console.log(error.response.data);
@@ -11,9 +73,13 @@ export class UserAPI {
                     console.log(error.response.headers);
                     return error.response.status
                 }
+                else {
+                    console.log(error)
+                }
             });
-            return result.data
-    } 
+        console.log(result)
+        return result.data
+    }
 
     static async getUserByRole(role) {
         const url = process.env.REACT_APP_BACKEND_URL
@@ -62,10 +128,11 @@ export class UserAPI {
     }
 
     static async changePersonalDataRequest(userDto, reason) {
+        await this.initialize()
         try {
             const url = process.env.REACT_APP_BACKEND_URL + "/api/user/changeUsersPersonalData?reason=" + reason
             const response = await axios.post(url, userDto)
-            if (response.status !== 200) alert("Failed to change user's personal data") 
+            if (response.status !== 200) alert("Failed to change user's personal data")
             return response.status
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
@@ -73,6 +140,7 @@ export class UserAPI {
     }
     
     static async changeUserGradeRequest(newGrade, reason, userId) {
+        await this.initialize()
         try {
             const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${userId}/changeGrade?grade=${newGrade}&reason=${reason}`
             const response = await axios.post(url)
@@ -84,6 +152,7 @@ export class UserAPI {
     }
     
     static async changeUserRoleRequest(newRole, reason, userId) {
+        await this.initialize()
         try {
             const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(userId)}/changeRole?role=${encodeURIComponent(newRole)}&reason=${encodeURIComponent(reason)}`
             const response = await axios.post(url)
@@ -95,6 +164,7 @@ export class UserAPI {
     }
     
     static async changeProjectData(newData) {
+        await this.initialize()
         try {
             const url = process.env.REACT_APP_BACKEND_URL + '/api/user/changeUserProject'
             const response = await axios.post(url, newData)
@@ -106,6 +176,7 @@ export class UserAPI {
     }
 
     static async addUserRequest(data) {
+        await this.initialize()
         const url = process.env.REACT_APP_BACKEND_URL + "/api/user/add"
         const response = await axios.post(url, data).catch(function (error) {
             console.error('Ошибка при отправке запроса:', error)

@@ -14,6 +14,7 @@ import edu.spbu.datacontrol.userservice.models.UserInfoDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -42,6 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> addUser(@RequestBody UserAdditionDTO userData) {
 
         if (userData.getName() == null || userData.getName().isEmpty()) {
@@ -204,6 +206,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/dismiss")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> dismissUserById(@PathVariable UUID userId,
                                                   @RequestParam LocalDate date,
                                                   @RequestParam String description) {
@@ -237,6 +240,7 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/changeUsersPersonalData")
     public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
                                                           @RequestBody UserDataChangeDTO modifiedData) {
@@ -254,6 +258,7 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{userId}/changeGrade")
     public ResponseEntity<String> changeUserGrade(@PathVariable UUID userId,
                                                   @RequestParam String grade,
@@ -275,6 +280,7 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{userId}/changeRole")
     public ResponseEntity<String> changeUserRole(@PathVariable UUID userId,
                                                  @RequestParam String role,
@@ -309,6 +315,7 @@ public class UserController {
         return new ResponseEntity<>("This user doesn't exist", HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/changeUserProject")
     public ResponseEntity<String> changeUserProject(@RequestBody ChangeUserProjectDTO changeUserProjectDTO) {
 

@@ -22,11 +22,11 @@ public class UserServiceApplication {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+                registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:3000", "http://localhost:5001", "http://localhost:5002")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
             }
         };
     }
