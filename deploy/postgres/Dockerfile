@@ -1,4 +1,3 @@
-FROM ubuntu:latest
-LABEL authors="User"
+FROM postgres:15
 
-ENTRYPOINT ["top", "-b"]
+COPY create_tables.sql /docker-entrypoint-initdb.d/

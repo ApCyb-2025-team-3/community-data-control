@@ -3,7 +3,11 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
     exit;
 }
 
-cd ../web/cdc
+cd ../deploy/postgres
+docker build -t data-control-app-postgres:latest ./
+minikube image load data-control-app-postgres:latest --daemon
+
+cd ../../web/cdc
 docker build -t data-control-app-frontend:latest ./
 minikube image load data-control-app-frontend:latest --daemon
 

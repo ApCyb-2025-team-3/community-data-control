@@ -1,6 +1,7 @@
 FROM node:22 as build-deps
 WORKDIR /usr/app
-COPY package.json package-lock.json .env.production ./
+COPY package.json package-lock.json ./
+COPY .env.production .env
 COPY ./public ./public
 COPY ./src ./src
 RUN npm install --production && npm run build

@@ -30,7 +30,8 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: postgres
-          image: postgres:15
+          image: docker.io/library/data-control-app-postgres:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 5432
               name: postgres
