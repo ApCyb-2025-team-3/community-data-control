@@ -25,8 +25,7 @@ public class UserServiceApplication {
                 registry.addMapping("/api/user/**")
                     .allowedOrigins("*")
                     .allowedMethods("*")
-                    .allowedHeaders("*")
-                    .allowCredentials(true);
+                    .allowedHeaders("*");
             }
         };
     }

@@ -10,7 +10,7 @@ spec:
     - port: 80
       targetPort: 80
       nodePort: 30080
-      name: frontend
+      name: nginx
   selector:
     app: datacontrol-app
     tier: frontend
@@ -36,12 +36,29 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-        - name: frontend
+        - name: nginx
           env:
-            - name: MY_APP_BACKEND_URL
+            - name: BACKEND_HOST
               value: http://$(DATACONTROL_BACKEND_SERVICE_HOST):5002
-          image: docker.io/library/data-control-app-frontend:latest
+          image: docker.io/library/data-control-app-nginx:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 80
+              name: port80
+            - containerPort: 5002
+              name: port5002
+            - containerPort: 5003
+              name: port5003
+        - name: frontend
+          image: docker.io/library/data-control-app-frontend:latest
+          imagePullPolicy: Never
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_APP_USER_HOST
+              value: http://datacontrol.app
+          ports:
+            - containerPort: 3000
               name: frontend
