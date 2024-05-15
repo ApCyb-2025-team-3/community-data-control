@@ -1,57 +1,57 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: datacontrol
-  labels:
-    app: datacontrol
-spec:
-  ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30080
-      name: frontend
-  selector:
-    app: datacontrol-app
-  type: NodePort
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: datacontrol-app
-spec:
-  selector:
-    matchLabels:
-      app: datacontrol-app
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: datacontrol-app
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-        - name: event-service
-          image: docker.io/library/data-control-app-event-service:latest
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 5001
-              name: event-service
-        - name: user-service
-          image: docker.io/library/data-control-app-user-service:latest
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 5002
-              name: user-service
-        - name: frontend
-          env:
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: MY_APP_BACKEND_URL
-              value: http://$(POD_IP):5002
-          image: docker.io/library/data-control-app-frontend:latest
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 80
-              name: frontend
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: datacontrol
+#  labels:
+#    app: datacontrol
+#spec:
+#  ports:
+#    - port: 80
+#      targetPort: 80
+#      nodePort: 30080
+#      name: frontend
+#  selector:
+#    app: datacontrol-app
+#  type: NodePort
+#---
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: datacontrol-app
+#spec:
+#  selector:
+#    matchLabels:
+#      app: datacontrol-app
+#  replicas: 1
+#  template:
+#    metadata:
+#      labels:
+#        app: datacontrol-app
+#    spec:
+#      terminationGracePeriodSeconds: 10
+#      containers:
+#        - name: event-service
+#          image: docker.io/library/data-control-app-event-service:latest
+#          imagePullPolicy: Never
+#          ports:
+#            - containerPort: 5001
+#              name: event-service
+#        - name: user-service
+#          image: docker.io/library/data-control-app-user-service:latest
+#          imagePullPolicy: Never
+#          ports:
+#            - containerPort: 5002
+#              name: user-service
+#        - name: frontend
+#          env:
+#            - name: POD_IP
+#              valueFrom:
+#                fieldRef:
+#                  fieldPath: status.podIP
+#            - name: MY_APP_BACKEND_URL
+#              value: http://$(POD_IP):5002
+#          image: docker.io/library/data-control-app-frontend:latest
+#          imagePullPolicy: Never
+#          ports:
+#            - containerPort: 80
+#              name: frontend

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: datacontrol-backend
+  namespace: datacontrol
+  labels:
+    app: datacontrol-backend
+spec:
+  ports:
+    - port: 5002
+      targetPort: 5002
+      name: user
+  selector:
+    app: datacontrol-app
+    tier: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datacontrol-backend
+  namespace: datacontrol
+spec:
+  selector:
+    matchLabels:
+      app: datacontrol-app
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      namespace: datacontrol
+      labels:
+        app: datacontrol-app
+        tier: backend
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: event-service
+          image: docker.io/library/data-control-app-event-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5001
+              name: event
+        - name: user-service
+          image: docker.io/library/data-control-app-user-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5002
+              name: user

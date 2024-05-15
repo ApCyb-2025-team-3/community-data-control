@@ -23,8 +23,8 @@ public class UserServiceApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/user/**")
-                    .allowedOriginPatterns("*")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                    .allowedOrigins("*")
+                    .allowedMethods("*")
                     .allowedHeaders("*")
                     .allowCredentials(true);
             }
