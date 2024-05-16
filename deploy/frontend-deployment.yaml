@@ -36,29 +36,12 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-        - name: nginx
-          env:
-            - name: BACKEND_HOST
-              value: http://$(DATACONTROL_BACKEND_SERVICE_HOST):5002
-          image: docker.io/library/data-control-app-nginx:latest
-          imagePullPolicy: Never
-          ports:
-            - containerPort: 80
-              name: port80
-            - containerPort: 5002
-              name: port5002
-            - containerPort: 5003
-              name: port5003
         - name: frontend
           image: docker.io/library/data-control-app-frontend:latest
           imagePullPolicy: Never
           env:
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
             - name: MY_APP_USER_HOST
               value: http://datacontrol.app
           ports:
-            - containerPort: 3000
+            - containerPort: 80
               name: frontend

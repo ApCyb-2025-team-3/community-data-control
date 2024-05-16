@@ -7,10 +7,6 @@ cd postgres
 docker build -t data-control-app-postgres:latest ./
 minikube image load data-control-app-postgres:latest --daemon
 
-cd ../nginx
-docker build -t data-control-app-nginx:latest ./
-minikube image load data-control-app-nginx:latest --daemon
-
 cd ../../web/cdc
 docker build -t data-control-app-frontend:latest ./
 minikube image load data-control-app-frontend:latest --daemon

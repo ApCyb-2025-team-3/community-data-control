@@ -23,9 +23,9 @@ public class EventServiceApplication {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/event/**")
-                    .allowedOriginPatterns("*")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                registry.addMapping("/api/user/**")
+                    .allowedOrigins("http://datacontrol.app", "http://localhost")
+                    .allowedMethods("*")
                     .allowedHeaders("*")
                     .allowCredentials(true);
             }
