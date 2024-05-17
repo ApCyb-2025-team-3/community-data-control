@@ -55,19 +55,10 @@ export class UserAPI {
 
 
     static async #getRequestLogic(url) {
-        await this.initialize();
-
-        const result = await axios.get(url, { withCredentials: true, maxRedirects: 10 })
-            .then(response => {
-                console.log(response)
-                if (response.request?.responseURL !== url) {
-                    localStorage.clear()
-                    document.location = response.request.responseURL;
-                    return
-                }
-            })
+        const result = await axios.get(url, { withCredentials: true})
             .catch(function (error) {
                 if (error.response) {
+                    console.log(error)
                     console.log(error.response.data);
                     console.log(error.response.status);
                     console.log(error.response.headers);
@@ -77,8 +68,13 @@ export class UserAPI {
                     console.log(error)
                 }
             });
-        console.log(result)
-        return result.data
+            if (result?.request.responseURL !== url) {
+                    localStorage.clear()
+                    document.location = result.request.responseURL;
+                    console.log(result)
+                    window.location.href = result.request?.responseURL 
+                } 
+            return result.data
     }
 
     static async getUserByRole(role) {
@@ -90,6 +86,11 @@ export class UserAPI {
     static async getFullInfo(userId) {
         const url = process.env.REACT_APP_BACKEND_URL
         + "/api/user/" + userId + "/fullInfo";
+        return this.#getRequestLogic(url)
+    } 
+
+    static async getAuthUser() {
+        const url = process.env.REACT_APP_BACKEND_URL + '/api/getAuthUser';
         return this.#getRequestLogic(url)
     } 
 
@@ -177,8 +178,10 @@ export class UserAPI {
 
     static async addUserRequest(data) {
         await this.initialize()
+
         const url = process.env.REACT_APP_BACKEND_URL + "/api/user/add"
-        const response = await axios.post(url, data).catch(function (error) {
+        const response = await axios.post(url, data, { withCredentials: true })
+        .catch(function (error) {
             console.error('Ошибка при отправке запроса:', error)
         });
         return response

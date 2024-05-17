@@ -237,7 +237,11 @@ const MainInfo = ({ userId }) => {
 
         const isActive = state.userInfo.isActive
         const dismissDate = state.userInfo.dismissedAt !== null ? state.userInfo.dismissedAt : "10"
-
+        const authorities = UserAPI.getAuthUser()
+            .then(response => {
+                JSON.parse(JSON.stringify(response.authorities))
+            })
+        const isAdmin = (authorities[0].authority === "ROLE_ADMIN")
         return (
             <div className={`${classes.mainBlockRPart}`}>
                 <div className={`${classes.rPartInfo}`}>
@@ -270,7 +274,8 @@ const MainInfo = ({ userId }) => {
                         <img src={arrow} alt="arrow" />
                         <p>Менторство</p>
                     </button>
-                    <button className={`${classes.buttonEdit}`} style={{ display: isActive ? "" : "none" }} onClick={() => {
+                    
+                    <button className={`${classes.buttonEdit}`} style={{ display: isActive && isAdmin ? "" : "none" }} onClick={() => {
                         if (state.isChanging) {
                             if (nameIsCorrect && emailIsCorrect && phoneIsCorrect && dobIsCorrect && invitedAtIsCorrect)
                                 setState({...state, isChanging: !state.isChanging})
@@ -321,7 +326,7 @@ const MainInfo = ({ userId }) => {
                         }
                     </Popup>
                     <Popup trigger=
-                        {<button className={`${classes.buttonEdit}`} style={{ display: isActive && !state.isChanging ? "" : "none" }}>
+                        {<button className={`${classes.buttonEdit}`} style={{ display: isAdmin && isActive && !state.isChanging ? "" : "none" }}>
                             Уволить
                         </button>}
                         modal nested>
