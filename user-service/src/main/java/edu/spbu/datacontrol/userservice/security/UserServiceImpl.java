@@ -20,8 +20,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private final UserEntityRepository userEntityRepository;
     @Override
-    public Optional<UserEntity> findByEmail(String email) {
-        return userEntityRepository.findByEmail(email);
+    public Optional<UserEntity> findByNodeId(String nodeId) {
+        return userEntityRepository.findByNodeId(nodeId);
     }
 
     public Optional<UserEntity> getLoggedInUser() {
@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService {
         userEntityRepository.save(user);
     }
 
-    public void changeUserRole(String email, String newRole) {
-        UserEntity user = userEntityRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    public void changeUserRole(String nodeId, String newRole) {
+        UserEntity user = userEntityRepository.findByNodeId(nodeId)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + nodeId));
 
         // Обновляем роль пользователя
         if (newRole.equals("ROLE_ADMIN"))

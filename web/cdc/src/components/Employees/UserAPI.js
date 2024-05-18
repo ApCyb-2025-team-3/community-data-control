@@ -90,7 +90,7 @@ export class UserAPI {
     } 
 
     static async getAuthUser() {
-        const url = process.env.REACT_APP_BACKEND_URL + '/api/getAuthUser';
+        const url = process.env.REACT_APP_BACKEND_URL + '/api/auth/getAuthUser';
         return this.#getRequestLogic(url)
     } 
 

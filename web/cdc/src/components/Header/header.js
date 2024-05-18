@@ -9,7 +9,8 @@ function Header() {
 	useEffect(() => {
 		UserAPI.getAuthUser()
 			.then(response => {
-				setUser(JSON.parse(JSON.stringify(response.authorities)));
+				console.log(response)
+				if (response !== 'anonymousUser') setUser(JSON.parse(JSON.stringify(response.authorities)));
 			})
 			.catch(error => {
 				if (error.response?.status === 401) {

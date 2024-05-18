@@ -10,7 +10,7 @@ public interface UserService  {
 
     Optional<UserEntity> getLoggedInUser();
 
-    Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findByNodeId(String nodeId);
 
     void save(UserEntity user);
 }

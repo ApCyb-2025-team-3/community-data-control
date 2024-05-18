@@ -28,7 +28,7 @@ public class UserEntity {
 
     private String name;
 
-    private String email;
+    private String nodeId;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
@@ -41,9 +41,9 @@ public class UserEntity {
 
     public UserEntity(){}
 
-    public UserEntity(String email, String name, String role, String source) {
+    public UserEntity(String name, String nodeId,  String role, String source) {
         this.name = name;
-        this.email = email;
+        this.nodeId = nodeId;
         this.role = role.equals("ADMIN") ? UserRole.ROLE_ADMIN : UserRole.ROLE_USER;
         this.source = source.equals("GITHUB") ? RegistrationSource.GITHUB : RegistrationSource.GOOGLE;
     }

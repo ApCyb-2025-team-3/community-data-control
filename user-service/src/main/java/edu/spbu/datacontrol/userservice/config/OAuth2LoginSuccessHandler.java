@@ -38,14 +38,19 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         String source = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
         DefaultOAuth2User principal = (DefaultOAuth2User) authentication.getPrincipal();
         Map<String, Object> attributes = principal.getAttributes();
-        String email = attributes.getOrDefault("email", "").toString();
+        String nodeId;
+        if (source.equalsIgnoreCase(RegistrationSource.GITHUB.name())) {
+            nodeId = attributes.getOrDefault("id", "").toString();
+        } else {
+            nodeId = attributes.getOrDefault("sub", "").toString();
+        }
         String name = attributes.getOrDefault("name", "").toString();
-        userService.findByEmail(email)
+        userService.findByNodeId(nodeId)
             .ifPresentOrElse(user -> {
-                if (source.equals("github")) {
+                if (source.equalsIgnoreCase(RegistrationSource.GITHUB.name())) {
                     DefaultOAuth2User newUser = new DefaultOAuth2User(
-                    List.of(new SimpleGrantedAuthority(user.getRole().name())),
-                    attributes, "id");
+                        List.of(new SimpleGrantedAuthority(user.getRole().name())),
+                        attributes, "id");
                     Authentication securityAuth = new OAuth2AuthenticationToken(newUser,
                         List.of(new SimpleGrantedAuthority(UserRole.ROLE_USER.name())),
                         oAuth2AuthenticationToken.getAuthorizedClientRegistrationId());
@@ -63,7 +68,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             }, () -> {
                 UserEntity userEntity = new UserEntity();
                 userEntity.setRole(UserRole.ROLE_USER);
-                userEntity.setEmail(email);
+                userEntity.setNodeId(nodeId);
                 userEntity.setName(name);
                 if (source.equals("github")) {
                     userEntity.setSource(RegistrationSource.GITHUB);

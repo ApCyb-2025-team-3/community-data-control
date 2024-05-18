@@ -7,6 +7,7 @@ import React, {useState} from "react";
 import MainInfo from "./mainInfo";
 import AddUser from "./AddUser.js"
 import {localiseRole} from "./localise";
+import { UserAPI } from './UserAPI.js';
 
 const Employees = () => {
 
@@ -30,11 +31,7 @@ const Employees = () => {
         if (role === "") {
             setEmptyUserListToState()
         }
-
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByRole?role=" + encodeURIComponent(role)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await UserAPI.getUserByRole(role)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList,
@@ -46,11 +43,7 @@ const Employees = () => {
         if (grade === "") {
             setEmptyUserListToState()
         }
-
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByGrade?grade=" + encodeURIComponent(grade)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await UserAPI.getUserByGrade(grade)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
@@ -59,9 +52,7 @@ const Employees = () => {
 
     async function getDismissedUsers() {
 
-        const url = process.env.REACT_APP_BACKEND_URL + "/api/user/getDismissedUsers"
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await UserAPI.getDismissedUsers()
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
@@ -74,10 +65,7 @@ const Employees = () => {
             setEmptyUserListToState()
         }
 
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByPartialName?partialName=" + encodeURIComponent(name)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await UserAPI.getUsersByName(name)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
@@ -89,11 +77,7 @@ const Employees = () => {
         if (project === "") {
             setEmptyUserListToState()
         }
-
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByProject?project=" + encodeURIComponent(project)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await UserAPI.getUsersByProject(project)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
@@ -106,10 +90,7 @@ const Employees = () => {
             setEmptyUserListToState()
         }
 
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersByDepartment?department=" + encodeURIComponent(department)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await getUsersByDepartment(department)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
@@ -122,35 +103,11 @@ const Employees = () => {
             setEmptyUserListToState()
         }
 
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/user/getUsersBySupervisor?partialName=" + encodeURIComponent(name)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await UserAPI.getUsersBySupervisorName(name)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
         })
-    }
-
-    async function performGetRequest(url) {
-        try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
-
-            if (response.ok) {
-                return await response.json()
-
-            } else {
-                console.error("HTTP error:" + response.status + "\n" + response.statusText)
-            }
-
-        } catch (error) {
-            console.error(error)
-        }
     }
 
     function handleUserSelection(userId) {
