@@ -1,6 +1,5 @@
 package edu.spbu.datacontrol.userservice;
 
-import java.util.List;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -23,9 +22,9 @@ public class UserServiceApplication {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/user/**")
-                    .allowedOrigins("http://datacontrol.app", "http://localhost")
-                    .allowedMethods("*")
+                registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:3000", "http://localhost:5001", "http://localhost:5002")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                     .allowedHeaders("*")
                     .allowCredentials(true);
             }
