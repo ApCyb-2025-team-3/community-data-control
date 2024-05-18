@@ -80,3 +80,16 @@ CREATE TABLE public.users_product_owners
 );
 ALTER TABLE ONLY public.users_product_owners ADD CONSTRAINT fk350790x5rj4d2j8ork5enob2q FOREIGN KEY (user_id) REFERENCES public.users(id);
 ALTER TABLE ONLY public.users_product_owners ADD CONSTRAINT fkr5gih8qphmmp9dcrc0foxxhsr FOREIGN KEY (product_owners_id) REFERENCES public.users(id);
+
+CREATE TABLE public.user_entity
+(
+    user_id bigint NOT NULL primary key,
+    name character varying(255),
+    email character varying(255),
+    role character varying(255),
+    source character varying(255),
+    CONSTRAINT user_entity_role_check CHECK (((role)::text = ANY
+                                            ((ARRAY ['ROLE_USER'::character varying, 'ROLE_ADMIN'::character varying])::text[]))),
+    CONSTRAINT user_entity_source_check CHECK (((source)::text = ANY
+                                              ((ARRAY ['GITHUB'::character varying, 'GOOGLE'::character varying])::text[])))
+);

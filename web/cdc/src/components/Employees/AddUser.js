@@ -4,6 +4,7 @@ import AsyncSelect from 'react-select/async';
 import { UserAPI } from './UserAPI';
 
 
+
 const AddUser = () => {
 
     const today = new Date()
@@ -25,8 +26,15 @@ const AddUser = () => {
             `${today.getFullYear()}-0${today.getMonth() + 1}-${today.getDate()}`
     })
     const [allFilled, setAllFilled] = useState(false)
+    const [nameFilled, setNameFilled] = useState(false)
+    const [emailFilled, setEmailFilled] = useState(false)
+    const [phoneFilled, setPhoneFilled] = useState(false)
+    const [dateOfBirthFilled, setDOBFilled] = useState(false)
+    const [invitedAtFilled, setInvitedAtFilled] = useState(true)
 
-    async function addUser() {
+
+
+    async function getUsers(inputValue) {
         try {
 
             const response = await UserAPI.getUserByRole('supervisor');
@@ -75,17 +83,20 @@ const AddUser = () => {
         if (authData.authorities[0].authority === "ROLE_ADMIN") {
             const response = await UserAPI.addUserRequest(data)
             setUser({
-                name: null,
+                name: "",
                 dob: null,
-                email: null,
-                phoneNumber: null,
+                email: "",
+                phoneNumber: "",
                 supervisorName: "",
                 productOwnersNames: [],
                 project: "",
                 department: "",
                 grade: "Unspecified",
                 role: "Non Member",
-                mentorStatus: "Not participating"
+                mentorStatus: "Not participating",
+                invitedAt: today.getMonth() >= 9 ?
+                    `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}` :
+                    `${today.getFullYear()}-0${today.getMonth() + 1}-${today.getDate()}`
             })
             setDOBFilled(false)
             setNameFilled(false)
@@ -126,20 +137,26 @@ const AddUser = () => {
         setUser({ ...user, phoneNumber: e.target.value })
     }
 
-    const getUsers = async (inputValue) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
-
-            returnresponse.data.map(user => ({
-                id: user.id,
-                value: user.name,
-                label: user.name
-            }));
-        } catch (error) {
-            console.error('Ошибка при загрузке пользователей:', error);
-            return [];
+    const DateHandler = (e, ind) => {
+        if (!e.target.value) {
+            ind === 1 ?
+                setDOBFilled(false) : setInvitedAtFilled(false)
+            return
         }
-    };
+        const selectedDate = new Date(e.target.value);
+        const minDate = new Date("1900-01-01");
+        const today = new Date();
+        if (isNaN(selectedDate.getTime()) || selectedDate < minDate || selectedDate > today) {
+            ind === 1 ?
+                setDOBFilled(false) : setInvitedAtFilled(false)
+            return
+        }
+        ind === 1 ?
+            setDOBFilled(true) : setInvitedAtFilled(true)
+        ind === 1 ?
+            setUser({ ...user, dob: e.target.value }) : setUser({ ...user, invitedAt: e.target.value })
+
+    }
 
     const customStyles = {
         control: provided => ({
@@ -177,50 +194,32 @@ const AddUser = () => {
         // Add more styles for other elements as needed
     };
 
-    const promiseOptions = inputValue =>
-        new Promise(resolve => resolve(getUsers(inputValue)));
-
-    const promiseOptionsPO = inputValue =>
-        new Promise(resolve => resolve(getPO(inputValue)));
-
-    const getPO = async (inputValue) => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
-
-            return response.data.map(user => ({
-                id: user.id,
-                value: user.name,
-                label: user.name
-            }));
-        } catch (error) {
-            console.error('Ошибка при загрузке пользователей:', error);
-            return [];
-        }
-    };
-
     return (
-        <div className={`${classes.addUserBlock}`}>
-            <div className={`${classes.addUserBlockTitle}`} >ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ</div>
+        <form name="form" className={`${classes.addUserBlock}`}>
+            <div className={`${classes.addUserBlockTitle}`}>
+                ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
+            </div>
             <div className={`${classes.addUserBlockMain}`}>
                 <div className={`${classes.addUserBlockLabels}`}>
-                    <div>ФИО</div>
+                    <div>Имя</div>
                     <div>Дата рождения</div>
                     <div>Email</div>
                     <div>Номер телефона</div>
                     <div>Роль</div>
-                    <div>Уровень компетенций</div>
+                    <div>Позиция</div>
                     <div>Руководитель</div>
-                    <div>Product Owners</div>
+                    <div>Product Owner</div>
                     <div>Проект</div>
-                    <div>Подразделение</div>
-                    <div>Статус менторства</div>
+                    <div>Отдел</div>
+                    <div>Менторство</div>
+                    <div>Дата присоединения</div>
                 </div>
-            <div className={`${classes.addUserBlockFields}`}>
-            <input value={user.name} className={user.name === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="name" placeholder="Имя" onChange={(event) => { setUser({ ...user, name: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
-                    <input value={user.dob} className={user.dob === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="date" type="date" placeholder="Дата рождения" onChange={(event) => { setUser({ ...user, dob: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
-                    <input value={user.email} className={user.email === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="email" type="email" placeholder="Email" onChange={(event) => { setUser({ ...user, email: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
-                    <input value={user.phoneNumber} className={user.phoneNumber === null ? `${classes.UnfilledInput}` : `${classes.InputField}`} id="phone" type="tel" placeholder="Номер телефона" onChange={(event) => { setUser({ ...user, phoneNumber: event.target.value }); setAllFilled(user.name && user.email && user.dob && user.phoneNumber) }} />
-                    <select id="role" placeholder="Роль" value={user.role} onChange={(event) => setUser({ ...user, role: event.target.value })} >
+                <div className={`${classes.addUserBlockFields}`}>
+                    <input value={user.name} className={!nameFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="name" placeholder="Имя" onChange={(event) => { nameHandler(event); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+                    <input value={user.dob} className={!dateOfBirthFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="dob" type="date" placeholder="Дата рождения" onChange={(event) => { DateHandler(event, 1); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+                    <input value={user.email} className={!emailFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="email" type="email" placeholder="Email" onChange={(event) => { emailHandler(event); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+                    <input value={user.phoneNumber} className={!phoneFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="phoneNumber" type="tel" placeholder="Номер телефона" onChange={(event) => { phoneHandler(event); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
+                    <select name="role" placeholder="Роль" value={user.role} onChange={(event) => setUser({ ...user, role: event.target.value })} >
                         <option value="Member">Участник</option>
                         <option value="Data Engineer">Дата инженер</option>
                         <option value="Developer" >Разработчик</option>
@@ -229,7 +228,7 @@ const AddUser = () => {
                         <option value="Supervisor">Руководитель</option>
                         <option value="Non Member">Гость</option>
                     </select>
-                    <select id="grade" placeholder="Уровень компетенций" value={user.grade} onChange={(event) => setUser({ ...user, grade: event.target.value })} >
+                    <select name="grade" placeholder="Позиция" value={user.grade} onChange={(event) => setUser({ ...user, grade: event.target.value })} >
                         <option value="Junior">Junior</option>
                         <option value="Middle">Middle</option>
                         <option value="Senior">Senior</option>
@@ -243,9 +242,9 @@ const AddUser = () => {
                         defaultOptions
                         classNamePrefix="custom"
                         className="custom-container"
-                        placeholder="Руководитель  "
+                        placeholder="Руководитель"
                         styles={customStyles}
-                        loadOptions={promiseOptions}
+                        loadOptions={getUsers}
                         onChange={(selectedOption) => setUser({ ...user, supervisorName: selectedOption })}
 
                     />
@@ -257,24 +256,30 @@ const AddUser = () => {
                         className="custom-container"
                         placeholder="Product Owners"
                         styles={customStyles}
-                        loadOptions={promiseOptionsPO}
-                        onChange={(selectedOption) => setUser({ ...user, productOwnersNames: selectedOption })}
+                        loadOptions={getPO}
+                        onChange={(selectedOption) => { console.log(selectedOption); setUser({ ...user, productOwnersNames: selectedOption }) }}
 
                     />
-                    <input className={`${classes.InputField}`} id="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
-                    <input className={`${classes.InputField}`} id="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
-            <select id="mentorStasus" value={user.mentorStatus} placeholder="Менторство" onChange={(event) => setUser({ ...user, mentorStatus: event.target.value })} >
-                <option value="Mentor">Ментор</option>
-                <option value="Mentee" >Менти</option>
-                <option value="Not participating">Не участвует</option>
-            </select>
+                    <input className={`${classes.InputField}`} name="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
+                    <input className={`${classes.InputField}`} name="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
+                    <select id="mentorStasus" value={user.mentorStatus} placeholder="Менторство" onChange={(event) => setUser({ ...user, mentorStatus: event.target.value })} >
+                        <option value="Mentor">Ментор</option>
+                        <option value="Mentee" >Менти</option>
+                        <option value="Not participating">Не участвует</option>
+                    </select>
+                    <input defaultValue={user.invitedAt} className={!invitedAtFilled ? `${classes.UnfilledInput}` : `${classes.InputField}`} name="invitedAt" type="date" placeholder="Дата присоединения" onChange={(event) => { DateHandler(event, 2); setAllFilled(nameFilled && emailFilled && user.dob && phoneFilled && invitedAtFilled) }} />
                 </div>
             </div>
-            <button type='button' onClick={() => {
-                { allFilled ? addUser(user) : alert("Заполните обязательные поля") }
-            }}>Добавить</button>
-
-        </div>)
+            <div className={`${classes.addUserBlockBottom}`}>
+                <button className={`${classes.addUserBlockBottomButton}`}
+                    type='button'
+                    onClick={(event) => {
+                        allFilled ? addUser(event) : alert("Заполните обязательные поля")
+                    }}>
+                    Добавить
+                </button>
+            </div>
+        </form>)
 
 }
 

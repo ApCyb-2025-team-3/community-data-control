@@ -20,29 +20,24 @@ const MainInfo = ({ userId }) => {
         isChanging: false
     })
     const [isLoading, setLoading] = useState(true)
+    const today = new Date()
+    const [dismissDateState, setDismissDateState] = useState(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
 
     useEffect(() => {
         async function getUserInfo() {
             try {
-                const url = process.env.REACT_APP_BACKEND_URL
-                    + "/api/user/" + state.userId + "/fullInfo"
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        "Origin": "http://localhost:3000",
-                    },
-                });
-
-                if (response.ok) {
-                    const userInfo = await response.json()
+                const response = await UserAPI.getFullInfo(userId)
+                console.log(response)
+                if (response !== null) {
+                    const userInfo = response
 
                     setState({
-                        userId: state.userId,
+                        userId: userId,
                         userInfo: userInfo,
                         oldUserInfo: { ...userInfo },
                         isGroupsVisible: false,
                         isMentorshipVisible: false,
-                        isChanging: false,
+                        isChanging: false
                     })
                     setLoading(false)
 
@@ -57,7 +52,52 @@ const MainInfo = ({ userId }) => {
         }
 
         getUserInfo()
-    }, [state.userId])
+    }, [userId])
+
+    const [nameIsCorrect, setNameIsCorrect] = useState(true)
+    const [emailIsCorrect, setEmailIsCorrect] = useState(true)
+    const [phoneIsCorrect, setPhoneIsCorrect] = useState(true)
+    const [dobIsCorrect, setDobIsCorrect] = useState(true)
+    const [invitedAtIsCorrect, setInvitedAtIsCorrect] = useState(true)
+
+    const handleName = (event) => {
+        event.target.value.length > 0 ? setNameIsCorrect(true) : setNameIsCorrect(false)
+        setState({...state, userInfo: {...state.userInfo, name : event.target.value}})
+    }
+
+    const handleEmail = (event) => {
+        event.target.value.match("^[-a-z0-9!#$%&'*+/=?^_`{|}~]+(?:.[-a-z0-9!#$%&'*+/=?^_`{|}~]+)*@(?:[a-z0-9]([-a-z0-9]{0,61}[a-z0-9])?.)*(?:aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel|[a-z][a-z])$") ?
+            setEmailIsCorrect(true) : setEmailIsCorrect(false)
+        setState({...state, userInfo: {...state.userInfo, email : event.target.value}})
+    }
+
+    const handlePhone = (event) => {
+        const phoneRegex = /^\+\d{10,14}$/;
+        phoneRegex.test(event.target.value) ? 
+            setPhoneIsCorrect(true) : setPhoneIsCorrect(false)
+        setState({...state, userInfo: {...state.userInfo, phoneNumber : event.target.value}})
+    }
+
+    const handleDate = (event, ind) => {
+        if (!event.target.value) {
+            ind === 1 ?
+                setDobIsCorrect(false) : setInvitedAtIsCorrect(false)
+            return 
+        }
+        const selectedDate = new Date(event.target.value);
+        const minDate = new Date("1900-01-01");
+        const today = new Date();
+        if (isNaN(selectedDate.getTime()) || selectedDate < minDate || selectedDate > today) {
+            ind === 1 ?
+                setDobIsCorrect(false) : setInvitedAtIsCorrect(false)
+            return
+        }
+        ind === 1 ?
+            setDobIsCorrect(true) : setInvitedAtIsCorrect(true)
+        ind === 1 ? 
+            setState({...state, userInfo: {...state.userInfo, dob : event.target.value}}) :
+            setState({...state, userInfo: {...state.userInfo, invitedAt : event.target.value}})
+    }
 
     const customStyles = {
         control: (provided, state) => ({
@@ -109,110 +149,20 @@ const MainInfo = ({ userId }) => {
     }
 
 
-    async function changePersonalDataRequest(userDto, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/user/changeUsersPersonalData?reason=" + reason
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(userDto)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-    async function changeUserGradeRequest(newGrade, reason) {
-        // try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${state.userId}/changeGrade?grade=${newGrade}&reason=${reason}`
-            const response = await fetch(url
-            //     , {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'Origin': 'http://localhost:3000'
-            //     }
-            // }
-            );
-
-        //     if (!response.ok) {
-        //         throw new Error('Ошибка запроса');
-        //     }
-
-        //     const result = await response.text();
-        //     console.log(result);
-        // } catch (error) {
-        //     console.error('Ошибка при отправке запроса:', error);
-        // }
-    }
-
-    async function changeUserRoleRequest(newRole, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(state.userId)}/changeRole?role=${encodeURIComponent(newRole)}&reason=${encodeURIComponent(reason)}`
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-
-    async function changeProjectData(newData) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + '/api/user/changeUserProject'
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(newData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-
+    
     async function changeUserInfo(reason) {
 
         let userDTO = {
             userId: state.userId,
             name: state.userInfo.name,
-            dob: state.userInfo.dob,
+            dob: state.userInfo.dob.toString(),
             email: state.userInfo.email,
             phoneNumber: state.userInfo.phoneNumber
         }
         let oldPD = {
             id: state.userId,
             name: state.oldUserInfo.name,
-            dob: state.oldUserInfo.dob,
+            dob: state.oldUserInfo.dob.toString(),
             email: state.oldUserInfo.email,
             phoneNumber: state.oldUserInfo.phoneNumber
         }
@@ -221,6 +171,7 @@ const MainInfo = ({ userId }) => {
             project: state.userInfo.project,
             supervisor: state.userInfo.supervisor === null ? '' : state.userInfo.supervisor.value,
             department: state.userInfo.department,
+            changedAt: dateToIEEE(state.userInfo.projectChangedAt),
             productOwners: state.userInfo.productOwners.map(item => item.value)
         }
         let oldProjData = {
@@ -228,30 +179,32 @@ const MainInfo = ({ userId }) => {
             project: state.oldUserInfo.project,
             supervisor: state.oldUserInfo.supervisor === null ? null : state.oldUserInfo.supervisor.value,
             department: state.oldUserInfo.department,
+            changedAt: dateToIEEE(state.oldUserInfo.projectChangedAt),
             productOwners: state.oldUserInfo.productOwners.map(item => item.name)
         }
 
-        if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await changePersonalDataRequest(userDTO, reason)
+        if (JSON.stringify(userDTO) !== JSON.stringify(oldPD)) await UserAPI.changePersonalDataRequest(userDTO, reason)
 
-        if (state.userInfo.grade !== state.oldUserInfo.grade) await changeUserGradeRequest(state.userInfo.grade, reason)
+        if (state.userInfo.grade !== state.oldUserInfo.grade) await UserAPI.changeUserGradeRequest(state.userInfo.grade, reason, userId)
 
-        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await changeProjectData(newProjData, reason)
+        if (JSON.stringify(newProjData) !== JSON.stringify(oldProjData)) await UserAPI.changeProjectData(newProjData)
 
-        if (state.userInfo.role !== state.oldUserInfo.role) await changeUserRoleRequest(state.userInfo.role, reason)
-
+        if (state.userInfo.role !== state.oldUserInfo.role) await UserAPI.changeUserRoleRequest(state.userInfo.role, reason, userId)
 
         setState({ ...state, oldUserInfo: { ...state.userInfo } })
-
-
-
     }
 
-    async function handleUserDismissal(reason) {
+    function dateToIEEE(date) {
+        return (date !== undefined && date !== null) ? date.split(".").reverse().join("-") : ""
+    }
+
+    async function handleUserDismissal(reason, dismissedAt) {
 
         try {
 
             const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/dismiss?description=" + encodeURIComponent(reason)
+                + "/api/user/" + state.userId + "/dismiss?date=" + dateToIEEE(dismissedAt)
+                + "&description=" + encodeURIComponent(reason)
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -259,19 +212,15 @@ const MainInfo = ({ userId }) => {
                 },
             });
 
-            const date = new Date()
-
             if (response.ok) {
                 const newUserInfo = state.userInfo
                 newUserInfo.isActive = false
                 newUserInfo.dismissReason = reason
-                newUserInfo.dismissedAt = `${date.getDate()}.${date.getMonth()
-                + 1}.${date.getFullYear()}`
-
+                newUserInfo.dismissedAt = dismissedAt
                 setState({
                     ...state,
                     userInfo: newUserInfo,
-                    oldUserInfo: newUserInfo,
+                    oldUserInfo: newUserInfo
                 })
 
 
@@ -325,13 +274,27 @@ const MainInfo = ({ userId }) => {
                         <img src={arrow} alt="arrow" />
                         <p>Менторство</p>
                     </button>
-
+                    
                     <button className={`${classes.buttonEdit}`} style={{ display: isActive && isAdmin ? "" : "none" }} onClick={() => {
-                        setState({ ...state, isChanging: !state.isChanging })
+                        if (state.isChanging) {
+                            if (nameIsCorrect && emailIsCorrect && phoneIsCorrect && dobIsCorrect && invitedAtIsCorrect)
+                                setState({...state, isChanging: !state.isChanging})
+                            else alert('Проверьте введенные данные')
+                        } else {
+                            setState({
+                                ...state,
+                                isChanging: !state.isChanging,
+                                userInfo: {
+                                    ...state.userInfo,
+                                    projectChangedAt: `${today.getFullYear()}-${today.getMonth()
+                                    + 1}-${today.getDate()}`
+                                }
+                            })
+                        }
                     }}>
                         {state.isChanging ? "Сохранить" : "Внести изменения"}
                     </button>
-                    <Popup open={!state.isChanging && (JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo))}
+                    <Popup open={!state.isChanging && JSON.stringify(state.userInfo) !== JSON.stringify(state.oldUserInfo)}
                         modal nested>
                         {
                             close => (
@@ -339,15 +302,13 @@ const MainInfo = ({ userId }) => {
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
                                             Введите причину изменения данных
-                                            <form action="">
-                                                <input id={"changingReason"} placeholder="Причина" />
-                                            </form>
+                                            <input id={"changingReason"} placeholder="Причина" />
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     changeUserInfo(
                                                         document.getElementById("changingReason").value
                                                     )
-                                                    close()
+                                                    close() 
                                                 }}>
                                                     Подтвердить
                                                 </button>
@@ -374,14 +335,20 @@ const MainInfo = ({ userId }) => {
                                 <div className={`${classes.popUpMask}`}>
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
-                                            Введите причину увольнения
-                                            <form action="">
-                                                <input id={"dismissalReason"} placeholder="Причина" />
-                                            </form>
-                                            <div className={`${classes.popUpButtons}`}>
+                                            Введите причину и дату увольнения
+                                            <input id={"dismissalReason"}
+                                                   placeholder="Причина"></input>
+                                            <input type='date'
+                                                   id={"dismissalDate"}
+                                                   value={dismissDateState}
+                                                   onChange={(event) => setDismissDateState(event.currentTarget.value)}
+                                                   className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                            <div
+                                                className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
                                                     handleUserDismissal(
-                                                        document.getElementById("dismissalReason").value
+                                                        document.getElementById("dismissalReason").value,
+                                                        document.getElementById("dismissalDate").value.toString(),
                                                     )
                                                     close()
                                                 }}>
@@ -429,7 +396,12 @@ const MainInfo = ({ userId }) => {
     }
 
     function formatLocalDate(date) {
-        return date === null ? "Не указано" : date.split("-").reverse().join(".")
+        const localDate = date === null ? null : date.split("-").reverse()
+        if (localDate === null) return null
+        else {
+            localDate[1] = localDate[1].length === 1 ? '0' + localDate[1] : localDate[1]
+            return localDate.join()
+        }
     }
 
     function renderProductOwners(productOwnersList) {
@@ -462,13 +434,12 @@ const MainInfo = ({ userId }) => {
 
     const getUsers = async (inputValue) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=supervisor`);
-
-            return response.data.map(user => ({
+            const response = await UserAPI.getUserByRole('supervisor')
+            return response.map(user => ({
                 id: user.id,
                 value: user.name,
                 label: user.name
-            }));
+            })).filter(t => t.id !== state.userId);
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
@@ -476,28 +447,25 @@ const MainInfo = ({ userId }) => {
     };
 
 
-    const promiseOptions = inputValue =>
+    const promiseOptions = (inputValue) =>
         new Promise(resolve => resolve(getUsers(inputValue)));
 
-    const promiseOptionsPO = inputValue =>
+    const promiseOptionsPO = (inputValue) =>
         new Promise(resolve => resolve(getPO(inputValue)));
 
     const getPO = async (inputValue) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=product owner`);
-
-            return response.data.map(user => ({
+            const response = await UserAPI.getUserByRole(`product owner`);
+            return response.map(user => ({
                 id: user.id,
                 value: user.name,
                 label: user.name
-            }));
+            })).filter(t => t.id !== state.userId);
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
         }
     };
-
-    console.log(state.userInfo)
 
     if (isLoading) {
 
@@ -509,8 +477,10 @@ const MainInfo = ({ userId }) => {
             </div>
         )
     }
-    const projectChangeDate = state.userInfo.projectChangedAt !== null
-        ? state.userInfo.projectChangedAt : state.userInfo.invitedAt
+
+    const projectChangeDate = state.oldUserInfo.projectdAt !== null
+        ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
+
     return (
         <div className={`${classes.infoBlocks}`}>
             <div className={`${classes.mainBlock}`}>
@@ -518,12 +488,12 @@ const MainInfo = ({ userId }) => {
                     {state.isChanging ?
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <input value={state.userInfo.name} onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingNameInput}`} />
+                            <input value={state.userInfo.name} onChange={(event) => { handleName(event) }} className={`${classes.lPartHeadingNameInput}`} />{!nameIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Некорректый формат имени</p>}
                         </div>
                         :
                         <div className={`${classes.lPartHeading}`}>
                             <p>Сотрудник:</p>
-                            <div onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} className={`${classes.lPartHeadingName}`}>{state.userInfo.name}</div>
+                            <div className={`${classes.lPartHeadingName}`}>{state.oldUserInfo.name}</div>
                         </div>}
                     <div className={`${classes.lPartInfo}`}>
                         <div className={`${classes.lPartInfoCol1Title}`}>
@@ -531,15 +501,15 @@ const MainInfo = ({ userId }) => {
                             <p>Телефон:</p>
                             <p>Дата рождения:</p>
                             <p>Отдел:</p>
-                            <p>Уровень компетенций:</p>
+                            <p>Позиция:</p>
                             <p>Роль:</p>
                         </div>
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol1Data}`}>
-                                <input type='email' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, email: event.target.value } }) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
-                                <input type='tel' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, phoneNumber: event.target.value } }) }} value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
-                                <input type='date' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, dob: event.target.value } }) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department !== "" ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input type='email' onChange={(event) => { handleEmail(event) }} value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}/>{!emailIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Некорректый формат электронной почты</p>}
+                                <input type='tel' onChange={(event) =>  { handlePhone(event)} } value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />{!phoneIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Некорректый формат номера телефона</p>}
+                                <input type='date' onChange={(event) => { handleDate(event, 1) }} value={state.userInfo.dob} className={`${classes.lPartInfoCol2DataDoB}`}></input>{!dobIsCorrect && <p style={{color: 'red', fontSize: '12px'}}>Неверная дата</p>}
+                                <input type='text' onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, department: event.target.value } }) }} value={state.userInfo.department} className={`${classes.lPartInfoCol1DataDep}`}/>
                                 <select onChange={(event) => { setState({ ...state, userInfo: { ...state.userInfo, grade: event.target.value } }) }} value={state.userInfo.grade} className={`${classes.lPartInfoCol1DataGrade}`}>
                                     <option value='Junior'>Junior</option>
                                     <option value='Middle'>Middle</option>
@@ -559,12 +529,12 @@ const MainInfo = ({ userId }) => {
                             </div>
                             :
                             <div className={`${classes.lPartInfoCol1Data}`}>
-                                <input readOnly value={state.userInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
-                                <input readOnly value={state.userInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
-                                <input readOnly value={formatLocalDate(state.userInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
-                                <input readOnly value={(state.userInfo.department !== null && state.userInfo.department !== "") ? state.userInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
-                                <input readOnly value={localiseGrade(state.userInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
-                                <input readOnly value={localiseRole(state.userInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
+                                <input readOnly value={state.oldUserInfo.email} className={`${classes.lPartInfoCol1DataEmail}`}></input>
+                                <input readOnly value={state.oldUserInfo.phoneNumber} className={`${classes.lPartInfoCol1Project}`} />
+                                <input readOnly value={formatLocalDate(state.oldUserInfo.dob)} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input readOnly value={(state.oldUserInfo.department !== null && state.oldUserInfo.department !== "") ? state.oldUserInfo.department : "Нет"} className={`${classes.lPartInfoCol1DataDep}`}></input>
+                                <input readOnly value={localiseGrade(state.oldUserInfo.grade)} className={`${classes.lPartInfoCol1DataGrade}`}></input>
+                                <input readOnly value={localiseRole(state.oldUserInfo.role)} className={`${classes.lPartInfoCol1DataRole}`}></input>
                             </div>
                         }
                         <div className={`${classes.lPartInfoCol2Title}`}>
@@ -576,7 +546,7 @@ const MainInfo = ({ userId }) => {
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
-                                <input readOnly type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangeAt: event.target.value } })} value={state.userInfo.projectChangedAt === null ? state.userInfo.invitedAt : state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangedAt: event.target.value } })} defaultValue={state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
@@ -606,14 +576,14 @@ const MainInfo = ({ userId }) => {
                             :
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <div className={`${classes.lPartInfoCol2DataPhoneNum}`}>
-                                    {(state.userInfo.project !== null && state.userInfo.project !== "") ? state.userInfo.project : "Нет"}
+                                    {(state.oldUserInfo.project !== null && state.oldUserInfo.project !== "") ? state.oldUserInfo.project : "Нет"}
                                 </div>
                                 <div className={`${classes.lPartInfoCol2DataSeprvisor}`}>{formatLocalDate(projectChangeDate)}</div>
                                 <input readOnly className={`${classes.lPartInfoCol2DataConnected}`}
-                                    value={state.userInfo.supervisor !== null ? state.userInfo.supervisor.value : "Не назначен"}
+                                    value={state.oldUserInfo.supervisor !== null ? state.oldUserInfo.supervisor.value : "Не назначен"}
                                 />
                                 <ul className={`${classes.lPartInfoCol2DataProdOwners}`}>
-                                    {renderProductOwners(state.userInfo.productOwners)}
+                                    {renderProductOwners(state.oldUserInfo.productOwners)}
                                 </ul>
                             </div>}
                     </div>
