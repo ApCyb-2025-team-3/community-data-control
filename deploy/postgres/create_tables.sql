@@ -83,11 +83,11 @@ ALTER TABLE ONLY public.users_product_owners ADD CONSTRAINT fkr5gih8qphmmp9dcrc0
 
 CREATE TABLE public.users_entity
 (
-    user_id bigint NOT NULL primary key,
-    name character varying(255),
-    email character varying(255),
-    role character varying(255),
-    source character varying(255),
+    user_id bigserial primary key,
+    name character varying(255) NOT NULL,
+    node_id character varying(255) NOT NULL,
+    role character varying(50) NOT NULL,
+    source character varying(50) NOT NULL
     CONSTRAINT users_entity_role_check CHECK (((role)::text = ANY
                                             ((ARRAY ['ROLE_USER'::character varying, 'ROLE_ADMIN'::character varying])::text[]))),
     CONSTRAINT users_entity_source_check CHECK (((source)::text = ANY
