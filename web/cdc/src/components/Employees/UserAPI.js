@@ -1,9 +1,11 @@
 import axios from "axios"
+import dotenv from "dotenv"
 
+require('dotenv').config()
 
-const clientId = 'Ov23ctQnsqB3lpRUyEJf';
-const clientSecret = '902ad4e7133fd188e0420d54fb45b52de8a34648';
-const tokenUrl = 'http://localhost:5002/login/oauth2/code/github';
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
+const tokenUrl = process.env.TOKEN_URL;
 
 
 export class UserAPI {

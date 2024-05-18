@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         if (authentication != null) {
             return (Optional<UserEntity>) authentication.getPrincipal();
         }
-        return null;
+        return Optional.empty();
     }
     @Override
     public void save(UserEntity user) {
