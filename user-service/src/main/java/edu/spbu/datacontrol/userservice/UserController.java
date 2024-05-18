@@ -241,6 +241,10 @@ public class UserController {
     public ResponseEntity<String> changeUsersPersonalData(@RequestParam String reason,
                                                           @RequestBody UserDataChangeDTO modifiedData) {
 
+        if(modifiedData.getUserId() == null){
+            return new ResponseEntity<>("Null user id", HttpStatus.BAD_REQUEST);
+        }
+
         User user = userRepository.findById(modifiedData.getUserId()).orElse(null);
         if (user != null) {
             user.changePersonalData(modifiedData);
