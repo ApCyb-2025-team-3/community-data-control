@@ -3,7 +3,7 @@ import axios from "axios"
 
 const clientId = 'Ov23ctQnsqB3lpRUyEJf';
 const clientSecret = '902ad4e7133fd188e0420d54fb45b52de8a34648';
-const tokenUrl = 'http://localhost:5002/login/oauth2/code/github';
+const tokenUrl = process.env.REACT_APP_BACKEND_URL + '/login/oauth2/code/github';
 
 
 export class UserAPI {

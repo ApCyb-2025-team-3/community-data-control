@@ -35,7 +35,7 @@ function Header() {
 					<a href="/groups">группы</a>
 					<a href="/mentorship">менторство</a>
 					<a href="/employees">сотрудники</a>
-					{user ? <a href="http://localhost:5002/logout">Выйти</a> : <a href="http://localhost:5002/login">Войти</a>}
+					{user ? <a href={process.env.REACT_APP_BACKEND_URL + "/logout"}>Выйти</a> : <a href={process.env.REACT_APP_BACKEND_URL + "/login"}>Войти</a>}
 				</nav>
 			</div>
 		</div>

@@ -20,6 +20,7 @@ const MainInfo = ({ userId }) => {
         isChanging: false
     })
     const [isLoading, setLoading] = useState(true)
+    const [isAdmin, setIsAdmin] = useState(false)
     const today = new Date()
     const [dismissDateState, setDismissDateState] = useState(`${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`)
 
@@ -53,6 +54,16 @@ const MainInfo = ({ userId }) => {
 
         getUserInfo()
     }, [userId])
+
+    useEffect(() => {
+        const authorities = UserAPI.getAuthUser()
+        .then(response => {
+            JSON.parse(JSON.stringify(response.authorities))
+        })
+        const isNull = authorities[0] === undefined;
+        setIsAdmin(!isNull && authorities[0].authority === "ROLE_ADMIN");
+
+    }, [])
 
     const [nameIsCorrect, setNameIsCorrect] = useState(true)
     const [emailIsCorrect, setEmailIsCorrect] = useState(true)
@@ -237,11 +248,7 @@ const MainInfo = ({ userId }) => {
 
         const isActive = state.userInfo.isActive
         const dismissDate = state.userInfo.dismissedAt !== null ? state.userInfo.dismissedAt : "10"
-        const authorities = UserAPI.getAuthUser()
-            .then(response => {
-                JSON.parse(JSON.stringify(response.authorities))
-            })
-        const isAdmin = (authorities[0].authority === "ROLE_ADMIN")
+
         return (
             <div className={`${classes.mainBlockRPart}`}>
                 <div className={`${classes.rPartInfo}`}>
@@ -397,7 +404,7 @@ const MainInfo = ({ userId }) => {
 
     function formatLocalDate(date) {
         const localDate = date === null ? null : date.split("-").reverse()
-        if (localDate === null) return null
+        if (localDate === undefined || localDate === null) return null
         else {
             localDate[1] = localDate[1].length === 1 ? '0' + localDate[1] : localDate[1]
             return localDate.join()
