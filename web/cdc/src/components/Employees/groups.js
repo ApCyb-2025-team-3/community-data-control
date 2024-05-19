@@ -35,54 +35,54 @@ const Groups = ({userId}) => {
         }
     }
 
-    useEffect(() => {
-        async function getUserWorkingGroup() {
-
-            const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/group/getUserGroupsByType?userId=" + encodeURIComponent(userId) +
-                "&groupType=" + encodeURIComponent("WORKING_TEAM")
-
-            const groupList = await performGetRequest(url);
-
-            if (groupList === undefined || groupList.length === 0) {
-                setWorkingGroupState({
-                    groupName: "Нет",
-                    teamLeadName: "Не указан"
-                })
-                return
-            }
-
-            const getTeamLeadNameUrl = process.env.REACT_APP_BACKEND_URL
-                + "/api/" + encodeURIComponent(userId)
-
-            const teamLead = await performGetRequest(getTeamLeadNameUrl)
-
-            setWorkingGroupState({
-                groupName: groupList[0].name,
-                teamLeadName: teamLead.name,
-            })
-        }
-
-        getUserWorkingGroup()
-        setWorkingGroupLoading(false)
-
-    }, [userId, workingGroupState, setWorkingGroupLoading])
-
-    useEffect( () => {
-
-        async function getUserGroupList() {
-
-            const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/group/getUserGroups?userId=" + encodeURIComponent(userId)
-
-            const groupList = await performGetRequest(url);
-
-            setGroupListState(groupList)
-        }
-
-        getUserGroupList()
-        setGroupListLoading(false)
-    }, [userId, groupListState, setGroupListLoading])
+    // useEffect(() => {
+    //     async function getUserWorkingGroup() {
+    //
+    //         const url = process.env.REACT_APP_BACKEND_URL
+    //             + "/api/group/getUserGroupsByType?userId=" + encodeURIComponent(userId) +
+    //             "&groupType=" + encodeURIComponent("WORKING_TEAM")
+    //
+    //         const groupList = await performGetRequest(url);
+    //
+    //         if (groupList === undefined || groupList.length === 0) {
+    //             setWorkingGroupState({
+    //                 groupName: "Нет",
+    //                 teamLeadName: "Не указан"
+    //             })
+    //             return
+    //         }
+    //
+    //         const getTeamLeadNameUrl = process.env.REACT_APP_BACKEND_URL
+    //             + "/api/" + encodeURIComponent(userId)
+    //
+    //         const teamLead = await performGetRequest(getTeamLeadNameUrl)
+    //
+    //         setWorkingGroupState({
+    //             groupName: groupList[0].name,
+    //             teamLeadName: teamLead.name,
+    //         })
+    //     }
+    //
+    //     getUserWorkingGroup()
+    //     setWorkingGroupLoading(false)
+    //
+    // }, [userId, workingGroupState, setWorkingGroupLoading])
+    //
+    // useEffect( () => {
+    //
+    //     async function getUserGroupList() {
+    //
+    //         const url = process.env.REACT_APP_BACKEND_URL
+    //             + "/api/group/getUserGroups?userId=" + encodeURIComponent(userId)
+    //
+    //         const groupList = await performGetRequest(url);
+    //
+    //         setGroupListState(groupList)
+    //     }
+    //
+    //     getUserGroupList()
+    //     setGroupListLoading(false)
+    // }, [userId, groupListState, setGroupListLoading])
 
     if (isGroupListLoading || isWorkingGroupLoading) {
 
