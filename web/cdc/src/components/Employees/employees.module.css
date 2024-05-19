@@ -1445,6 +1445,20 @@
     gap: 10px;
 }
 
+.addUserBlockBottom {
+    min-width: 400px;
+    min-height: 2.2rem;
+    font-size: 2rem;
+}
+
+.addUserBlockBottomButton {
+    align-self: center;
+    min-width: 200px;
+    min-height: 40px;
+    font-size: 2rem;
+    margin-left: 25%
+}
+
 .lPartHeadingNameInput {
     display: flex;
     /* width: 250px; */

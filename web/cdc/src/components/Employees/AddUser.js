@@ -78,7 +78,6 @@ const AddUser = () => {
         }
 
         const result = await UserAPI.getAuthUser()
-        console.log(result)
         const authData = JSON.parse(JSON.stringify(result))
         if (authData.authorities[0].authority === "ROLE_ADMIN") {
             const response = await UserAPI.addUserRequest(data)
@@ -103,7 +102,6 @@ const AddUser = () => {
             setEmailFilled(false)
             setPhoneFilled(false)
             alert("Пользователь успешно добавлен")
-            console.log(response.data)
             return response.data
         }
         else {
@@ -206,11 +204,11 @@ const AddUser = () => {
                     <div>Email</div>
                     <div>Номер телефона</div>
                     <div>Роль</div>
-                    <div>Позиция</div>
+                    <div>Уровень компетенций</div>
                     <div>Руководитель</div>
                     <div>Product Owner</div>
                     <div>Проект</div>
-                    <div>Отдел</div>
+                    <div>Подразделение</div>
                     <div>Менторство</div>
                     <div>Дата присоединения</div>
                 </div>
@@ -228,12 +226,12 @@ const AddUser = () => {
                         <option value="Supervisor">Руководитель</option>
                         <option value="Non Member">Гость</option>
                     </select>
-                    <select name="grade" placeholder="Позиция" value={user.grade} onChange={(event) => setUser({ ...user, grade: event.target.value })} >
+                    <select name="grade" placeholder="Уровень компетенций" value={user.grade} onChange={(event) => setUser({ ...user, grade: event.target.value })} >
                         <option value="Junior">Junior</option>
                         <option value="Middle">Middle</option>
                         <option value="Senior">Senior</option>
                         <option value="Team Lead">Team Lead</option>
-                        <option value="Unspecified">Не указана</option>
+                        <option value="Unspecified">Не указан</option>
                     </select>
                     {/*<input className={`${classes.InputField}`} id="supervisorName" placeholder="Руководитель" onChange={(event) => setUser({ ...user, supervisorName: event.target.value })} />}
             <input className={`${classes.InputField}`} id="productOwnersNames" placeholder="Product Owners" type="text" onChange={(event) => setUser({ ...user, productOwnersNames: event.target.value.split(',').map(item => item.trim()) })} />*/}
@@ -257,11 +255,11 @@ const AddUser = () => {
                         placeholder="Product Owners"
                         styles={customStyles}
                         loadOptions={getPO}
-                        onChange={(selectedOption) => { console.log(selectedOption); setUser({ ...user, productOwnersNames: selectedOption }) }}
+                        onChange={(selectedOption) => { setUser({ ...user, productOwnersNames: selectedOption }) }}
 
                     />
                     <input className={`${classes.InputField}`} name="project" placeholder="Проект" onChange={(event) => setUser({ ...user, project: event.target.value })} />
-                    <input className={`${classes.InputField}`} name="department" placeholder="Отдел" onChange={(event) => setUser({ ...user, department: event.target.value })} />
+                    <input className={`${classes.InputField}`} name="department" placeholder="Подразделение" onChange={(event) => setUser({ ...user, department: event.target.value })} />
                     <select id="mentorStasus" value={user.mentorStatus} placeholder="Менторство" onChange={(event) => setUser({ ...user, mentorStatus: event.target.value })} >
                         <option value="Mentor">Ментор</option>
                         <option value="Mentee" >Менти</option>

@@ -9,7 +9,6 @@ function Header() {
 	useEffect(() => {
 		UserAPI.getAuthUser()
 			.then(response => {
-				console.log(response)
 				if (response !== 'anonymousUser') setUser(JSON.parse(JSON.stringify(response.authorities)));
 			})
 			.catch(error => {
@@ -20,7 +19,6 @@ function Header() {
 				}
 			});
 	}, []);
-	console.log(user)
 	return (
 		<div className={`${classes.wrapperHeaderContainer}`}>
 			<div className={`${classes.headerInfobox}`}>
