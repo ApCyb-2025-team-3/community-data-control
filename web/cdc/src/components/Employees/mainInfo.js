@@ -28,7 +28,6 @@ const MainInfo = ({ userId }) => {
         async function getUserInfo() {
             try {
                 const response = await UserAPI.getFullInfo(userId)
-                console.log(response)
                 if (response !== null) {
                     const userInfo = response
 
@@ -56,12 +55,13 @@ const MainInfo = ({ userId }) => {
     }, [userId])
 
     useEffect(() => {
-        const authorities = UserAPI.getAuthUser()
+        UserAPI.getAuthUser()
         .then(response => {
-            JSON.parse(JSON.stringify(response.authorities))
+            let authorities = JSON.parse(JSON.stringify(response.authorities))
+            const isNull = authorities[0] === undefined;
+            setIsAdmin(!isNull && authorities[0].authority === "ROLE_ADMIN");
         })
-        const isNull = authorities[0] === undefined;
-        setIsAdmin(!isNull && authorities[0].authority === "ROLE_ADMIN");
+        
 
     }, [])
 
@@ -88,6 +88,7 @@ const MainInfo = ({ userId }) => {
             setPhoneIsCorrect(true) : setPhoneIsCorrect(false)
         setState({...state, userInfo: {...state.userInfo, phoneNumber : event.target.value}})
     }
+
 
     const handleDate = (event, ind) => {
         if (!event.target.value) {
@@ -404,7 +405,7 @@ const MainInfo = ({ userId }) => {
 
     function formatLocalDate(date) {
         const localDate = date === null ? null : date.split("-").reverse()
-        if (localDate === undefined || localDate === null) return null
+        if (localDate === undefined || localDate === null || localDate.length !== 3) return null
         else {
             localDate[1] = localDate[1].length === 1 ? '0' + localDate[1] : localDate[1]
             return localDate.join()
