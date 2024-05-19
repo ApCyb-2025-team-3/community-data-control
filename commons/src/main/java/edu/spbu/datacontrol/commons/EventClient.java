@@ -2,6 +2,8 @@ package edu.spbu.datacontrol.commons;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +20,8 @@ public class EventClient {
 
     private final String serviceUrl;
     private final RestTemplate client = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(
+            new JavaTimeModule()).setDateFormat(new StdDateFormat().withColonInTimeZone(true));
 
     public EventClient(String serviceUrl) {
         this.serviceUrl = serviceUrl + "/api/event";
