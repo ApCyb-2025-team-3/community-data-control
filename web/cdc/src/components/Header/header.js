@@ -2,6 +2,7 @@ import classes from './header.module.css';
 import logo from '../../icons/safari-pinned-tab.svg';
 import React, { useState, useEffect } from "react";
 import { UserAPI } from '../Employees/UserAPI';
+import Cookie from "js-cookie";
 
 
 function Header() {
@@ -35,7 +36,7 @@ function Header() {
 					<a href="/groups">группы</a>
 					<a href="/mentorship">менторство</a>
 					<a href="/employees">сотрудники</a>
-					{user ? <a href={process.env.REACT_APP_BACKEND_URL + "/logout"}>Выйти</a> : <a href={process.env.REACT_APP_BACKEND_URL + "/login"}>Войти</a>}
+					{user ? <a href={process.env.REACT_APP_BACKEND_URL + "/logout"} onClick={() => {Cookie.remove('JSESSIONID')}}>Выйти</a> : <a href={process.env.REACT_APP_BACKEND_URL + "/login"}>Войти</a>}
 				</nav>
 			</div>
 		</div>

@@ -27,6 +27,6 @@ export function localiseGrade(grade) {
         case "Team Lead":
             return grade
         default:
-            return "Не указана"
+            return "Не указан"
     }
 }

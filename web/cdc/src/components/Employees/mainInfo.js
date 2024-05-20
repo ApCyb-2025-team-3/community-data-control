@@ -214,17 +214,10 @@ const MainInfo = ({ userId }) => {
 
         try {
 
-            const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/user/" + state.userId + "/dismiss?date=" + dateToIEEE(dismissedAt)
-                + "&description=" + encodeURIComponent(reason)
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
+            const response = await UserAPI.dismissUser(state.userId,
+                dateToIEEE(dismissedAt), reason);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 const newUserInfo = state.userInfo
                 newUserInfo.isActive = false
                 newUserInfo.dismissReason = reason
@@ -408,7 +401,7 @@ const MainInfo = ({ userId }) => {
         if (localDate === undefined || localDate === null || localDate.length !== 3) return null
         else {
             localDate[1] = localDate[1].length === 1 ? '0' + localDate[1] : localDate[1]
-            return localDate.join()
+            return localDate.join(".")
         }
     }
 
@@ -489,6 +482,8 @@ const MainInfo = ({ userId }) => {
     const projectChangeDate = state.oldUserInfo.projectdAt !== null
         ? state.oldUserInfo.projectChangedAt : state.oldUserInfo.invitedAt
 
+    console.log(state)
+
     return (
         <div className={`${classes.infoBlocks}`}>
             <div className={`${classes.mainBlock}`}>
@@ -508,8 +503,8 @@ const MainInfo = ({ userId }) => {
                             <p>Email:</p>
                             <p>Телефон:</p>
                             <p>Дата рождения:</p>
-                            <p>Отдел:</p>
-                            <p>Позиция:</p>
+                            <p>Подразделение:</p>
+                            <p>Уровень компетенции:</p>
                             <p>Роль:</p>
                         </div>
                         {state.isChanging ?
@@ -554,7 +549,7 @@ const MainInfo = ({ userId }) => {
                         {state.isChanging ?
                             <div className={`${classes.lPartInfoCol2Data}`}>
                                 <input onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, project: event.target.value } })} value={state.userInfo.project} className={`${classes.lPartInfoCol2DataPhoneNum}`} />
-                                <input type='date' onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangedAt: event.target.value } })} defaultValue={state.userInfo.projectChangedAt} className={`${classes.lPartInfoCol2DataDoB}`}></input>
+                                <input type='date' value={dateToIEEE(state.userInfo.projectChangedAt)} onChange={(event) => setState({ ...state, userInfo: { ...state.userInfo, projectChangedAt: event.target.value } })} className={`${classes.lPartInfoCol2DataDoB}`}></input>
                                 <AsyncSelect
                                     cacheOptions
                                     defaultOptions
