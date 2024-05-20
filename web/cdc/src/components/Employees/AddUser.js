@@ -111,7 +111,7 @@ const AddUser = () => {
     }
 
     const nameHandler = (e) => {
-        const nameRegex = /^[A-Za-zА-Яа-яЁё]+([-']?[A-Za-zА-Яа-яЁё]+)?$/
+        const nameRegex = /^[A-Za-zА-Яа-яЁё ]+([-']?[A-Za-zА-Яа-яЁё]+)?$/
         if (nameRegex.test(e.target.value)) {
             setNameFilled(true)
             setUser({ ...user, name: e.target.value })

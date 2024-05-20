@@ -90,7 +90,7 @@ const Employees = () => {
             setEmptyUserListToState()
         }
 
-        const userDtoList = await getUsersByDepartment(department)
+        const userDtoList = await UserAPI.getUsersByDepartment(department)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList

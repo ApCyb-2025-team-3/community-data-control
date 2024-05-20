@@ -25,3 +25,38 @@ spec:
                 name: datacontrol-backend
                 port:
                   number: 5002
+          - path: /login
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5002
+          - path: /logout
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5002
+          - path: /api/auth
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5002
+          - path: /api/swagger-ui
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5002
+          - path: /oauth2/
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5002

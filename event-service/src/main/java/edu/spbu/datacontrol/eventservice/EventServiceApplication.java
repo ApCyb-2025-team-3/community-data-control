@@ -23,7 +23,7 @@ public class EventServiceApplication {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/user/**")
+                registry.addMapping("/api/event/**")
                     .allowedOrigins("http://datacontrol.app", "http://localhost")
                     .allowedMethods("*")
                     .allowedHeaders("*")

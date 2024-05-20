@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -71,11 +72,13 @@ public class EventClient {
 
         try {
 
-            URI requestUri = new URI(serviceUrl + "/lastByUserAndType?userId=" + userId + "&type=" + type);
+            URI requestUri = new URI(
+                serviceUrl + "/lastByUserAndType?userId=" + userId + "&type=" + type);
             ResponseEntity<Event> response = client.getForEntity(requestUri, Event.class);
 
             return response.getBody();
-
+        } catch (HttpClientErrorException.NotFound e ) {
+            return null;
         } catch (URISyntaxException e) {
             throw new RuntimeException("Wrong URI syntax!");
         }

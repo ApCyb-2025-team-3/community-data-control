@@ -40,7 +40,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**").permitAll()
-                    .requestMatchers(HttpMethod.POST).hasAuthority("ROLE_ADMIN")
+                    .requestMatchers(HttpMethod.POST).authenticated()
                     .requestMatchers("/api/user/").authenticated()
                     .anyRequest().authenticated()
 
@@ -65,8 +65,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-            List.of(frontendUrl, "http://localhost:5001", "http://localhost:5002",
-                "http://localhost:5432"));
+            List.of(frontendUrl, "http://localhost"));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

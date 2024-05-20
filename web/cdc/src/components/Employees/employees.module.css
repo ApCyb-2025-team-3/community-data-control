@@ -785,6 +785,7 @@
 .buttonTeamsGroups,
 .buttonMentorship {
     display: flex;
+    flex-direction: row-reverse;
     width: 100%;
     height: 40px;
     justify-content: center;

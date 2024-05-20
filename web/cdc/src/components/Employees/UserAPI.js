@@ -1,58 +1,6 @@
 import axios from "axios"
 
-
-const clientId = 'Ov23ctQnsqB3lpRUyEJf';
-const clientSecret = '902ad4e7133fd188e0420d54fb45b52de8a34648';
-const tokenUrl = 'http://localhost:5002/login/oauth2/code/github';
-
-
 export class UserAPI {
-
-
-    
-    static async getAccessToken() {
-        try {
-            const response = await axios.post(tokenUrl, {
-                grant_type: 'client_credentials',
-                client_id: clientId,
-                client_secret: clientSecret
-            });
-            return response.data.access_token;
-        } catch (error) {
-            console.error('Error fetching access token', error);
-            throw error;
-        }
-    }
-    accessToken;
-
-
-    static async initialize() {
-        this.accessToken = await this.getAccessToken();
-
-        axios.interceptors.request.use(
-            config => {
-                config.headers.Authorization = `Bearer ${this.accessToken}`;
-                return config;
-            },
-            error => {
-                return Promise.reject(error);
-            }
-        );
-
-        axios.interceptors.response.use(
-            response => response,
-            async error => {
-                if (error.response.status === 401 && !error.config._retry) {
-                    error.config._retry = true;
-                    this.accessToken = await this.getAccessToken();
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${this.accessToken}`;
-                    return axios(error.config);
-                }
-                return Promise.reject(error);
-            }
-        );
-    }
-
 
     static async #getRequestLogic(url) {
         const result = await axios.get(url, { withCredentials: true})
@@ -129,10 +77,10 @@ export class UserAPI {
     }
 
     static async changePersonalDataRequest(userDto, reason) {
-        await this.initialize()
+        
         try {
             const url = process.env.REACT_APP_BACKEND_URL + "/api/user/changeUsersPersonalData?reason=" + reason
-            const response = await axios.post(url, userDto)
+            const response = await axios.post(url, userDto, { withCredentials: true })
             if (response.status !== 200) alert("Failed to change user's personal data")
             return response.status
         } catch (error) {
@@ -141,10 +89,10 @@ export class UserAPI {
     }
     
     static async changeUserGradeRequest(newGrade, reason, userId) {
-        await this.initialize()
+        
         try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${userId}/changeGrade?grade=${newGrade}&reason=${reason}`
-            const response = await axios.post(url)
+            const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(userId)}/changeGrade?grade=${encodeURIComponent(newGrade)}&reason=${encodeURIComponent(reason)}`
+            const response = await axios.post(url, "", { withCredentials: true })
             if (response.status !== 200) alert("Failed to change user's grade")
             return response.status;
         } catch (error) {
@@ -153,10 +101,10 @@ export class UserAPI {
     }
     
     static async changeUserRoleRequest(newRole, reason, userId) {
-        await this.initialize()
+        
         try {
             const url = process.env.REACT_APP_BACKEND_URL + `/api/user/${encodeURIComponent(userId)}/changeRole?role=${encodeURIComponent(newRole)}&reason=${encodeURIComponent(reason)}`
-            const response = await axios.post(url)
+            const response = await axios.post(url, "", { withCredentials: true })
             if (response.status !== 200) alert("Failed to change user's role")
             return response.status;
         } catch (error) {
@@ -165,10 +113,10 @@ export class UserAPI {
     }
     
     static async changeProjectData(newData) {
-        await this.initialize()
+        
         try {
             const url = process.env.REACT_APP_BACKEND_URL + '/api/user/changeUserProject'
-            const response = await axios.post(url, newData)
+            const response = await axios.post(url, newData, { withCredentials: true })
             if (response.status !== 200) alert("Failed to change user's project data")
             return response.status;
         } catch (error) {
@@ -176,8 +124,22 @@ export class UserAPI {
         }
     }
 
+    static async dismissUser(userId, dismissedAt, reason) {
+        
+        try {
+            const url = process.env.REACT_APP_BACKEND_URL + "/api/user/" + userId
+                + "/dismiss?date=" + dismissedAt
+                + "&description=" + encodeURIComponent(reason)
+            const response = await axios.post(url, "", { withCredentials: true })
+            if (response.status !== 200) alert("Failed to dismiss user")
+            return response;
+        } catch (error) {
+            console.error('Ошибка при отправке запроса:', error);
+        }
+    }
+
     static async addUserRequest(data) {
-        await this.initialize()
+        
 
         const url = process.env.REACT_APP_BACKEND_URL + "/api/user/add"
         const response = await axios.post(url, data, { withCredentials: true })
