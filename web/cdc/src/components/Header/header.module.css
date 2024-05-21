@@ -109,6 +109,22 @@
 
 .headerMenuObtaining nav a:hover::after,
 .headerMenuObtaining nav a:focus::after {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+button {
+    display: flex;
+    width: 10%;
+    height: 40%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    padding: 0;
+
+    background: none;
+    border-radius: 10px;
+    border: 0px solid #000;
 }

@@ -32,34 +32,34 @@ const Mentorships = ({userId, mentorStatus}) => {
         }
     }
 
-    useEffect( () => {
-        async function getMentor(id) {
-
-            const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/mentorship/getMentorByMentee?menteeId=" + id
-
-            const result = performGetRequest(url)
-            setState(s => s.userMentorshipInfo = result)
-        }
-
-        async function getMentees(id) {
-
-            const url = process.env.REACT_APP_BACKEND_URL
-                + "/api/mentorship/getMenteesByMentor?mentorId=" + id
-
-            const result = performGetRequest(url)
-            setState(s => s.userMentorshipInfo = result)
-        }
-
-        if (mentorStatus === "MENTOR") {
-            getMentees(userId)
-        } else if (mentorStatus === "MENTEE") {
-            getMentor(userId)
-        }
-
-        setLoading(false)
-
-    }, [userId, mentorStatus])
+    // useEffect( () => {
+    //     async function getMentor(id) {
+    //
+    //         const url = process.env.REACT_APP_BACKEND_URL
+    //             + "/api/mentorship/getMentorByMentee?menteeId=" + id
+    //
+    //         const result = performGetRequest(url)
+    //         setState(s => s.userMentorshipInfo = result)
+    //     }
+    //
+    //     async function getMentees(id) {
+    //
+    //         const url = process.env.REACT_APP_BACKEND_URL
+    //             + "/api/mentorship/getMenteesByMentor?mentorId=" + id
+    //
+    //         const result = performGetRequest(url)
+    //         setState(s => s.userMentorshipInfo = result)
+    //     }
+    //
+    //     if (mentorStatus === "MENTOR") {
+    //         getMentees(userId)
+    //     } else if (mentorStatus === "MENTEE") {
+    //         getMentor(userId)
+    //     }
+    //
+    //     setLoading(false)
+    //
+    // }, [userId, mentorStatus])
 
     if (isLoading) {
         return (

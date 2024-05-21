@@ -30,9 +30,7 @@ const Employees = () => {
 
         if (role === "") {
             setEmptyUserListToState()
-            return
         }
-
         const userDtoList = await UserAPI.getUserByRole(role)
         setState({
             selectedUserId: state.selectedUserId,
@@ -42,9 +40,8 @@ const Employees = () => {
 
     async function getUsersByGrade (grade) {
 
-        if (grade === "" || grade === "Unspecified") {
+        if (grade === "") {
             setEmptyUserListToState()
-            return
         }
         const userDtoList = await UserAPI.getUserByGrade(grade)
         setState({
@@ -91,7 +88,8 @@ const Employees = () => {
 
         if (department === "") {
             setEmptyUserListToState()
-        }        
+        }
+
         const userDtoList = await UserAPI.getUsersByDepartment(department)
         setState({
             selectedUserId: state.selectedUserId,
@@ -105,15 +103,12 @@ const Employees = () => {
             setEmptyUserListToState()
         }
 
-
         const userDtoList = await UserAPI.getUsersBySupervisorName(name)
         setState({
             selectedUserId: state.selectedUserId,
             userList: userDtoList
         })
     }
-
-    
 
     function handleUserSelection(userId) {
         setState({
@@ -137,7 +132,7 @@ const Employees = () => {
                 renderedUserList.push(
                     <li>
                         <div className={`${classes.listLiInfo}`}
-                            onClick={(event) => handleUserSelection(userDto.id)}>
+                             onClick={(event) => handleUserSelection(userDto.id)}>
                             <div
                                 className={`${classes.listLiInfoName}`}>{userDto.name}
                             </div>
@@ -225,7 +220,7 @@ const Employees = () => {
                                                     getUsersByGrade(
                                                         event.currentTarget.value)}
                                         >
-                                            <option value="">Позиция
+                                            <option value="">Уровень комп.
                                             </option>
                                             <option value="Junior">Junior
                                             </option>
@@ -242,7 +237,7 @@ const Employees = () => {
                                         </select>
                                         <div action="">
                                             <input
-                                                placeholder="Отдел"
+                                                placeholder="Подразделение"
                                                 id={"departmentSearch"}
                                                 onKeyUp={(event) => {
                                                     if (event.key === 'Enter') {
