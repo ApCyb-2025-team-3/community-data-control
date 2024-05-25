@@ -11,7 +11,6 @@ import React, {useState} from "react";
 import Popup from "reactjs-popup";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
-import adapter from 'axios/lib/adapters/http';
 
 const Teams = () => {
 
@@ -145,7 +144,7 @@ const Teams = () => {
     async function createTeam() {
         try {
             const url = process.env.REACT_APP_BACKEND_URL_GROUP + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
-            const response = await axios.post(url, {adapter})
+            const response = await axios.post(url, JSON.stringify(newInformation), {withCredentials: true})
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
