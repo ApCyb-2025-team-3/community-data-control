@@ -1,4 +1,4 @@
-package edu.spbu.datacontrol.userservice.config;
+package edu.spbu.datacontrol.groupservice.config;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +39,14 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html").permitAll()
+                    .requestMatchers("http://localhost:5002/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html").permitAll()
                     .requestMatchers(HttpMethod.POST).authenticated()
                     .requestMatchers("/api/user/", "/api/group/**", "/api/mentorship/").authenticated()
                     .anyRequest().authenticated()
 
             )
             .oauth2Login(oauth2 -> {
-                    oauth2.loginPage("/login").permitAll();
+                    oauth2.loginPage("http://localhost:5002/login").permitAll();
                     oauth2.successHandler(oAuth2LoginSuccessHandler);
                 }
             )

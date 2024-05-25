@@ -11,6 +11,7 @@ import React, {useState} from "react";
 import Popup from "reactjs-popup";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
+import adapter from 'axios/lib/adapters/http';
 
 const Teams = () => {
 
@@ -49,15 +50,18 @@ const Teams = () => {
 
 
 
-    const getUsers = async (inputValue) => {
+    async function getUsers(inputValue) {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=team lead`);
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=Team Lead`, { withCredentials: true});
 
-            return response.data.map(user => ({
-                id: user.id,
-                value: user.name,
-                label: user.name
-            }));
+            if (response) {
+                return response.data.map(user => ({
+                    id: user.id,
+                    value: user.name,
+                    label: user.name
+                }));
+            }
+            else return;
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
@@ -100,8 +104,8 @@ const Teams = () => {
         // Add more styles for other elements as needed
     };
 
-    const promiseOptions = inputValue =>
-        new Promise(resolve => resolve(getUsers(inputValue)));
+    // const promiseOptions = inputValue =>
+    //     new Promise(resolve => resolve(getUsers(inputValue)));
 
 
 
@@ -140,33 +144,42 @@ const Teams = () => {
 
     async function createTeam() {
         try {
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(newInformation)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-            setTeamLead(null);
-            setNewInformation({
-                name: null,
-                type: "WORKING_TEAM",
-                description: null
-            })
+            const url = process.env.REACT_APP_BACKEND_URL_GROUP + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
+            const response = await axios.post(url, {adapter})
         } catch (error) {
             console.error('Ошибка при отправке запроса:', error);
         }
-        getActiveTeams()
     }
+
+    // async function createTeam() {
+    //     try {
+    //         const url = process.env.REACT_APP_BACKEND_URL_GROUP + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
+    //         const response = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Origin': 'http://localhost:3000'
+    //             },
+    //             body: JSON.stringify(newInformation)
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error('Ошибка запроса');
+    //         }
+
+    //         const result = await response.text();
+    //         console.log(result);
+    //         setTeamLead(null);
+    //         setNewInformation({
+    //             name: null,
+    //             type: "WORKING_TEAM",
+    //             description: null
+    //         })
+    //     } catch (error) {
+    //         console.error('Ошибка при отправке запроса:', error);
+    //     }
+    //     getActiveTeams()
+    // }
 
     async function updateTeam() {
         try {
@@ -209,7 +222,7 @@ const Teams = () => {
 
         const userDtoList = await performGetRequest(url)
         setState({
-            isGroupSelected: state.selectedUserId,
+            isGroupSelected: state.isGroupSelected,
             selectedGroup: state.selectedGroup,
             groupList: userDtoList
         })
@@ -484,6 +497,12 @@ const Teams = () => {
         //     return <AddUser/>
         // }
 
+        if (state.isGroupSelected === 0) {
+            return (
+                <div></div>
+            )
+        }
+
         return (
             <div className={`${classes.rightBlock}`}>
                 <div className={`${classes.teamInfoHeading}`}>
@@ -555,7 +574,7 @@ const Teams = () => {
                                                 className="custom-container"
                                                 placeholder="Тимлид  "
                                                 styles={customStyles}
-                                                loadOptions={promiseOptions}
+                                                loadOptions={getUsers}
                                                 onChange={(selectedOption) => setModifiedInfo(selectedOption.id)}
     
                                             />
@@ -724,7 +743,7 @@ const Teams = () => {
                                                                 className="custom-container"
                                                                 placeholder="Тимлид  "
                                                                 styles={customStyles}
-                                                                loadOptions={promiseOptions}
+                                                                loadOptions={getUsers}
                                                                 onChange={(selectedOption) => setTeamLead(selectedOption.id)}
 
                                                             />

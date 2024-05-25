@@ -212,6 +212,14 @@ const Mentorship = () => {
     function renderPairs() {
         let renderedPairList = []
 
+        if (pairs === null || pairs === undefined) {
+            return (
+                renderedPairList.push(
+                    <li></li>
+                )
+            )
+        } 
+
         pairs.forEach((pairDto) => {
             renderedPairList.push(
                  <li>
@@ -236,6 +244,14 @@ const Mentorship = () => {
     function renderFreeMentors(userDtoList) {
         let renderedPairList = []
 
+        if (userDtoList === null || userDtoList === undefined) {
+            renderedPairList.push(
+                <li></li>
+            )
+
+            return renderedPairList
+        }
+
         userDtoList.forEach((userDto) => {
             renderedPairList.push(
                 <li>
@@ -249,6 +265,14 @@ const Mentorship = () => {
 
     function renderFreeMentees(userDtoList) {
         let renderedPairList = []
+
+        if (userDtoList === null || userDtoList === undefined) {
+            renderedPairList.push(
+                <li></li>
+            )
+
+            return renderedPairList
+        }
 
         userDtoList.forEach((userDto) => {
             renderedPairList.push(

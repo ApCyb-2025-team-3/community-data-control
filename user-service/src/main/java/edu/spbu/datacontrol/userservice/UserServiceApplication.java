@@ -27,6 +27,18 @@ public class UserServiceApplication {
                     .allowedMethods("*")
                     .allowedHeaders("*")
                     .allowCredentials(true);
+
+                registry.addMapping("/api/auth/**")
+                    .allowedOrigins("http://datacontrol.app", "http://localhost")
+                    .allowedMethods("*")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
+
+                registry.addMapping("/login/")
+                    .allowedOrigins("http://datacontrol.app", "http://localhost")
+                    .allowedMethods("*")
+                    .allowedHeaders("*")
+                    .allowCredentials(true);
             }
         };
     }
