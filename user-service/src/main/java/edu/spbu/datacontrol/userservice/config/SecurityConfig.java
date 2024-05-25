@@ -38,12 +38,21 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html", "/api/group/**", "/api/mentorship/").permitAll()
-                    .requestMatchers(HttpMethod.POST).authenticated()
-                    .requestMatchers("/api/user/").authenticated()
-                    .anyRequest().authenticated()
-
+                {
+                    try {
+                        authorizeRequests
+                            .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html", "/api/group/**", "/api/mentorship/").permitAll()
+                            .requestMatchers(HttpMethod.POST).authenticated()
+                            .requestMatchers("/api/user/").authenticated()
+                            .anyRequest().authenticated()
+                            .and()
+                            .sessionManagement()
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(false);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             )
             .oauth2Login(oauth2 -> {
                     oauth2.loginPage("/login").permitAll();
