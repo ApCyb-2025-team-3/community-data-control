@@ -111,12 +111,15 @@ const Teams = () => {
 
     async function performGetRequest(url) {
         try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
+            const response = await axios.get(url, 
+            // {
+            //     method: "GET",
+            //     headers: {
+            //         "Origin": "http://localhost:3000",
+            //     },
+            // }
+            {withCredentials: true}
+        );
 
             if (response.ok) {
                 return await response.json()
@@ -266,6 +269,7 @@ const Teams = () => {
         const url = process.env.REACT_APP_BACKEND_URL
             + "/api/group/getActiveGroupsByType?groupType=WORKING_TEAM"
         const groupDtoList = await performGetRequest(url)
+
       
 
         setState({

@@ -39,14 +39,15 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("http://localhost:5002/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html").permitAll()
+                    .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html").permitAll()
                     .requestMatchers(HttpMethod.POST).authenticated()
-                    .requestMatchers("/api/user/", "/api/group/**", "/api/mentorship/").authenticated()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/api/user/").authenticated()
+//                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
 
             )
             .oauth2Login(oauth2 -> {
-                    oauth2.loginPage("http://localhost:5002/login").permitAll();
+                    oauth2.loginPage("/login").permitAll();
                     oauth2.successHandler(oAuth2LoginSuccessHandler);
                 }
             )

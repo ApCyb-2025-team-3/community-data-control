@@ -39,9 +39,9 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html").permitAll()
+                    .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html", "/api/group/**", "/api/mentorship/").permitAll()
                     .requestMatchers(HttpMethod.POST).authenticated()
-                    .requestMatchers("/api/user/", "/api/group/**", "/api/mentorship/").authenticated()
+                    .requestMatchers("/api/user/").authenticated()
                     .anyRequest().authenticated()
 
             )
