@@ -113,7 +113,7 @@
     transform: translate3d(0, 0, 0);
 }
 
-button {
+/* button {
     display: flex;
     width: 10%;
     height: 40%;
@@ -127,4 +127,4 @@ button {
     background: none;
     border-radius: 10px;
     border: 0px solid #000;
-}
+} */

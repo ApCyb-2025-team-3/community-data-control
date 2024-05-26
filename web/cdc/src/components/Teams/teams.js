@@ -11,6 +11,7 @@ import React, {useState} from "react";
 import Popup from "reactjs-popup";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
+import { TeamAPI } from './TeamAPI';
 
 const Teams = () => {
 
@@ -44,6 +45,8 @@ const Teams = () => {
         description: null,
         teamLead: null,
     })
+
+    const [serviceDate, setServiceDate] = useState(Date())
 
 
 
@@ -131,7 +134,7 @@ const Teams = () => {
         } catch (error) {
             console.error(error)
         }
-    }
+    };
 
     window.addEventListener('load', () => {
         getActiveTeams();
@@ -143,45 +146,6 @@ const Teams = () => {
             userList: []
         })
     }
-
-    async function createTeam() {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL_GROUP + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
-            const response = await axios.post(url, JSON.stringify(newInformation), {withCredentials: true})
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-    }
-
-    // async function createTeam() {
-    //     try {
-    //         const url = process.env.REACT_APP_BACKEND_URL_GROUP + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
-    //         const response = await fetch(url, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Origin': 'http://localhost:3000'
-    //             },
-    //             body: JSON.stringify(newInformation)
-    //         });
-
-    //         if (!response.ok) {
-    //             throw new Error('Ошибка запроса');
-    //         }
-
-    //         const result = await response.text();
-    //         console.log(result);
-    //         setTeamLead(null);
-    //         setNewInformation({
-    //             name: null,
-    //             type: "WORKING_TEAM",
-    //             description: null
-    //         })
-    //     } catch (error) {
-    //         console.error('Ошибка при отправке запроса:', error);
-    //     }
-    //     getActiveTeams()
-    // }
 
     async function updateTeam() {
         try {
@@ -266,36 +230,17 @@ const Teams = () => {
     }
 
     async function getActiveTeams() {
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/group/getActiveGroupsByType?groupType=WORKING_TEAM"
-        const groupDtoList = await performGetRequest(url)
-
-      
-
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        const activeGroups = await TeamAPI.getActiveTeams()
+        setState({...state, groupList: activeGroups})
     }
 
     async function getAllTeams() {
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/group/getGroupsByType?groupType=WORKING_TEAM"
-
-        const groupDtoList = await performGetRequest(url)
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        const groupDtoList = await TeamAPI.getActiveTeams()
+        setState({...state, groupList: groupDtoList})
     }
 
     async function getActiveMembers(id) {
-        const url = process.env.REACT_APP_BACKEND_URL
-        + "/api/group/getActiveMembers?groupId=" + encodeURIComponent(id)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await TeamAPI.getActiveMembers(id)
         setMemberList(userDtoList)
     }
 
@@ -346,8 +291,10 @@ const Teams = () => {
     }
 
     async function sortByName(groupDtoList) {
-        
-        groupDtoList.sort((a, b) => a.name.localeCompare(b.name))
+
+        if (!(groupDtoList === undefined || groupDtoList.length === 0)) {
+            groupDtoList.sort((a, b) => a.name.localeCompare(b.name))
+        }
 
         setState({
             isGroupSelected: state.isGroupSelected,
@@ -358,26 +305,22 @@ const Teams = () => {
 
     async function sortByTeamLead(groupDtoList) {
 
-        groupDtoList.sort((a, b) => a.teamLeadName.localeCompare(b.teamLeadName))
+        if (!(groupDtoList === undefined || groupDtoList.length === 0)) {
+            groupDtoList.sort((a, b) => a.teamLeadName.localeCompare(b.teamLeadName))
+        }
 
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        setState({...state, groupList: groupDtoList})
     }
 
     async function sortByDate(groupDtoList) {
 
-        groupDtoList.sort(function(a, b) {
-            return new Date(b.creationDate) - new Date(a.creationDate)
-          })
+        if (!(groupDtoList === undefined || groupDtoList.length === 0)) {
+            groupDtoList.sort(function(a, b) {
+                return new Date(b.creationDate) - new Date(a.creationDate)
+            })
+        }
 
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        setState({...state, groupList: groupDtoList})
     }
 
     function menuButtons() {
@@ -440,11 +383,7 @@ const Teams = () => {
             renderedGroupList.push(
                 <li
                     onClick={() => {
-                        setState({
-                            isGroupSelected: 1,
-                            selectedGroup: groupDto,
-                            groupList: state.groupList
-                        });
+                        setState({...state, isGroupSelected: 1, selectedGroup: groupDto});
 
                         setObtainingState({
                             justifyContent: "space-between"
@@ -456,7 +395,12 @@ const Teams = () => {
                     <div className={`${classes.lilActive}`} style={{background: activeColor(groupDto.active)}} />
                     <div className={`${classes.lilName}`}>{groupDto.name}</div>
                     <div className={`${classes.lilLeader}`}>{groupDto.teamLeadName}</div>
-                    <div className={`${classes.lilCreation}`}>{changeDateFormat(groupDto.creationDate)}</div>
+                        <div className={`${classes.lilCreation}`}>
+                            {/* {
+                                // changeDateFormat(groupDto.creationDate)
+                            } */}
+                                                            5/26/2024
+                        </div>
                 </li>
             )
         })
@@ -467,6 +411,12 @@ const Teams = () => {
     function renderActiveMemberList(groupId, userDtoList) {
 
         let renderedUserList = []
+
+        if (userDtoList === undefined || userDtoList.length === 0) {
+            return (
+                <div>Пустота</div>
+            )
+        }
 
         userDtoList.forEach((userDto) => {
             renderedUserList.push(
@@ -531,7 +481,10 @@ const Teams = () => {
                     </div>
                     <div className={`${classes.leacreCreated}`}>
                     <p>Создана:</p>
-                    <div className={`${classes.leacreCreatedDate}`}>{changeDateFormat(groupDto.creationDate)}</div>
+                    <div className={`${classes.leacreCreatedDate}`}>
+                        {/* {changeDateFormat(groupDto.creationDate)} */}
+                        5/26/2024
+                        </div>
                     </div>
                 </div>
     
@@ -699,7 +652,10 @@ const Teams = () => {
             return (
                 <div className={`${classes.bodyUpdate}`}>
                     <p>Дата роспуска:</p>
-                    <div className={`${classes.bodyUpdateDate}`}>{changeDateFormat(groupDto.disbandmentDate)}</div>
+                        <div className={`${classes.bodyUpdateDate}`}>
+                            {/* {changeDateFormat(groupDto.disbandmentDate)} */}
+                                5/26/2024
+                        </div>
                 </div>
             )
         }
@@ -760,10 +716,15 @@ const Teams = () => {
                                                             onChange={(event) => setNewInformation({ ...newInformation, description: event.target.value })}
                                                             required/>
                                                         </form>
+                                                        <form>
+                                                        <input type='date'
+                                                            onChange={(event) => {setServiceDate(event.target.value)}} 
+                                                        />
+                                                        </form>
 
                                                         <div className={`${classes.popUpButtons}`}>
                                                             <button onClick={(event) => {
-                                                                createTeam()
+                                                                TeamAPI.createTeam(teamLead, newInformation)
                                                                 close()
                                                             }}>
                                                                 Подтвердить
