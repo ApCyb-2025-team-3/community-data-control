@@ -53,7 +53,7 @@ public class GroupController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createGroup(@RequestBody GroupInfoDTO groupInfoDTO,
-                                              @RequestParam UUID teamLeadId) {
+                                              @RequestParam UUID teamLeadId, @RequestParam Date creationDate) {
         try {
             Group currentGroups = groupRepository.getGroupByName(groupInfoDTO.getName());
             if (currentGroups != null) {
@@ -65,6 +65,7 @@ public class GroupController {
             }
             User teamLead = userRepository.getUserById(teamLeadId);
             assignTeamLead(newGroup, teamLead);
+            newGroup.setCreationDate(creationDate);
             groupRepository.save(newGroup);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(
@@ -110,7 +111,7 @@ public class GroupController {
 
     @PatchMapping("/disband")
     public ResponseEntity<String> disbandGroup(@RequestParam UUID groupId,
-                                               @RequestParam String disbandmentReason) {
+                                               @RequestParam String disbandmentReason, @RequestParam Date disbandmentDate) {
 
         Group disbandedGroup = groupRepository.getGroupById(groupId);
 
@@ -120,7 +121,6 @@ public class GroupController {
         if (!disbandedGroup.isActive()) {
             return new ResponseEntity<>("This group has already been disbanded.", HttpStatusCode.valueOf(409));
         }
-        Date disbandmentDate = new Date();
         disbandedGroup.setDisbandmentDate(disbandmentDate);
         disbandedGroup.setDisbandmentReason(disbandmentReason);
         disbandedGroup.setActive(false);
@@ -133,7 +133,7 @@ public class GroupController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup) {
+    public ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup, @RequestParam Date updatedDate) {
         Group group = groupRepository.getGroupById(changedGroup.getId());
         if (group == null) {
             return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
@@ -143,6 +143,7 @@ public class GroupController {
             User teamLead = userRepository.getUserById(changedGroup.getTeamLead());
             assignTeamLead(group, teamLead);
             group.changeGroupData(changedGroup);
+            group.setUpdatedDate(updatedDate);
             groupRepository.save(group);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
