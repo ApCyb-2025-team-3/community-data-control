@@ -10,6 +10,9 @@ spec:
     - port: 5002
       targetPort: 5002
       name: user
+    - port: 5003
+      targetPort: 5003
+      name: group
   selector:
     app: datacontrol-app
     tier: backend
@@ -46,3 +49,9 @@ spec:
           ports:
             - containerPort: 5002
               name: user
+        - name: group-service
+          image: docker.io/library/data-control-app-group-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5003
+              name: group

@@ -60,3 +60,17 @@ spec:
                 name: datacontrol-backend
                 port:
                   number: 5002
+          - path: /api/group
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5003
+          - path: /api/mentorship
+            pathType: Prefix
+            backend:
+              service:
+                name: datacontrol-backend
+                port:
+                  number: 5003
