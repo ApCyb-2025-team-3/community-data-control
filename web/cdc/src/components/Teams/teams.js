@@ -7,13 +7,15 @@ import date from '../../icons/sort-date-icon.svg';
 import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Popup from "reactjs-popup";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
 import { TeamAPI } from './TeamAPI';
 
 const Teams = () => {
+
+    const [isLoading, setIsLoading] = useState(true)
 
     const [state, setState] = useState({
         isGroupSelected: 0,
@@ -53,6 +55,23 @@ const Teams = () => {
         isNameSet: false
     })
 
+    const [disbandmentReason, setDisbandmentReason] = useState(null)
+
+    // const [acceptUser, setAcceptUser] = setState(false)
+
+    useEffect(() => {
+        async function startThePage() {
+            try {
+                getActiveTeams();
+                setIsLoading(false);
+            } catch (error) {
+                
+            }
+        }
+
+        startThePage()
+    }, [])
+
     async function getTeamleads() {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=Team Lead`, { withCredentials: true});
@@ -67,6 +86,27 @@ const Teams = () => {
             else return;
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
+            return [];
+        }
+    };
+
+    const getUser = async (inputValue) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByPartialName?partialName=${encodeURIComponent(inputValue)}`, { withCredentials: true});
+    
+            if (response) {
+                return response.data
+                    .filter(user => user.name.toLowerCase().includes(inputValue.toLowerCase()))  // Filter users based on inputValue
+                    .map(user => ({
+                        id: user.id,
+                        value: user.name,
+                        label: user.name
+                    }));
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
             return [];
         }
     };
@@ -180,13 +220,8 @@ const Teams = () => {
     }
 
     async function getTeamByName(name) {
-
-        if (name === "") {
-            setEmptyGroupListToState()
-        }
-
+        if (name === "") {setEmptyGroupListToState()}
         const userDtoList = await TeamAPI.getTeamByName(name)
-        
         setState({...state, groupList: userDtoList})
     }
 
@@ -231,7 +266,7 @@ const Teams = () => {
     }
 
     async function getAllTeams() {
-        const groupDtoList = await TeamAPI.getActiveTeams()
+        const groupDtoList = await TeamAPI.getAllTeams()
         setState({...state, groupList: groupDtoList})
     }
 
@@ -261,29 +296,6 @@ const Teams = () => {
             console.error('Ошибка при отправке запроса:', error);
         }
         getActiveMembers(groupId)
-    }
-
-    async function disband(id, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/group/disband?groupId=${id}&disbandmentReason=${reason}`
-            const response = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-        window.location.reload()
     }
 
     async function sortByName(groupDtoList) {
@@ -355,14 +367,6 @@ const Teams = () => {
         );
     }
 
-    function activeColor(isActive) {
-        if (isActive === true) {
-            return ( "#00CA4E" );
-        } else {
-            return ( "#FF605C" );
-        }
-    }
-
     function changeDateFormat(str) {
         return(str[8] + str[9] + '.' + str[5] + str[6] + '.' + str[0] + str[1] + str[2] + str[3])
     }
@@ -394,7 +398,7 @@ const Teams = () => {
                         getActiveMembers(groupDto.id)
                     }}
                 >
-                    <div className={`${classes.lilActive}`} style={{background: activeColor(groupDto.active)}} />
+                    <div className={`${classes.lilActive}`} style={{background: groupDto.active ? "#00CA4E" : "#FF605C"}} />
                     <div className={`${classes.lilName}`}>{groupDto.name}</div>
                     <div className={`${classes.lilLeader}`}>{groupDto.teamLeadName}</div>
                         <div className={`${classes.lilCreation}`}>{changeDateFormat(groupDto.creationDate)}</div>
@@ -443,10 +447,6 @@ const Teams = () => {
 
     function teamInfo(groupDto, userList) {
 
-        // if (isAdding) {
-        //     return <AddUser/>
-        // }
-
         if (state.isGroupSelected === 0) {
             return (
                 <div></div>
@@ -463,7 +463,7 @@ const Teams = () => {
     
                     <div className={`${classes.headingActivity}`}>
                         <p>Активность:</p>
-                        <div className={`${classes.headingActivityStatus}`} style={{background: activeColor(groupDto.active)}} />
+                        <div className={`${classes.headingActivityStatus}`} style={{background: groupDto.active ? "#00CA4E" : "#FF605C"}} />
                     </div>
                 </div>
     
@@ -478,10 +478,7 @@ const Teams = () => {
                     </div>
                     <div className={`${classes.leacreCreated}`}>
                     <p>Создана:</p>
-                    <div className={`${classes.leacreCreatedDate}`}>
-                        {/* {changeDateFormat(groupDto.creationDate)} */}
-                        5/26/2024
-                        </div>
+                    <div className={`${classes.leacreCreatedDate}`}>{changeDateFormat(groupDto.creationDate)}</div>
                     </div>
                 </div>
     
@@ -575,14 +572,23 @@ const Teams = () => {
                                 <div className={`${classes.popUpMask}`}>
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
-                                            Выберите сотрудника
-                                            <form action="">
-                                                <input id={"newMember"} placeholder="Сотрудник" required/>
-                                            </form>
-    
+                                            <p>Выберите сотрудника</p>
+                                            <AsyncSelect
+                                                cacheOptions
+                                                defaultOptions
+                                                classNamePrefix="custom"
+                                                className="custom-container"
+                                                placeholder="Сотрудник*  "
+                                                styles={customStyles}
+                                                loadOptions={getUser}
+                                                onChange={(selectedOption) => {
+                                                    setModifiedInfo(selectedOption.id);
+                                                    //setAcceptUser(true);
+                                                }}
+                                            />
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={() => {
-                                                    addNewMember(groupDto.id, document.getElementById("newMember").value)
+                                                    //addNewMember(groupDto.id, document.getElementById("newMember").value)
                                                     close()
                                                 }}>
                                                     Подтвердить
@@ -613,14 +619,37 @@ const Teams = () => {
                                 <div className={`${classes.popUpMask}`}>
                                     <div className={`${classes.popUp}`}>
                                         <div className={`${classes.popUpContent}`}>
-                                            Введите причину увольнения
+                                            <p>Расформирование команды</p>
                                             <form action="">
-                                                <input id={"disbandReason"} placeholder="Причина" required/>
+                                                <input id={"disbandReason"} placeholder="Причина" maxLength={255}
+                                                onChange={(event) => setDisbandmentReason(event.target.value )}
+                                                />
+                                            </form>
+                                            <form>
+                                                <input type='date'
+                                                    defaultValue="2024-05-28"
+                                                    min="1992-01-01"
+                                                    onChange={(event) => {setServiceDate(dateConverterAsParam(event.target.value))}} 
+                                                />
                                             </form>
                                             <div className={`${classes.popUpButtons}`}>
                                                 <button onClick={(event) => {
-                                                    disband(groupDto.id, document.getElementById("disbandReason").value)
-                                                    close()
+                                                    const minDate = new Date("1992-01-01");
+                                                    const varDate = new Date(serviceDate);
+                                                    const today = new Date();
+
+                                                    if (varDate < minDate || varDate > today) {
+                                                        alert("Некорректная дата!");
+                                                    }
+                                                    else {
+                                                        TeamAPI.disbandTeam(groupDto.id, disbandmentReason, serviceDate);
+                                                        setCreateAllFilled({
+                                                            isNameSet: false,
+                                                            isTeamleadSet: false
+                                                        });
+                                                        close();
+                                                        window.location.reload();
+                                                    }
                                                 }}>
                                                     Подтвердить
                                                 </button>
@@ -629,8 +658,6 @@ const Teams = () => {
                                                  Отменить
                                                 </button>
                                             </div>
-                                        </div>
-                                        <div>
                                         </div>
                                     </div>
                                 </div>
@@ -666,6 +693,12 @@ const Teams = () => {
                 </div>
             )
         }
+    }
+
+    if (isLoading) {
+        return(
+            <div>Загрузка...</div>
+        )
     }
 
     return(
@@ -720,11 +753,11 @@ const Teams = () => {
                                                             />
                                                         </form>
                                                         <form>
-                                                        <input type='date'
-                                                            defaultValue="2024-05-28"
-                                                            min="1992-01-01"
-                                                            onChange={(event) => {setServiceDate(dateConverterAsParam(event.target.value))}} 
-                                                        />
+                                                            <input type='date'
+                                                                defaultValue="2024-05-28"
+                                                                min="1992-01-01"
+                                                                onChange={(event) => {setServiceDate(dateConverterAsParam(event.target.value))}} 
+                                                            />
                                                         </form>
 
                                                         <div className={`${classes.popUpButtons}`}>
@@ -745,8 +778,7 @@ const Teams = () => {
                                                                         isNameSet: false,
                                                                         isTeamleadSet: false
                                                                     });
-                                                                    close();
-                                                                    // alert("Новая команда создана");
+                                                                    window.location.reload();
                                                                 }
                                                             }}>
                                                                 Подтвердить

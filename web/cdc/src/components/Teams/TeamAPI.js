@@ -62,4 +62,12 @@ export class TeamAPI {
             console.error('Ошибка при отправке запроса:', error)
         });
     }
+
+    static async disbandTeam(id, reason, disbandmentDate) {
+        const url = process.env.REACT_APP_BACKEND_URL_GROUP + `/api/group/disband?groupId=${id}&disbandmentReason=${reason}&disbandmentDate=${disbandmentDate}`
+        await axios.patch(url)
+        .catch( function(error) {
+            console.error('Ошибка при отправке запроса:', error)
+        });
+    }
 }
