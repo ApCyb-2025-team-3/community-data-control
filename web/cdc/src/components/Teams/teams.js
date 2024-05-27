@@ -33,7 +33,7 @@ const Teams = () => {
 
     const [teamLead, setTeamLead] = useState(null)
 
-    const [serviceDate, setServiceDate] = useState(Date())
+    const [serviceDate, setServiceDate] = useState("2024/05/27")
 
     const [newInformation, setNewInformation] = useState({
         name: null,
@@ -53,11 +53,7 @@ const Teams = () => {
         isNameSet: false
     })
 
-
-
-
-
-    async function getUsers(inputValue) {
+    async function getTeamleads() {
         try {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=Team Lead`, { withCredentials: true});
 
@@ -74,6 +70,7 @@ const Teams = () => {
             return [];
         }
     };
+
 
     const customStyles = {
         control: provided => ({
@@ -188,15 +185,9 @@ const Teams = () => {
             setEmptyGroupListToState()
         }
 
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/group/getGroupsByPartialName?partialName=" + encodeURIComponent(name)
-
-        const userDtoList = await performGetRequest(url)
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: userDtoList
-        })
+        const userDtoList = await TeamAPI.getTeamByName(name)
+        
+        setState({...state, groupList: userDtoList})
     }
 
     async function acceptMember(groupId, userId) {
@@ -328,6 +319,8 @@ const Teams = () => {
         setState({...state, groupList: groupDtoList})
     }
 
+
+
     function menuButtons() {
 
         const ToggleButton = ({ active, onClick, title }) => {
@@ -374,6 +367,10 @@ const Teams = () => {
         return(str[8] + str[9] + '.' + str[5] + str[6] + '.' + str[0] + str[1] + str[2] + str[3])
     }
 
+    function dateConverterAsParam(str) {
+        return(str[0] + str[1] + str[2] + str[3] + '/' + str[5] + str[6] + '/' + str[8] + str[9])
+    }
+
     function renderGroupList(groupDtoList) {
 
         if (groupDtoList === undefined || groupDtoList.length === 0) {
@@ -400,12 +397,7 @@ const Teams = () => {
                     <div className={`${classes.lilActive}`} style={{background: activeColor(groupDto.active)}} />
                     <div className={`${classes.lilName}`}>{groupDto.name}</div>
                     <div className={`${classes.lilLeader}`}>{groupDto.teamLeadName}</div>
-                        <div className={`${classes.lilCreation}`}>
-                            {/* {
-                                // changeDateFormat(groupDto.creationDate)
-                            } */}
-                                                            5/26/2024
-                        </div>
+                        <div className={`${classes.lilCreation}`}>{changeDateFormat(groupDto.creationDate)}</div>
                 </li>
             )
         })
@@ -535,7 +527,7 @@ const Teams = () => {
                                                 className="custom-container"
                                                 placeholder="Тимлид  "
                                                 styles={customStyles}
-                                                loadOptions={getUsers}
+                                                loadOptions={getTeamleads}
                                                 onChange={(selectedOption) => setModifiedInfo(selectedOption.id)}
                                             />
                                         <form action="">
@@ -706,7 +698,8 @@ const Teams = () => {
                                                                 className="custom-container"
                                                                 placeholder="Тимлид*  "
                                                                 styles={customStyles}
-                                                                loadOptions={getUsers}
+                                                                loadOptions={getTeamleads}
+                                                                //onInputChange={}
                                                                 onChange={(selectedOption) => {
                                                                     setTeamLead(selectedOption.id);
                                                                     setCreateAllFilled({ ...createAllFilled, isTeamleadSet: true});
@@ -714,7 +707,7 @@ const Teams = () => {
 
                                                             />
                                                         <form action="">
-                                                            <input id={"teamName"} placeholder="Название*"
+                                                            <input id={"teamName"} placeholder="Название*" maxLength={255}
                                                             onChange={(event) => {
                                                                 setNewInformation({ ...newInformation, name: event.target.value });
                                                                 setCreateAllFilled({ ...createAllFilled, isNameSet: true});
@@ -722,7 +715,7 @@ const Teams = () => {
                                                             required/>
                                                         </form>
                                                         <form action="">
-                                                            <input id={"teamDescription"} placeholder="Описание" 
+                                                            <input id={"teamDescription"} placeholder="Описание" maxLength={255}
                                                             onChange={(event) => setNewInformation({ ...newInformation, description: event.target.value })}
                                                             />
                                                         </form>
@@ -730,7 +723,7 @@ const Teams = () => {
                                                         <input type='date'
                                                             defaultValue="2024-05-28"
                                                             min="1992-01-01"
-                                                            onChange={(event) => {setServiceDate(event.target.value)}} 
+                                                            onChange={(event) => {setServiceDate(dateConverterAsParam(event.target.value))}} 
                                                         />
                                                         </form>
 
@@ -747,11 +740,13 @@ const Teams = () => {
                                                                 }
                                                                 else {
                                                                     TeamAPI.createTeam(teamLead, serviceDate, newInformation);
+                                                                    getActiveTeams();
                                                                     setCreateAllFilled({
                                                                         isNameSet: false,
                                                                         isTeamleadSet: false
                                                                     });
                                                                     close();
+                                                                    // alert("Новая команда создана");
                                                                 }
                                                             }}>
                                                                 Подтвердить
