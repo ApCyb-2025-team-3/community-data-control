@@ -133,8 +133,9 @@ public class GroupController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup, @RequestParam Date updatedDate) {
-        Group group = groupRepository.getGroupById(changedGroup.getId());
+    public ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup,
+            @RequestParam UUID changedGroupId, @RequestParam Date updatedDate) {
+        Group group = groupRepository.getGroupById(changedGroupId);
         if (group == null) {
             return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
         }

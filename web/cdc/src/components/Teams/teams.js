@@ -33,6 +33,8 @@ const Teams = () => {
 
     const [teamLead, setTeamLead] = useState(null)
 
+    const [serviceDate, setServiceDate] = useState(Date())
+
     const [newInformation, setNewInformation] = useState({
         name: null,
         type: "WORKING_TEAM",
@@ -46,7 +48,10 @@ const Teams = () => {
         teamLead: null,
     })
 
-    const [serviceDate, setServiceDate] = useState(Date())
+    const [createAllFilled, setCreateAllFilled] = useState({
+        isTeamleadSet: false,
+        isNameSet: false
+    })
 
 
 
@@ -532,7 +537,6 @@ const Teams = () => {
                                                 styles={customStyles}
                                                 loadOptions={getUsers}
                                                 onChange={(selectedOption) => setModifiedInfo(selectedOption.id)}
-    
                                             />
                                         <form action="">
                                             <input id={"teamName"} placeholder="Название"
@@ -585,7 +589,7 @@ const Teams = () => {
                                             </form>
     
                                             <div className={`${classes.popUpButtons}`}>
-                                                <button onClick={(event) => {
+                                                <button onClick={() => {
                                                     addNewMember(groupDto.id, document.getElementById("newMember").value)
                                                     close()
                                                 }}>
@@ -694,38 +698,61 @@ const Teams = () => {
                                             <div className={`${classes.popUpMask}`}>
                                                 <div className={`${classes.popUp}`}>
                                                     <div className={`${classes.popUpContent}`}>
-                                                        Создание команды
+                                                        <p>Создание команды</p>
                                                             <AsyncSelect
                                                                 cacheOptions
                                                                 defaultOptions
                                                                 classNamePrefix="custom"
                                                                 className="custom-container"
-                                                                placeholder="Тимлид  "
+                                                                placeholder="Тимлид*  "
                                                                 styles={customStyles}
                                                                 loadOptions={getUsers}
-                                                                onChange={(selectedOption) => setTeamLead(selectedOption.id)}
+                                                                onChange={(selectedOption) => {
+                                                                    setTeamLead(selectedOption.id);
+                                                                    setCreateAllFilled({ ...createAllFilled, isTeamleadSet: true});
+                                                                }}
 
                                                             />
                                                         <form action="">
-                                                            <input id={"teamName"} placeholder="Название"
-                                                            onChange={(event) => setNewInformation({ ...newInformation, name: event.target.value })}
+                                                            <input id={"teamName"} placeholder="Название*"
+                                                            onChange={(event) => {
+                                                                setNewInformation({ ...newInformation, name: event.target.value });
+                                                                setCreateAllFilled({ ...createAllFilled, isNameSet: true});
+                                                            }}
                                                             required/>
                                                         </form>
                                                         <form action="">
                                                             <input id={"teamDescription"} placeholder="Описание" 
                                                             onChange={(event) => setNewInformation({ ...newInformation, description: event.target.value })}
-                                                            required/>
+                                                            />
                                                         </form>
                                                         <form>
                                                         <input type='date'
+                                                            defaultValue="2024-05-28"
+                                                            min="1992-01-01"
                                                             onChange={(event) => {setServiceDate(event.target.value)}} 
                                                         />
                                                         </form>
 
                                                         <div className={`${classes.popUpButtons}`}>
-                                                            <button onClick={(event) => {
-                                                                TeamAPI.createTeam(teamLead, newInformation)
-                                                                close()
+                                                            <button onClick={() => {
+                                                                const minDate = new Date("1992-01-01");
+                                                                const varDate = new Date(serviceDate);
+                                                                const today = new Date();
+                                                                if (!(createAllFilled.isNameSet && createAllFilled.isTeamleadSet)) {
+                                                                    alert("Не заполнены обязательные* поля!")
+                                                                }
+                                                                else if (varDate < minDate || varDate > today) {
+                                                                    alert("Некорректная дата!");
+                                                                }
+                                                                else {
+                                                                    TeamAPI.createTeam(teamLead, serviceDate, newInformation);
+                                                                    setCreateAllFilled({
+                                                                        isNameSet: false,
+                                                                        isTeamleadSet: false
+                                                                    });
+                                                                    close();
+                                                                }
                                                             }}>
                                                                 Подтвердить
                                                             </button>

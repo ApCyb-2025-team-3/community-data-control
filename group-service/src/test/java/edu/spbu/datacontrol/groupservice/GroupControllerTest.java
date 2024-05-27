@@ -48,7 +48,7 @@ public class GroupControllerTest {
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
-        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, "Test2", "update", uuidUser2), new Date());
+        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO("Test2","update", uuidUser2), groupId, new Date());
 
         String checkName = testGroup.getName();
         String checkDescription = testGroup.getDescription();
@@ -81,7 +81,7 @@ public class GroupControllerTest {
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
-        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, "Test2", "update", uuidUser), new Date());
+        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO("Test2", "update", uuidUser), groupId, new Date());
 
         assertEquals("", "This user is in a work team already!", response.getBody());
     }
@@ -92,7 +92,7 @@ public class GroupControllerTest {
         Mockito.when(mockGroupRepository.getGroupById(null)).thenReturn(null);
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
-        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(null, "543", "%", null), new Date());
+        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO("543", "%", null), null, new Date());
 
         assertEquals("", "This group doesn't exist", response.getBody());
         assertEquals("", HttpStatusCode.valueOf(404), response.getStatusCode());
@@ -118,7 +118,7 @@ public class GroupControllerTest {
         Mockito.when(mockGroupRepository.getGroupById(groupId)).thenReturn(testGroup);
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
-        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, null, null, null), new Date());
+        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(null, null, null), groupId, new Date());
 
         assertEquals("", "Test1", testGroup.getName());
         assertEquals("", null, testGroup.getDescription());
@@ -146,7 +146,7 @@ public class GroupControllerTest {
         GroupController groupController = new GroupController(mockGroupRepository, mockUserRepository);
 
         ResponseEntity<String> disband = groupController.disbandGroup(groupId, "testing", new Date());
-        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO(groupId, "543", "%", null), new Date());
+        ResponseEntity<String> response = groupController.updateGroup(new ModifiedGroupDTO("543", "%", null), groupId, new Date());
 
         assertEquals("", "This group is inactive", response.getBody());
         assertEquals("", HttpStatusCode.valueOf(409), response.getStatusCode());

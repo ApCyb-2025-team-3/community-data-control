@@ -39,9 +39,9 @@ export class TeamAPI {
         return this.#getRequestLogic(url)
     }
 
-    static async createTeam(teamLead, data) {
+    static async createTeam(teamLead, creationDate, data) {
 
-        const url = process.env.REACT_APP_BACKEND_URL_GROUP + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
+        const url = process.env.REACT_APP_BACKEND_URL_GROUP + `/api/group/create?teamLeadId=${teamLead}&creationDate=${creationDate}`
         await axios.post(url, data, {withCredentials: true})
         .catch( function(error) {
             console.error('Ошибка при отправке запроса:', error)

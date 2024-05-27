@@ -39,8 +39,8 @@ ALTER TABLE ONLY public.users ADD CONSTRAINT fkpgopks9vl2c3kw6rb5ivil2vo FOREIGN
 
 CREATE TABLE public.mentorships
 (
-    creation_date    timestamp(6) without time zone,
-    disbandment_date timestamp(6) without time zone,
+    creation_date    date,
+    disbandment_date date,
     id               uuid NOT NULL primary key,
     mentee_id        uuid unique,
     mentor_id        uuid
@@ -51,9 +51,9 @@ ALTER TABLE ONLY public.mentorships ADD CONSTRAINT fkpalfyuenepsdpn9cwpcskgp1n F
 CREATE TABLE public.subgroups
 (
     is_active          boolean NOT NULL,
-    creation_date      timestamp(6) without time zone,
-    disbandment_date   timestamp(6) without time zone,
-    updated_date       timestamp(6) without time zone,
+    creation_date      date,
+    disbandment_date   date,
+    updated_date       date,
     id                 uuid NOT NULL primary key,
     team_lead_id       uuid,
     description        character varying(255),
