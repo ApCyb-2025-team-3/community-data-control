@@ -25,5 +25,9 @@ cd ../user-service
 docker build -t data-control-app-user-service:latest ./
 minikube image load data-control-app-user-service:latest --daemon
 
+cd ../group-service
+docker build -t data-control-app-group-service:latest ./
+minikube image load data-control-app-group-service:latest --daemon
+
 echo "All images built!"
 Read-Host -Prompt "Press any key to continue"
