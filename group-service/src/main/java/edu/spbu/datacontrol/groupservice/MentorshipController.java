@@ -96,7 +96,8 @@ public class MentorshipController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<String> createMentorship(@RequestParam UUID mentorId, @RequestParam UUID menteeId, @RequestParam Date disbandmentDate) {
+    public ResponseEntity<String> createMentorship(@RequestParam UUID mentorId, @RequestParam UUID menteeId,
+        @RequestParam Date creationDate, @RequestParam Date disbandmentDate) {
 
         User mentor = userRepository.getUserById(mentorId);
         User mentee = userRepository.getUserById(menteeId);
@@ -108,7 +109,7 @@ public class MentorshipController {
         if (mentor.getMentorStatus() != MentorshipStatus.MENTOR || mentee.getMentorStatus() != MentorshipStatus.MENTEE) {
             return new ResponseEntity<>("The mentor or mentee is incorrectly specified.", HttpStatusCode.valueOf(409));
         }
-        mentorshipRepository.save(new Mentorship(mentor, mentee, disbandmentDate));
+        mentorshipRepository.save(new Mentorship(mentor, mentee, creationDate, disbandmentDate));
         return new ResponseEntity<>("Mentorship is created.", HttpStatusCode.valueOf(201));
     }
 

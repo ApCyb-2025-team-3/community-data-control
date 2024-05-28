@@ -40,7 +40,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                     .requestMatchers("/login", "/api/event/**", "/api/auth/getAuthUser", "/api/auth/changeUserRole", "/css/**", "/images/**", "/swagger-ui.html", "/api/group/**", "/api/mentorship/").permitAll()
-                    .requestMatchers(HttpMethod.POST).authenticated()
+                    .requestMatchers(HttpMethod.POST).permitAll()
+                    .requestMatchers(HttpMethod.GET).permitAll()
                     .requestMatchers("/api/user/").authenticated()
                     .anyRequest().authenticated()
 

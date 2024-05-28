@@ -87,6 +87,9 @@ public class GroupController {
         if (!group.isActive()) {
             return new ResponseEntity<>("This group isn't active!", HttpStatusCode.valueOf(409));
         }
+        if (newMember.getRole() == Role.TEAM_LEAD) {
+            return new ResponseEntity<>("This user is a team leader!", HttpStatusCode.valueOf(409));
+        }
 
         List<User> currentMembers = group.getMembers();
         if (currentMembers.contains(newMember)) {
@@ -133,8 +136,9 @@ public class GroupController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup, @RequestParam Date updatedDate) {
-        Group group = groupRepository.getGroupById(changedGroup.getId());
+    public ResponseEntity<String> updateGroup(@RequestBody ModifiedGroupDTO changedGroup,
+        @RequestParam Date updatedDate, @RequestParam UUID changedGroupId) {
+        Group group = groupRepository.getGroupById(changedGroupId);
         if (group == null) {
             return new ResponseEntity<>("This group doesn't exist", HttpStatusCode.valueOf(404));
         }

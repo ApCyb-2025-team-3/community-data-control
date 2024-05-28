@@ -26,7 +26,7 @@ public class Mentorship {
     @OneToOne
     private User mentee;
 
-    @CreatedDate
+    //@CreatedDate
     private Date creationDate;
 
     private Date disbandmentDate;
@@ -34,9 +34,10 @@ public class Mentorship {
     public Mentorship() {
     }
 
-    public Mentorship(User mentor, User mentee, Date disbandmentDate) {
+    public Mentorship(User mentor, User mentee, Date creationDate, Date disbandmentDate) {
         this.mentor = mentor;
         this.mentee = mentee;
+        this.creationDate = creationDate;
         this.disbandmentDate = disbandmentDate;
     }
 

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet'
-import classes from './teams.module.css';
+import classes from './groups.module.css';
 import add from '../../icons/add-icon.svg';
 import search from '../../icons/search-icon.svg';
 import sort from '../../icons/sort-icon.svg';
@@ -7,12 +7,15 @@ import date from '../../icons/sort-date-icon.svg';
 import dot from '../../icons/dot-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Popup from "reactjs-popup";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
+import { GroupAPI } from './GroupAPI';
 
-const Teams = () => {
+const Groups = () => {
+
+    const [isLoading, setIsLoading] = useState(true)
 
     const [state, setState] = useState({
         isGroupSelected: 0,
@@ -32,6 +35,8 @@ const Teams = () => {
 
     const [teamLead, setTeamLead] = useState(null)
 
+    const [serviceDate, setServiceDate] = useState("2024/05/27")
+
     const [newInformation, setNewInformation] = useState({
         name: null,
         type: "INTEREST_GROUP",
@@ -39,29 +44,80 @@ const Teams = () => {
     })
 
     const [modifiedInfo, setModifiedInfo] = useState({
-        id: null,
         name: null,
         description: null,
         teamLead: null,
     })
 
+    const [createAllFilled, setCreateAllFilled] = useState({
+        isTeamleadSet: false,
+        isNameSet: false
+    })
 
+    const [updateNameFilled, setUpdateNameFilled] = useState(true)
 
+    const [disbandmentReason, setDisbandmentReason] = useState(null)
 
-    const getUsers = async (inputValue) => {
+    const [acceptUser, setAcceptUser] = useState({
+        id: null,
+        isAcceptUserSet: false
+    })
+
+    useEffect(() => {
+        async function startThePage() {
+            try {
+                getActiveTeams();
+                setIsLoading(false);
+            } catch (error) {
+                
+            }
+        }
+
+        startThePage()
+    }, [])
+
+    const getTeamleads = async (inputValue) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=team lead`);
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByRole?role=Team Lead`, { withCredentials: true});
 
-            return response.data.map(user => ({
-                id: user.id,
-                value: user.name,
-                label: user.name
-            }));
+            if (response) {
+                return response.data
+                    .filter(user => user.name.toLowerCase().includes(inputValue.toLowerCase()))  // Filter users based on inputValue
+                    .map(user => ({
+                        id: user.id,
+                        value: user.name,
+                        label: user.name
+                    }));
+            } else {
+                return [];
+            }
         } catch (error) {
             console.error('Ошибка при загрузке пользователей:', error);
             return [];
         }
     };
+
+    const getUser = async (inputValue) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user/getUsersByPartialName?partialName=${encodeURIComponent(inputValue)}`, { withCredentials: true});
+    
+            if (response) {
+                return response.data
+                    .filter(user => user.name.toLowerCase().includes(inputValue.toLowerCase()))  // Filter users based on inputValue
+                    .map(user => ({
+                        id: user.id,
+                        value: user.name,
+                        label: user.name
+                    }));
+            } else {
+                return [];
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            return [];
+        }
+    };
+
 
     const customStyles = {
         control: provided => ({
@@ -99,33 +155,6 @@ const Teams = () => {
         // Add more styles for other elements as needed
     };
 
-    const promiseOptions = inputValue =>
-        new Promise(resolve => resolve(getUsers(inputValue)));
-
-
-
-
-    async function performGetRequest(url) {
-        try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
-
-            if (response.ok) {
-                return await response.json()
-            
-            } else {
-                console.error("HTTP error:" + response.status + "\n" + response.statusText)
-            }
-
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
     window.addEventListener('load', () => {
         getActiveTeams();
     });
@@ -137,209 +166,54 @@ const Teams = () => {
         })
     }
 
-    async function createTeam() {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/group/create?teamLeadId=" + encodeURIComponent(teamLead)
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(newInformation)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-            setTeamLead(null);
-            setNewInformation({
-                name: null,
-                type: "INTEREST_GROUP",
-                description: null
-            })
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-        getActiveTeams()
-    }
-
-    async function updateTeam() {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + "/api/group/update"
-            const response = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                },
-                body: JSON.stringify(modifiedInfo)
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-            setModifiedInfo({
-                id: null,
-                name: null,
-                description: null,
-                teamLead: null,
-            })
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
+    async function updateTeam(groupId) {
+        await GroupAPI.updateTeam(groupId, modifiedInfo, dateConverterAsParam(serviceDate))
+        setModifiedInfo({
+            id: null,
+            name: null,
+            description: null,
+            teamLead: null,
+        })
         getActiveTeams()
     }
 
     async function getTeamByName(name) {
-
-        if (name === "") {
-            setEmptyGroupListToState()
-        }
-
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/group/getGroupsByPartialName?partialName=" + encodeURIComponent(name)
-
-        const userDtoList = await performGetRequest(url)
-        setState({
-            isGroupSelected: state.selectedUserId,
-            selectedGroup: state.selectedGroup,
-            groupList: userDtoList
-        })
+        if (name === "") {setEmptyGroupListToState()}
+        const userDtoList = await GroupAPI.getTeamByName(name)
+        setState({...state, groupList: userDtoList})
     }
 
     async function acceptMember(groupId, userId) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/group/accept?groupId=${groupId}&userId=${userId}`
-            const response = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
+        await GroupAPI.acceptMember(groupId, userId);
         getActiveMembers(groupId)
     }
 
-    async function addNewMember(groupId, name) {
-        if (name === "") {}
-
-        const url = process.env.REACT_APP_BACKEND_URL
-        + "/api/user/getUsersByPartialName?partialName=" + encodeURIComponent(name)
-
-        const userDtoList = await performGetRequest(url)
-        userDtoList.forEach((userDto) => {
-            acceptMember(groupId, userDto.id)
-        })
-    }
 
     async function getActiveTeams() {
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/group/getActiveGroupsByType?groupType=INTEREST_GROUP"
-            // + "/api/group/getGroupsByType?groupType=INTEREST_GROUP"
-
-        const groupDtoList = await performGetRequest(url)
-        // let sortedList = []
-
-        // groupDtoList.forEach((groupDto) => {
-        //     if (groupDto.active) {
-        //         sortedList.push(groupDto)
-        //     }
-        // })
-
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            // groupList: sortedList
-            groupList: groupDtoList
-        })
+        const activeGroups = await GroupAPI.getActiveTeams()
+        setState({...state, groupList: activeGroups})
     }
 
     async function getAllTeams() {
-        const url = process.env.REACT_APP_BACKEND_URL
-            + "/api/group/getGroupsByType?groupType=INTEREST_GROUP"
-
-        const groupDtoList = await performGetRequest(url)
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        const groupDtoList = await GroupAPI.getAllTeams()
+        setState({...state, groupList: groupDtoList})
     }
 
     async function getActiveMembers(id) {
-        const url = process.env.REACT_APP_BACKEND_URL
-        + "/api/group/getActiveMembers?groupId=" + encodeURIComponent(id)
-
-        const userDtoList = await performGetRequest(url)
+        const userDtoList = await GroupAPI.getActiveMembers(id)
         setMemberList(userDtoList)
     }
 
     async function excludeMember(groupId, userId) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/group/exclude?groupId=${groupId}&userId=${userId}`
-            const response = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
+        await GroupAPI.excludeMember(groupId, userId);
         getActiveMembers(groupId)
     }
 
-    async function disband(id, reason) {
-        try {
-            const url = process.env.REACT_APP_BACKEND_URL + `/api/group/disband?groupId=${id}&disbandmentReason=${reason}`
-            const response = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': 'http://localhost:3000'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const result = await response.text();
-            console.log(result);
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-        window.location.reload()
-    }
-
     async function sortByName(groupDtoList) {
-        
-        groupDtoList.sort((a, b) => a.name.localeCompare(b.name))
+
+        if (!(groupDtoList === undefined || groupDtoList.length === 0)) {
+            groupDtoList.sort((a, b) => a.name.localeCompare(b.name))
+        }
 
         setState({
             isGroupSelected: state.isGroupSelected,
@@ -350,27 +224,25 @@ const Teams = () => {
 
     async function sortByTeamLead(groupDtoList) {
 
-        groupDtoList.sort((a, b) => a.teamLeadName.localeCompare(b.teamLeadName))
+        if (!(groupDtoList === undefined || groupDtoList.length === 0)) {
+            groupDtoList.sort((a, b) => a.teamLeadName.localeCompare(b.teamLeadName))
+        }
 
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        setState({...state, groupList: groupDtoList})
     }
 
     async function sortByDate(groupDtoList) {
 
-        groupDtoList.sort(function(a, b) {
-            return new Date(b.creationDate) - new Date(a.creationDate)
-          })
+        if (!(groupDtoList === undefined || groupDtoList.length === 0)) {
+            groupDtoList.sort(function(a, b) {
+                return new Date(b.creationDate) - new Date(a.creationDate)
+            })
+        }
 
-        setState({
-            isGroupSelected: state.isGroupSelected,
-            selectedGroup: state.selectedGroup,
-            groupList: groupDtoList
-        })
+        setState({...state, groupList: groupDtoList})
     }
+
+
 
     function menuButtons() {
 
@@ -406,24 +278,13 @@ const Teams = () => {
         );
     }
 
-    function activeColor(isActive) {
-        if (isActive === true) {
-            return ( "#00CA4E" );
-        } else {
-            return ( "#FF605C" );
-        }
-    }
-
     function changeDateFormat(str) {
         return(str[8] + str[9] + '.' + str[5] + str[6] + '.' + str[0] + str[1] + str[2] + str[3])
     }
 
-
-
-
-
-
-
+    function dateConverterAsParam(str) {
+        return(str[0] + str[1] + str[2] + str[3] + '/' + str[5] + str[6] + '/' + str[8] + str[9])
+    }
 
     function renderGroupList(groupDtoList) {
 
@@ -439,11 +300,7 @@ const Teams = () => {
             renderedGroupList.push(
                 <li
                     onClick={() => {
-                        setState({
-                            isGroupSelected: 1,
-                            selectedGroup: groupDto,
-                            groupList: state.groupList
-                        });
+                        setState({...state, isGroupSelected: 1, selectedGroup: groupDto});
 
                         setObtainingState({
                             justifyContent: "space-between"
@@ -452,10 +309,10 @@ const Teams = () => {
                         getActiveMembers(groupDto.id)
                     }}
                 >
-                    <div className={`${classes.lilActive}`} style={{background: activeColor(groupDto.active)}} />
+                    <div className={`${classes.lilActive}`} style={{background: groupDto.active ? "#00CA4E" : "#FF605C"}} />
                     <div className={`${classes.lilName}`}>{groupDto.name}</div>
                     <div className={`${classes.lilLeader}`}>{groupDto.teamLeadName}</div>
-                    <div className={`${classes.lilCreation}`}>{changeDateFormat(groupDto.creationDate)}</div>
+                        <div className={`${classes.lilCreation}`}>{changeDateFormat(groupDto.creationDate)}</div>
                 </li>
             )
         })
@@ -466,6 +323,12 @@ const Teams = () => {
     function renderActiveMemberList(groupId, userDtoList) {
 
         let renderedUserList = []
+
+        if (userDtoList === undefined || userDtoList.length === 0) {
+            return (
+                <div>Пустота</div>
+            )
+        }
 
         userDtoList.forEach((userDto) => {
             renderedUserList.push(
@@ -495,209 +358,264 @@ const Teams = () => {
 
     function teamInfo(groupDto, userList) {
 
-        // if (isAdding) {
-        //     return <AddUser/>
-        // }
-
-        const InfoBlock = () => {
+        if (state.isGroupSelected === 0) {
             return (
-                <div className={`${classes.rightBlock}`}>
-                    <div className={`${classes.teamInfoHeading}`}>
-                        <div className={`${classes.headingTitle}`}>
-                            <p>Группа:</p>
-                            <div className={`${classes.headingTitleTeamName}`}>{groupDto.name}</div>
-                        </div>
+                <div></div>
+            )
+        }
 
-                        <div className={`${classes.headingActivity}`}>
-                            <p>Активность:</p>
-                            <div className={`${classes.headingActivityStatus}`} style={{background: activeColor(groupDto.active)}} />
-                        </div>
+        return (
+            <div className={`${classes.rightBlock}`}>
+                <div className={`${classes.teamInfoHeading}`}>
+                    <div className={`${classes.headingTitle}`}>
+                        <p>Команда:</p>
+                        <div className={`${classes.headingTitleTeamName}`}>{groupDto.name}</div>
                     </div>
-
+    
+                    <div className={`${classes.headingActivity}`}>
+                        <p>Активность:</p>
+                        <div className={`${classes.headingActivityStatus}`} style={{background: groupDto.active ? "#00CA4E" : "#FF605C"}} />
+                    </div>
+                </div>
+    
+            <div 
+                className={`${classes.infoBody}`}
+                style={groupDto.active ? {justifyContent: "flex-between"} : {justifyContent: "flex-start"}}
+            >
+                <div className={`${classes.bodyLeacre}`}>
+                    <div className={`${classes.leacreLeader}`}>
+                    <p>Лидер:</p>
+                    <div className={`${classes.leacreLeaderName}`}>{groupDto.teamLeadName}</div>
+                    </div>
+                    <div className={`${classes.leacreCreated}`}>
+                    <p>Создана:</p>
+                    <div className={`${classes.leacreCreatedDate}`}>{changeDateFormat(groupDto.creationDate)}</div>
+                    </div>
+                </div>
+    
+                <div className={`${classes.bodyDescription}`}>
+                    <p>Описание:</p>
+                    <div className={`${classes.bodyDescriptionText}`}>{groupDto.description}</div>
+                </div>
+    
                 <div 
-                    className={`${classes.infoBody}`}
-                    style={groupDto.active ? {justifyContent: "flex-between"} : {justifyContent: "flex-start"}}
+                    className={`${classes.bodyMembers}`}
+                    style={groupDto.active ? {display: "flex"} : {display: "none"}}
                 >
-                    <div className={`${classes.bodyLeacre}`}>
-                        <div className={`${classes.leacreLeader}`}>
-                        <p>Лидер:</p>
-                        <div className={`${classes.leacreLeaderName}`}>{groupDto.teamLeadName}</div>
-                        </div>
-                        <div className={`${classes.leacreCreated}`}>
-                        <p>Создана:</p>
-                        <div className={`${classes.leacreCreatedDate}`}>{changeDateFormat(groupDto.creationDate)}</div>
-                        </div>
-                    </div>
-
-                    <div className={`${classes.bodyDescription}`}>
-                        <p>Описание:</p>
-                        <div className={`${classes.bodyDescriptionText}`}>{groupDto.description}</div>
-                    </div>
-
-                    <div 
-                        className={`${classes.bodyMembers}`}
-                        style={groupDto.active ? {display: "flex"} : {display: "none"}}
-                    >
-                        <p>Члены:</p>
-                        <ul className={`${classes.bodyMembersTable}`}>
-                            {renderActiveMemberList(groupDto.id, userList)}
-                        </ul>
-                    </div>
-
-                    {disbandedDate(groupDto)}
-                    {disbandedReason(groupDto)}
-
-                    <div 
-                        className={`${classes.bodyButtons}`}
-                        style={groupDto.active ? {display: "flex"} : {display: "none"}}
-                    >
-                        <Popup trigger=
-                            {<button
-                                className={`${classes.bodyButtonsButton}`}
-                            >
-                                Внести изменения
-                            </button>}
-                                modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUpMask}`}>
-                                        <div className={`${classes.popUp}`}>
-                                            <div className={`${classes.popUpContent}`}>
-                                                Внести изменения
-                                                <AsyncSelect
-                                                    cacheOptions
-                                                    defaultOptions
-                                                    classNamePrefix="custom"
-                                                    className="custom-container"
-                                                    placeholder="Тимлид  "
-                                                    styles={customStyles}
-                                                    loadOptions={promiseOptions}
-                                                    onChange={(selectedOption) => setModifiedInfo(selectedOption.id)}
-
-                                                />
-                                            <form action="">
-                                                <input id={"teamName"} placeholder="Название"
-                                                onChange={(event) => setModifiedInfo({ ...modifiedInfo, name: event.target.value })}
-                                                />
-                                            </form>
-                                            <form action="">
-                                                <input id={"teamDescription"} placeholder="Описание" 
-                                                onChange={(event) => setModifiedInfo({ ...modifiedInfo, name: event.target.value })}
-                                                />
-                                            </form>
-
-                                            <div className={`${classes.popUpButtons}`}>
-                                                <button onClick={(event) => {
-                                                    // setModifiedInfo({ ...modifiedInfo, id: groupDto.id })
-                                                    updateTeam()
+                    <p>Члены:</p>
+                    <ul className={`${classes.bodyMembersTable}`}>
+                        {renderActiveMemberList(groupDto.id, userList)}
+                    </ul>
+                </div>
+    
+                {disbandedDate(groupDto)}
+                {disbandedReason(groupDto)}
+    
+                <div 
+                    className={`${classes.bodyButtons}`}
+                    style={groupDto.active ? {display: "flex"} : {display: "none"}}
+                >
+                    <Popup trigger=
+                        {<button
+                            className={`${classes.bodyButtonsButton}`}
+                        >
+                            Внести изменения
+                        </button>}
+                            modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            <p>Внести изменения</p>
+                                            <AsyncSelect
+                                                cacheOptions
+                                                defaultOptions
+                                                classNamePrefix="custom"
+                                                className="custom-container"
+                                                placeholder="Тимлид  "
+                                                styles={customStyles}
+                                                loadOptions={getTeamleads}
+                                                onChange={(selectedOption) => setModifiedInfo({...modifiedInfo, teamLead: selectedOption.id})}
+                                            />
+                                        <form action="">
+                                            <input id={"teamName"} placeholder="Название*" defaultValue={groupDto.name} maxLength={255}
+                                            onChange={(event) => {
+                                                setModifiedInfo({ ...modifiedInfo, name: event.target.value });
+                                                event.target.value === null ? setUpdateNameFilled(false) : setUpdateNameFilled(true);
+                                            }}
+                                            />
+                                        </form>
+                                        <form action="" style={{height: '170px'}}>
+                                            <textarea id={"teamDescription"} placeholder="Описание" style={{height: '160px'}} defaultValue={groupDto.description} maxLength={255}
+                                            onChange={(event) => setModifiedInfo({ ...modifiedInfo, description: event.target.value })}
+                                            />
+                                        </form>
+                                        <form>
+                                            <input type='date'
+                                                defaultValue="2024-05-28"
+                                                min="1992-01-01"
+                                                onChange={(event) => {
+                                                    setServiceDate("2024/05/28");
+                                                    setServiceDate(dateConverterAsParam(event.target.value));
+                                                }} 
+                                            />
+                                        </form>
+    
+                                        <div className={`${classes.popUpButtons}`}>
+                                            <button onClick={(event) => {
+                                                const minDate = new Date("1992-01-01");
+                                                const varDate = new Date(serviceDate);
+                                                const today = new Date();
+                                                if (!updateNameFilled) {
+                                                    alert("Имя не может быть пустым!")
+                                                }
+                                                else if (varDate < minDate || varDate > today) {
+                                                                    alert("Некорректная дата!");
+                                                }
+                                                else {
+                                                    updateTeam(groupDto.id)
+                                                    alert("Обновите страницу!")
                                                     close()
+                                                }
+                                            }}>
+                                                Подтвердить
+                                            </button>
+                                            <button onClick=
+                                                {() => close()}>
+                                            Отменить
+                                            </button>
+                                        </div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </Popup>
+    
+                    <Popup trigger=
+                        {<button
+                            className={`${classes.bodyButtonsButton}`}
+                        >
+                            + сотрудника
+                        </button>}
+                            modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            <p>Выберите сотрудника</p>
+                                            <AsyncSelect
+                                                cacheOptions
+                                                defaultOptions
+                                                classNamePrefix="custom"
+                                                className="custom-container"
+                                                placeholder="Сотрудник*  "
+                                                styles={customStyles}
+                                                loadOptions={getUser}
+                                                onChange={(selectedOption) => setAcceptUser({
+                                                    id: selectedOption.id,
+                                                    isAcceptUserSet: true
+                                                })}
+                                            />
+                                            <div className={`${classes.popUpButtons}`}>
+                                                <button onClick={() => {
+                                                    if (!acceptUser.isAcceptUserSet) {
+                                                        alert("Пользователь не выбран!")
+                                                    }
+                                                    else {
+                                                        acceptMember(groupDto.id, acceptUser.id);
+                                                        setAcceptUser({
+                                                            id: null,
+                                                            isAcceptUserSet: false
+                                                        });
+                                                        close();
+                                                    }
                                                 }}>
                                                     Подтвердить
                                                 </button>
                                                 <button onClick=
                                                     {() => close()}>
-                                                Отменить
+                                                 Отменить
                                                 </button>
                                             </div>
-                                            </div>
-                                            <div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </Popup>
+    
+                    <Popup trigger=
+                        {<button
+                            className={`${classes.bodyButtonsButton}`}
+                        >
+                            Расформировать
+                        </button>}
+                            modal nested>
+                        {
+                            close => (
+                                <div className={`${classes.popUpMask}`}>
+                                    <div className={`${classes.popUp}`}>
+                                        <div className={`${classes.popUpContent}`}>
+                                            <p>Расформирование группы</p>
+                                            <form action="">
+                                                <input id={"disbandReason"} placeholder="Причина" maxLength={255}
+                                                onChange={(event) => setDisbandmentReason(event.target.value )}
+                                                />
+                                            </form>
+                                            <form>
+                                                <input type='date'
+                                                    defaultValue="2024-05-28"
+                                                    min="1992-01-01"
+                                                    onChange={(event) => {
+                                                        setServiceDate("2024/05/28");
+                                                        setServiceDate(dateConverterAsParam(event.target.value));
+                                                    }}
+                                                />
+                                            </form>
+                                            <div className={`${classes.popUpButtons}`}>
+                                                <button onClick={(event) => {
+                                                    const minDate = new Date("1992-01-01");
+                                                    const varDate = new Date(serviceDate);
+                                                    const today = new Date();
+
+                                                    if (varDate < minDate || varDate > today) {
+                                                        alert("Некорректная дата!");
+                                                    }
+                                                    else {
+                                                        GroupAPI.disbandTeam(groupDto.id, disbandmentReason, serviceDate);
+                                                        setCreateAllFilled({
+                                                            isNameSet: false,
+                                                            isTeamleadSet: false
+                                                        });
+                                                        alert("Обновите страницу!")
+                                                        close();
+                                                        //window.location.reload();
+                                                    }
+                                                }}>
+                                                    Подтвердить
+                                                </button>
+                                                <button onClick=
+                                                    {() => close()}>
+                                                 Отменить
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                )
-                            }
-                        </Popup>
-
-                        <Popup trigger=
-                            {<button
-                                className={`${classes.bodyButtonsButton}`}
-                            >
-                                + сотрудника
-                            </button>}
-                                modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUpMask}`}>
-                                        <div className={`${classes.popUp}`}>
-                                            <div className={`${classes.popUpContent}`}>
-                                                Выберите сотрудника
-                                                <form action="">
-                                                    <input id={"newMember"} placeholder="Сотрудник" required/>
-                                                </form>
-
-                                                <div className={`${classes.popUpButtons}`}>
-                                                    <button onClick={(event) => {
-                                                        addNewMember(groupDto.id, document.getElementById("newMember").value)
-                                                        close()
-                                                    }}>
-                                                        Подтвердить
-                                                    </button>
-                                                    <button onClick=
-                                                        {() => close()}>
-                                                     Отменить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        </Popup>
-
-                        <Popup trigger=
-                            {<button
-                                className={`${classes.bodyButtonsButton}`}
-                            >
-                                Расформировать
-                            </button>}
-                                modal nested>
-                            {
-                                close => (
-                                    <div className={`${classes.popUpMask}`}>
-                                        <div className={`${classes.popUp}`}>
-                                            <div className={`${classes.popUpContent}`}>
-                                                Введите причину увольнения
-                                                <form action="">
-                                                    <input id={"disbandReason"} placeholder="Причина" required/>
-                                                </form>
-                                                <div className={`${classes.popUpButtons}`}>
-                                                    <button onClick={(event) => {
-                                                        disband(groupDto.id, document.getElementById("disbandReason").value)
-                                                        close()
-                                                    }}>
-                                                        Подтвердить
-                                                    </button>
-                                                    <button onClick=
-                                                        {() => close()}>
-                                                     Отменить
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        </Popup>
-                    </div>
+                                </div>
+                            )
+                        }
+                    </Popup>
                 </div>
             </div>
-            );
-        }
-
-
-        if (state.isGroupSelected === 0) {
-            return (
-                <div className={`${classes.rightBlock}`} style={{ display: "none" }}></div>
-            );
-        } else {
-            return(
-                <InfoBlock />
-            )
-        }
+        </div>
+        );
     }
 
     function disbandedDate (groupDto) {
@@ -705,7 +623,7 @@ const Teams = () => {
             return (
                 <div className={`${classes.bodyUpdate}`}>
                     <p>Дата роспуска:</p>
-                    <div className={`${classes.bodyUpdateDate}`}>{changeDateFormat(groupDto.disbandmentDate)}</div>
+                        <div className={`${classes.bodyUpdateDate}`}>{changeDateFormat(groupDto.disbandmentDate)}</div>
                 </div>
             )
         }
@@ -716,10 +634,16 @@ const Teams = () => {
             return (
                 <div className={`${classes.bodyReason}`}>
                     <p>Причина:</p>
-                    <div className={`${classes.bodyReasonReason}`}>{groupDto.disbandmentReason}</div>
+                    <div className={`${classes.bodyReasonReason}`}>{groupDto.disbandmentReason === 'null' ? "/не указана/" : groupDto.disbandmentReason}</div>
                 </div>
             )
         }
+    }
+
+    if (isLoading) {
+        return(
+            <div>Загрузка...</div>
+        )
     }
 
     return(
@@ -744,33 +668,64 @@ const Teams = () => {
                                             <div className={`${classes.popUpMask}`}>
                                                 <div className={`${classes.popUp}`}>
                                                     <div className={`${classes.popUpContent}`}>
-                                                        Создание группы
+                                                        <p>Создание группы</p>
                                                             <AsyncSelect
                                                                 cacheOptions
                                                                 defaultOptions
                                                                 classNamePrefix="custom"
                                                                 className="custom-container"
-                                                                placeholder="Тимлид  "
+                                                                placeholder="Тимлид*  "
                                                                 styles={customStyles}
-                                                                loadOptions={promiseOptions}
-                                                                onChange={(selectedOption) => setTeamLead(selectedOption.id)}
+                                                                loadOptions={getTeamleads}
+                                                                //onInputChange={}
+                                                                onChange={(selectedOption) => {
+                                                                    setTeamLead(selectedOption.id);
+                                                                    setCreateAllFilled({ ...createAllFilled, isTeamleadSet: true});
+                                                                }}
 
                                                             />
                                                         <form action="">
-                                                            <input id={"teamName"} placeholder="Название"
-                                                            onChange={(event) => setNewInformation({ ...newInformation, name: event.target.value })}
+                                                            <input id={"teamName"} placeholder="Название*" maxLength={255}
+                                                            onChange={(event) => {
+                                                                setNewInformation({ ...newInformation, name: event.target.value });
+                                                                setCreateAllFilled({ ...createAllFilled, isNameSet: true});
+                                                            }}
                                                             required/>
                                                         </form>
                                                         <form action="">
-                                                            <input id={"teamDescription"} placeholder="Описание" 
+                                                            <input id={"teamDescription"} placeholder="Описание" maxLength={255}
                                                             onChange={(event) => setNewInformation({ ...newInformation, description: event.target.value })}
-                                                            required/>
+                                                            />
+                                                        </form>
+                                                        <form>
+                                                            <input type='date'
+                                                                defaultValue="2024-05-28"
+                                                                min="1992-01-01"
+                                                                onChange={(event) => {setServiceDate(dateConverterAsParam(event.target.value))}} 
+                                                            />
                                                         </form>
 
                                                         <div className={`${classes.popUpButtons}`}>
-                                                            <button onClick={(event) => {
-                                                                createTeam()
-                                                                close()
+                                                            <button onClick={() => {
+                                                                const minDate = new Date("1992-01-01");
+                                                                const varDate = new Date(serviceDate);
+                                                                const today = new Date();
+                                                                if (!(createAllFilled.isNameSet && createAllFilled.isTeamleadSet)) {
+                                                                    alert("Не заполнены обязательные* поля!")
+                                                                }
+                                                                else if (varDate < minDate || varDate > today) {
+                                                                    alert("Некорректная дата!");
+                                                                }
+                                                                else {
+                                                                    GroupAPI.createTeam(teamLead, serviceDate, newInformation);
+                                                                    getActiveTeams();
+                                                                    setCreateAllFilled({
+                                                                        isNameSet: false,
+                                                                        isTeamleadSet: false
+                                                                    });
+                                                                    alert("Обновите страницу!")
+                                                                    //window.location.reload();
+                                                                }
                                                             }}>
                                                                 Подтвердить
                                                             </button>
@@ -794,7 +749,7 @@ const Teams = () => {
                         <div action="" className={`${classes.panelSearch}`}>
                             <input 
                                 value={content}
-                                placeholder="Группа"
+                                placeholder="Команда"
                                 onChange={(event) => setContent(event.currentTarget.value)}
                                 onKeyUp={(event) => {
                                     if (event.key === 'Enter') {
@@ -863,4 +818,4 @@ const Teams = () => {
     )
 }
 
-export default Teams;
+export default Groups;

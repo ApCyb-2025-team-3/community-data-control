@@ -10,14 +10,13 @@
     margin-top: 20px;
     margin-bottom: 70px;
     flex-direction: column;
-    /* align-items: center; */
+    align-items: center;
     gap: 35px;
 }
 
-.wrapperBlocks p {
+.wrapperBlocksTitle {
     margin: 0;
-    margin-left: 5.73%;
-    /* width: 99%; */
+    width: 89%;
 
     color: #000;
 
@@ -33,18 +32,16 @@
     display: flex;
     width: 83.33%;
 
-    margin-left: 8.33%;
-
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 50px;
+    /* gap: 50px; */
 }
 
 .leftBlock {
     display: flex;
-    width: 42%;
+    width: 28.75%;
     height: 540px;
-    padding: 35px 45px;
+    padding: 35px 4.5rem;
     flex-direction: column;
     align-items: center;
     gap: 15px;
@@ -54,9 +51,9 @@
 
 .rightBlock {
     display: flex;
-    width: 54.5%;
+    width: 56.875%;
     height: 540px;
-    padding: 35px 45px;
+    padding: 35px 4.5rem;
     flex-direction: column;
     align-items: center;
     gap: 15px;
@@ -65,7 +62,7 @@
     border: 3px solid #000;
 }
 
-.groupsControlPanel {
+.teamsControlPanel {
     display: flex;
     width: 100%;
     height: 32px;
@@ -76,7 +73,7 @@
 
 
 
-.panelAddGroup {
+.panelAddTeam {
     display: flex;
     width: 35.55%;
     justify-content: space-between;
@@ -84,7 +81,7 @@
     gap: 20px;
 }
 
-.panelAddGroup p {
+.panelAddTeam p {
     margin: 0;
 
     color: #000;
@@ -97,7 +94,7 @@
     line-height: normal;
 }
 
-.panelAddGroupButton {
+.panelAddTeamButton {
     display: flex;
     width: 30px;
     height: 30px;
@@ -115,11 +112,11 @@
     transition: all 0.15s ease; 
 }
 
-.panelAddGroupButton:hover {
+.panelAddTeamButton:hover {
     box-shadow: 0 0 5px 1px #808080;
 }
 
-.panelAddGroupButton img {
+.panelAddTeamButton img {
     width: 15px;
     height: 15px;
 }
@@ -146,11 +143,13 @@
     font-weight: 600;
     line-height: normal;
 
+    cursor: pointer;
+
     border: 0;
     background: none;
 }
 
-.switchAll {
+.switch {
     padding: 0;
 
     color: rgba(0, 0, 0, 0.50);
@@ -162,22 +161,21 @@
     font-weight: 400;
     line-height: normal;
 
+    cursor: pointer;
+
     border: 0;
     background: none;
 
     transition: all 0.1s ease;
 }
 
-.switchAll:hover {
+.switch:hover {
     font-size: 2.4rem;
 }
 
-.switchActive:hover {
-    font-size: 2.4rem;
-}
-.groupsTable {
+.teamsTable {
     display: flex;
-    width: 91%;
+    width: calc(100% - 1rem);
     height: 523px;
     flex-direction: column;
     align-items: flex-start;
@@ -185,10 +183,10 @@
     overflow: scroll;
     overflow-x: hidden;
 
-    padding-right: 2rem;
+    padding-right: 1rem;
 }
 
-.groupsTable li {
+.teamsTable li {
     display: flex;
     width: 100%;
     height: 3rem;
@@ -203,13 +201,12 @@
     height: 1rem;
     flex-shrink: 0;
     border-radius: 10px;
-    background: #00CA4E;
 }
 
 .lilName {
     display: flex;
     width: 30.23%;
-    padding-left: 2.32%;
+    /* padding-left: 2.32%; */
     align-items: center;
 
     color: #000;
@@ -227,7 +224,7 @@
 .lilLeader {
     display: flex;
     width: 27.9%;
-    padding-left: 2.32%;
+    /* padding-left: 2.32%; */
     align-items: center;
 
     color: #000;
@@ -245,7 +242,7 @@
 .lilCreation {
     display: flex;
     width: 27.9%;
-    padding-left: 2.32%;
+    /* padding-left: 2.32%; */
     align-items: center;
 
     color: #000;
@@ -270,14 +267,13 @@
     border: 0;
     border-radius: 2rem;
     background: none;
-  
+
     transition: all 0.15s ease; 
 }
 
 .lilInfo:hover {
     box-shadow: 0 0 5px 1px #808080;
 }
-
 
 .lilInfo img {
     width: 2rem;
@@ -286,7 +282,7 @@
 
 
 
-.groupInfoHeading {
+.teamInfoHeading {
     display: flex;
 
     width: 100%;
@@ -316,7 +312,7 @@
     line-height: normal;
 }
 
-.headingTitleGroupName {
+.headingTitleTeamName {
     display: flex;
     width: 74%;
     height: 100%;
@@ -335,7 +331,7 @@
 
 .headingActivity {
     display: flex;
-    width: 26.111%;
+    width: 26.4%;
     align-items: center;
     justify-content: space-between;
 }
@@ -505,7 +501,7 @@
     width: calc(82.485% - 2rem);
     height: 210px;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
 
     padding-right: 2rem;
@@ -600,7 +596,7 @@
     align-items: flex-start;
 }
 
-.bodyUpdate p {
+.bodyUpdate p, .bodyReason p {
     margin: 0;
     width: 15%;
 
@@ -626,6 +622,36 @@
     font-style: normal;
     font-weight: 300;
     line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.bodyReason {
+    display: flex;
+    width: 100%;
+    height: 30px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.bodyReasonReason {
+    display: flex;
+    width: 82.485%;
+    height: 30px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .bodyButtons {
@@ -636,7 +662,7 @@
     gap: 1rem;
 }
 
-.bodyButtons button {
+.bodyButtonsButton {
     display: flex;
     padding: 10px 15px;
     justify-content: center;
@@ -724,7 +750,6 @@
     margin-right: 5.2%;
 }
 
-
 .panelSearch {
     display: flex;
     width: calc(100% - 24px);
@@ -800,4 +825,190 @@
 .tableButtons button img {
     width: 2rem;
     height: 2rem;
+}
+
+
+
+
+
+
+.popUp {
+    display: flex;
+    width: 500px;
+    min-height: 180px;
+    padding: 35px 4.5rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-shrink: 0;
+    border-radius: 30px;
+    border: 3px solid #000;
+    background-color: #FFFFFF;
+}
+
+.popUp p {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+
+    margin: 0
+}
+
+.popUpMask {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    position: fixed;
+}
+
+.popUpContent {
+    display: flex;
+    width: 100%;
+    height: 95%;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 15px;
+    color: #000;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2.3rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+textarea { resize: none; }
+
+.popUpContentTextArea {
+    display: flex;
+    /* width: 100%; */
+    height: 150px;
+    padding: 0 10px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 2px solid #000;
+}
+
+.popUpContent form {
+    display: flex;
+    /* width: 100%; */
+    height: 36px;
+    padding: 0 10px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 2px solid #000;
+}
+
+.popUpContent form input {
+    width: 100%;
+    height: 32px;
+    border: none;
+    outline: none;
+    padding: 0;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.popUpContent form textarea {
+    width: 100%;
+    height: 32px;
+    border: none;
+    outline: none;
+    padding: 0;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.popUpButtons {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.popUpButtons button {
+    display: flex;
+    cursor: pointer;
+    width: 50%;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    background: none;
+    border-radius: 10px;
+    border: 2px solid #000;
+
+    transition: all 0.15s ease;
+}
+
+.floatList {
+    display: flex;
+    width: calc(100% - 1rem);
+    height: 100px;
+    overflow: scroll;
+    overflow-x: hidden;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.floatListItem {
+    display: flex;
+    width: 100%;
+    height: 30px;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.floatName {
+    width: 45%;
+    height: 30px;
+    color: #000;
+    font-family: 'Inter', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    overflow: hidden;
+    white-space: nowrap;
 }
