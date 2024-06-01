@@ -66,7 +66,7 @@ const Teams = () => {
     useEffect(() => {
         async function startThePage() {
             try {
-                getActiveTeams();
+                await getActiveTeams();
                 setIsLoading(false);
             } catch (error) {
                 
@@ -155,9 +155,9 @@ const Teams = () => {
         // Add more styles for other elements as needed
     };
 
-    window.addEventListener('load', () => {
-        getActiveTeams();
-    });
+    // window.addEventListener('load', () => {
+    //     getActiveTeams();
+    // });
 
     function setEmptyGroupListToState() {
         setState({
@@ -174,7 +174,7 @@ const Teams = () => {
             description: null,
             teamLead: null,
         })
-        getActiveTeams()
+        await getActiveTeams()
     }
 
     async function getTeamByName(name) {
@@ -185,7 +185,7 @@ const Teams = () => {
 
     async function acceptMember(groupId, userId) {
         await TeamAPI.acceptMember(groupId, userId);
-        getActiveMembers(groupId)
+        await getActiveMembers(groupId)
     }
 
 
@@ -206,7 +206,7 @@ const Teams = () => {
 
     async function excludeMember(groupId, userId) {
         await TeamAPI.excludeMember(groupId, userId);
-        getActiveMembers(groupId)
+        await getActiveMembers(groupId)
     }
 
     async function sortByName(groupDtoList) {
@@ -262,16 +262,16 @@ const Teams = () => {
           <div className={`${classes.panelSwitch}`}>
             {types.map(t => (
                 <ToggleButton
-                  active={t === chosen}
-                  onClick={ () => {
-                      setChosen(t);
-                      if (t === "активные") {
-                          getActiveTeams();
-                      } else {
-                          getAllTeams();
-                      }
-                  }}
-                  title={t}
+                    active={t === chosen}
+                    onClick={ () => {
+                        setChosen(t);
+                        if (t === "активные") {
+                            getActiveTeams();
+                        } else {
+                            getAllTeams();
+                        }
+                    }}
+                    title={t}
                 />
                 ))}
           </div>

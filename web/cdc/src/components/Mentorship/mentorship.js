@@ -6,13 +6,14 @@ import date from '../../icons/sort-date-icon.svg';
 import complete from '../../icons/complete-icon.svg';
 import remove from '../../icons/remove-icon.svg';
 import logo from '../../icons/safari-pinned-tab.svg';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Popup from "reactjs-popup";
 import AsyncSelect from 'react-select/async';
 import axios from 'axios';
 import { MentAPI } from './MentAPI'
 
 const Mentorship = () => {
+    const [isLoading, setIsLoading] = useState(true)
 
     const[pairs, setPairs] = useState([])
 
@@ -100,6 +101,21 @@ const Mentorship = () => {
         }
     };
 
+    useEffect(() => {
+        async function startThePage() {
+            try {
+                await getPairs();
+                await getFreeMentors();
+                await getFreeMentees();
+                setIsLoading(false);
+            } catch (error) {
+                
+            }
+        }
+
+        startThePage()
+    }, [])
+
     
     const getUser = async (inputValue) => {
         try {
@@ -143,33 +159,11 @@ const Mentorship = () => {
         }
     };
 
-
-    async function performGetRequest(url) {
-        try {
-            const response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    "Origin": "http://localhost:3000",
-                },
-            });
-
-            if (response.ok) {
-                return await response.json()
-            
-            } else {
-                console.error("HTTP error:" + response.status + "\n" + response.statusText)
-            }
-
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-    window.addEventListener('load', () => {
-        getPairs();
-        getFreeMentors();
-        getFreeMentees();
-    });
+    // window.addEventListener('load', () => {
+    //     getPairs();
+    //     getFreeMentors();
+    //     getFreeMentees();
+    // });
 
     async function getPairs() {
         const pairsDtoList = await MentAPI.getPairs()
@@ -188,7 +182,7 @@ const Mentorship = () => {
 
     async function deletePair(id) {
         MentAPI.deletePair(id);
-        getPairs()
+        await getPairs()
     }
 
     async function sortByMentors(pairsDtoList) {
@@ -226,7 +220,7 @@ const Mentorship = () => {
     async function createPair() {
         MentAPI.createPair(newPair.mentor, newPair.mentee, newPair.creationDate, newPair.disbandmentDate)
         setNewPair({ mentor: null, mentee: null, creationDate: "2024/05/28", disbandmentDate: "2024/05/28"})
-        getPairs()
+        await getPairs()
     }
 
 
@@ -328,6 +322,12 @@ const Mentorship = () => {
         })
 
         return renderedPairList
+    }
+
+    if (isLoading) {
+        return(
+            <div>Загрузка...</div>
+        )
     }
 
 

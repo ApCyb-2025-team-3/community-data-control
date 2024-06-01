@@ -66,7 +66,7 @@ const Groups = () => {
     useEffect(() => {
         async function startThePage() {
             try {
-                getActiveTeams();
+                await getActiveTeams();
                 setIsLoading(false);
             } catch (error) {
                 
@@ -155,9 +155,9 @@ const Groups = () => {
         // Add more styles for other elements as needed
     };
 
-    window.addEventListener('load', () => {
-        getActiveTeams();
-    });
+    // window.addEventListener('load', () => {
+    //     getActiveTeams();
+    // });
 
     function setEmptyGroupListToState() {
         setState({
@@ -174,7 +174,7 @@ const Groups = () => {
             description: null,
             teamLead: null,
         })
-        getActiveTeams()
+        await getActiveTeams()
     }
 
     async function getTeamByName(name) {
@@ -185,7 +185,7 @@ const Groups = () => {
 
     async function acceptMember(groupId, userId) {
         await GroupAPI.acceptMember(groupId, userId);
-        getActiveMembers(groupId)
+        await getActiveMembers(groupId)
     }
 
 
@@ -206,7 +206,7 @@ const Groups = () => {
 
     async function excludeMember(groupId, userId) {
         await GroupAPI.excludeMember(groupId, userId);
-        getActiveMembers(groupId)
+        await getActiveMembers(groupId)
     }
 
     async function sortByName(groupDtoList) {
